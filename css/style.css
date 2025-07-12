@@ -59,7 +59,7 @@ header {
 #header-content {
     position: relative;
     z-index: 1;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.7);
     padding: 2em;
     border-radius: 10px;
 }
@@ -83,6 +83,7 @@ section {
     padding: 2em;
     border-radius: 10px;
     transition: background-color 0.5s ease;
+    background-color: rgba(0, 0, 0, 0.7);
 }
 
 #energy { border-left: 5px solid #c0c0c0; }
