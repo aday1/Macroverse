@@ -64,8 +64,33 @@ function createGasCloud() {
     geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
     const points = new THREE.Points(geometry, material);
     group.add(points);
+
+    // Add a central blue star
+    const star = new THREE.Mesh(new THREE.SphereGeometry(4, 32, 32), new THREE.MeshBasicMaterial({ color: 0x6a8dff, transparent: true, opacity: 0.8 }));
+    group.add(star);
+
+    // Add orbiting planets
+    for (let i = 0; i < 3; i++) {
+        const planet = new THREE.Mesh(new THREE.SphereGeometry(Math.random() * 0.8 + 0.3, 16, 16), new THREE.MeshStandardMaterial({ color: new THREE.Color(0x888888) }));
+        const distance = i * 5 + 10;
+        const angle = Math.random() * Math.PI * 2;
+        planet.position.set(Math.cos(angle) * distance, (Math.random() - 0.5) * 5, Math.sin(angle) * distance);
+        planet.userData.distance = distance;
+        planet.userData.angle = angle;
+        planet.userData.speed = Math.random() * 0.005 + 0.002;
+        group.add(planet);
+    }
+
     group.userData.animate = () => {
         points.rotation.y += 0.001;
+        star.rotation.y += 0.001;
+        group.children.forEach(child => {
+            if (child.userData.distance) {
+                child.userData.angle += child.userData.speed;
+                child.position.x = Math.cos(child.userData.angle) * child.userData.distance;
+                child.position.z = Math.sin(child.userData.angle) * child.userData.distance;
+            }
+        });
     };
     return group;
 }
@@ -114,15 +139,28 @@ function createLifeScene() {
 
     // Nebula
     const textureLoader = new THREE.TextureLoader();
-    const nebulaTexture = textureLoader.load('https://cdn.rawgit.com/mrdoob/three.js/master/examples/textures/crate.gif'); // Placeholder
-    const nebulaMaterial = new THREE.MeshBasicMaterial({ map: nebulaTexture, transparent: true, opacity: 0.3, blending: THREE.AdditiveBlending });
-    const nebula = new THREE.Mesh(new THREE.PlaneGeometry(50, 50), nebulaMaterial);
-    nebula.position.z = -20;
-    group.add(nebula);
+    const nebulaTextures = [
+        'https://cdn.rawgit.com/mrdoob/three.js/master/examples/textures/skybox/px.jpg',
+        'https://cdn.rawgit.com/mrdoob/three.js/master/examples/textures/skybox/nx.jpg',
+        'https://cdn.rawgit.com/mrdoob/three.js/master/examples/textures/skybox/py.jpg'
+    ];
+
+    for (let i = 0; i < 3; i++) {
+        const nebulaTexture = textureLoader.load(nebulaTextures[i]);
+        const nebulaMaterial = new THREE.MeshBasicMaterial({ map: nebulaTexture, transparent: true, opacity: 0.2, blending: THREE.AdditiveBlending, depthWrite: false });
+        const nebula = new THREE.Mesh(new THREE.PlaneGeometry(80, 80), nebulaMaterial);
+        nebula.position.set((Math.random() - 0.5) * 30, (Math.random() - 0.5) * 30, (Math.random() - 0.5) * 30 - 20);
+        nebula.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+        group.add(nebula);
+    }
     
     group.userData.animate = () => {
         snowflakes.rotation.y += 0.0005;
-        nebula.rotation.z += 0.0002;
+        group.children.forEach(child => {
+            if (child.material.map) { // is a nebula
+                child.rotation.z += 0.0002;
+            }
+        });
     };
     return group;
 }
@@ -147,16 +185,32 @@ function createCivilizationScene() {
     const cityLights = new THREE.Points(lightsGeometry, lightsMaterial);
     planet.add(cityLights);
 
-    // Spaceship
-    const spaceship = new THREE.Mesh(new THREE.ConeGeometry(0.3, 1, 8), new THREE.MeshStandardMaterial({ color: 0xaaaaaa }));
-    spaceship.position.set(10, 5, 0);
-    group.add(spaceship);
+    // Spaceships and Satellites
+    for (let i = 0; i < 10; i++) {
+        const isShip = Math.random() > 0.5;
+        const object = isShip 
+            ? new THREE.Mesh(new THREE.ConeGeometry(0.2, 0.8, 8), new THREE.MeshStandardMaterial({ color: 0xaaaaaa }))
+            : new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.4, 0.1), new THREE.MeshStandardMaterial({ color: 0xcccccc }));
+        
+        const pathRadius = Math.random() * 5 + 7;
+        const angle = Math.random() * Math.PI * 2;
+        object.position.set(Math.cos(angle) * pathRadius, (Math.random() - 0.5) * 10, Math.sin(angle) * pathRadius);
+        object.userData.pathRadius = pathRadius;
+        object.userData.angle = angle;
+        object.userData.speed = (Math.random() - 0.5) * 0.002 + 0.001;
+        group.add(object);
+    }
 
     group.userData.animate = () => {
         planet.rotation.y += 0.001;
-        spaceship.position.x = Math.cos(Date.now() * 0.0001) * 10;
-        spaceship.position.z = Math.sin(Date.now() * 0.0001) * 10;
-        spaceship.lookAt(planet.position);
+        group.children.forEach(child => {
+            if (child.userData.pathRadius) {
+                child.userData.angle += child.userData.speed;
+                child.position.x = Math.cos(child.userData.angle) * child.userData.pathRadius;
+                child.position.z = Math.sin(child.userData.angle) * child.userData.pathRadius;
+                child.lookAt(planet.position);
+            }
+        });
     };
     return group;
 }
