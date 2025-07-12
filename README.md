@@ -5,7 +5,7 @@ A Microvirtuosity Performance by Nick Wilson and An AV Collaboration with Aday.
 [aday.net.au](https://aday.net.au) and Nick Wilson [https://nickewilson.net/reductionist/](https://nickewilson.net/reductionist/)
 
 ## 1. Energy Field (before the Big Bang and the beginning of time…)
-
+and push it to your repository. This will trigger the deployment. 
 > There was no matter. All that existed was space/time and energy. An ocean of energy,
 > almost still but gently rippling. A near still ocean of energy filling the void.
 >
