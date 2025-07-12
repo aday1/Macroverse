@@ -54,26 +54,12 @@ header {
     object-fit: cover;
     transform: translate(-50%, -50%);
     z-index: -1;
-#header-video {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    min-width: 100vw;
-    min-height: 100vh;
-    max-width: none;
-    max-height: none;
-    object-fit: cover;
-    object-position: center center;
-    z-index: -1;
-    background: #000;
 }
 
 #header-content {
     position: relative;
     z-index: 1;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.5);
     padding: 2em;
     border-radius: 10px;
 }
@@ -97,54 +83,14 @@ section {
     padding: 2em;
     border-radius: 10px;
     transition: background-color 0.5s ease;
-    background-color: rgba(0, 0, 0, 0.7);
 }
 
-
-#energy, #particles, #blue-giants, #orbits, #life, #living {
-    border-left: 5px solid;
-    border-image: linear-gradient(
-        180deg,
-        rgba(192,192,192,0.7) 0%,
-        rgba(255,69,0,0.7) 20%,
-        rgba(65,105,225,0.7) 40%,
-        rgba(255,215,0,0.7) 60%,
-        rgba(50,205,50,0.7) 80%,
-        rgba(255,105,180,0.7) 100%
-    ) 1;
-    animation: borderColorShift 6s linear infinite;
-}
-
-@keyframes borderColorShift {
-    0% {
-        border-image-source: linear-gradient(180deg, rgba(192,192,192,0.7) 0%, rgba(255,69,0,0.7) 20%, rgba(65,105,225,0.7) 40%, rgba(255,215,0,0.7) 60%, rgba(50,205,50,0.7) 80%, rgba(255,105,180,0.7) 100%);
-    }
-    25% {
-        border-image-source: linear-gradient(180deg, rgba(255,69,0,0.7) 0%, rgba(65,105,225,0.7) 20%, rgba(255,215,0,0.7) 40%, rgba(50,205,50,0.7) 60%, rgba(255,105,180,0.7) 80%, rgba(192,192,192,0.7) 100%);
-    }
-    50% {
-        border-image-source: linear-gradient(180deg, rgba(65,105,225,0.7) 0%, rgba(255,215,0,0.7) 20%, rgba(50,205,50,0.7) 40%, rgba(255,105,180,0.7) 60%, rgba(192,192,192,0.7) 80%, rgba(255,69,0,0.7) 100%);
-    }
-    75% {
-        border-image-source: linear-gradient(180deg, rgba(255,215,0,0.7) 0%, rgba(50,205,50,0.7) 20%, rgba(255,105,180,0.7) 40%, rgba(192,192,192,0.7) 60%, rgba(255,69,0,0.7) 80%, rgba(65,105,225,0.7) 100%);
-    }
-}
-    header {
-        height: 100vh;
-        min-height: 100vw;
-    }
-    #header-video {
-        width: 100vw;
-        height: 100vh;
-        min-width: 100vw;
-        min-height: 100vh;
-        max-width: none;
-        max-height: none;
-    }
-}
-        border-image-source: linear-gradient(180deg, rgba(192,192,192,0.7) 0%, rgba(255,69,0,0.7) 20%, rgba(65,105,225,0.7) 40%, rgba(255,215,0,0.7) 60%, rgba(50,205,50,0.7) 80%, rgba(255,105,180,0.7) 100%);
-    }
-}
+#energy { border-left: 5px solid #c0c0c0; }
+#particles { border-left: 5px solid #ff4500; }
+#blue-giants { border-left: 5px solid #4169e1; }
+#orbits { border-left: 5px solid #ffd700; }
+#life { border-left: 5px solid #32cd32; }
+#living { border-left: 5px solid #ff69b4; }
 
 h2 {
     font-size: 2em;
