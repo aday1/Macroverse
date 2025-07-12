@@ -4,8 +4,6 @@ A Microvirtuosity Performance by Nick Wilson and An AV Collaboration with Aday.
 
 [aday.net.au](https://aday.net.au) and Nick Wilson [https://nickewilson.net/reductionist/](https://nickewilson.net/reductionist/)
 
----
-
 ## 1. Energy Field (before the Big Bang and the beginning of time…)
 
 > There was no matter. All that existed was space/time and energy. An ocean of energy,
