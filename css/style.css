@@ -66,19 +66,21 @@ body {
         transform: translateX(-160px);
     }
     
-    /* Adjust right navbar for mobile */
+    /* Adjust mobile layout for new bottom navbar */
     .main-navbar {
-        width: 180px;
-        transform: translateX(140px);
-        z-index: 150;
+        min-width: 280px;
+        max-width: 95vw;
+        padding: 0.4em 1em 0.4em 1em;
     }
     
-    /* Make sure navbars don't overlap */
+    .main-navbar .navbar-link {
+        padding: 0.3em 0.5em;
+        min-width: 50px;
+        font-size: 0.85em;
+    }
+    
+    /* Make sure left sidebar doesn't overlap */
     .nav-sidebar.open {
-        transform: translateX(0);
-    }
-    
-    .main-navbar.open {
         transform: translateX(0);
     }
     
@@ -103,9 +105,17 @@ body {
         transform: translateX(-140px);
     }
     
+    /* Further mobile adjustments for bottom navbar */
     .main-navbar {
-        width: 160px;
-        transform: translateX(120px);
+        min-width: 260px;
+        max-width: 98vw;
+        padding: 0.3em 0.8em 0.3em 0.8em;
+    }
+    
+    .main-navbar .navbar-link {
+        padding: 0.25em 0.4em;
+        min-width: 45px;
+        font-size: 0.8em;
     }
     
     main {
@@ -750,11 +760,12 @@ li {
     align-items: center;
 }
 
-.navbar-header {
+/* Bottom navbar specific overrides */
+.main-navbar .navbar-header {
     display: none;
 }
 
-.navbar-list {
+.main-navbar .navbar-list {
     display: flex;
     flex-direction: row;
     gap: 0.5em;
@@ -764,11 +775,11 @@ li {
     margin: 0;
 }
 
-.navbar-list li {
+.main-navbar .navbar-list li {
     margin: 0;
 }
 
-.navbar-link {
+.main-navbar .navbar-link {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -784,30 +795,31 @@ li {
     min-width: 60px;
 }
 
-.navbar-link.active, .navbar-link:hover {
+.main-navbar .navbar-link.active, 
+.main-navbar .navbar-link:hover {
     background: rgba(0,255,255,0.13);
     color: #0ff;
 }
 
-.navbar-link-content {
+.main-navbar .navbar-link-content {
     flex-direction: column;
     align-items: center;
     margin-bottom: 0.1em;
 }
 
-.navbar-number {
+.main-navbar .navbar-number {
     font-size: 0.8em;
     color: #ff0080;
     font-weight: bold;
     margin-bottom: 0.1em;
 }
 
-.navbar-title {
+.main-navbar .navbar-title {
     font-size: 0.95em;
     font-weight: 600;
 }
 
-.navbar-time {
+.main-navbar .navbar-time {
     font-size: 0.7em;
     color: #aaa;
     margin-top: 0.1em;
