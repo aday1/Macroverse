@@ -1490,7 +1490,7 @@ function createFadeOverlay() {
 function setScene(themeFunction, forceChange = false) {
     const now = Date.now();
     
-    // Debounce scene changes unless forced (like navigation clicks)
+    // Debounce scene changes
     if (!forceChange && (isTransitioning || (now - lastSceneChangeTime) < SCENE_CHANGE_DEBOUNCE)) {
         return;
     }
@@ -1553,24 +1553,6 @@ let lastActiveSection = '';
 let lastSceneChangeTime = 0;
 const SCENE_CHANGE_DEBOUNCE = 400; // Reduced from 800ms to 400ms for snappier response
 
-// Function to update active navigation state
-function updateActiveNav(activeSection) {
-    const navLinks = document.querySelectorAll('.nav-link');
-    navLinks.forEach(link => {
-        link.classList.remove('active');
-        if (link.dataset.section === activeSection) {
-            link.classList.add('active');
-        }
-    });
-}
-
-// Update navigation state based on scroll position
-function updateNavigationFromScroll(sectionName) {
-    if (sectionName && sectionName !== lastActiveSection) {
-        updateActiveNav(sectionName);
-    }
-}
-
 // Enhanced intersection observer with intro section support
 const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -1586,7 +1568,6 @@ const observer = new IntersectionObserver((entries) => {
                 console.log('Changing scene to:', themeName);
                 setScene(sectionThemes[themeName]);
                 lastActiveSection = themeName;
-                updateNavigationFromScroll(themeName);
             }
         }
     });
@@ -1616,7 +1597,6 @@ const handleScroll = () => {
                 console.log('At top - switching to intro scene');
                 setScene(sectionThemes['intro']);
                 lastActiveSection = 'intro';
-                updateNavigationFromScroll('intro');
             }
             return;
         }
@@ -1647,7 +1627,6 @@ const handleScroll = () => {
                 console.log('Scroll changing scene to:', themeName);
                 setScene(sectionThemes[themeName]);
                 lastActiveSection = themeName;
-                updateNavigationFromScroll(themeName);
             }
         }
     }, throttleTime);
@@ -1672,63 +1651,6 @@ if (mobileDetected) {
 setTimeout(() => {
     handleScroll();
 }, 1000);
-
-// Navigation functionality
-const navLinks = document.querySelectorAll('.nav-link');
-const navToggle = document.getElementById('nav-toggle');
-const navSidebar = document.getElementById('navigation-sidebar');
-
-// Handle navigation clicks
-navLinks.forEach(link => {
-    link.addEventListener('click', (e) => {
-        e.preventDefault();
-        const sectionName = link.dataset.section;
-        const targetSection = document.getElementById(sectionName);
-        
-        console.log('Navigation clicked:', sectionName);
-        
-        if (targetSection && sectionThemes[sectionName]) {
-            // Force immediate scene change with fade transition for navigation
-            setScene(sectionThemes[sectionName], true);
-            lastActiveSection = sectionName;
-            
-            // Update navigation state
-            updateActiveNav(sectionName);
-            
-            // Smooth scroll to section with small delay for transition
-            setTimeout(() => {
-                targetSection.scrollIntoView({ 
-                    behavior: 'smooth',
-                    block: 'center'
-                });
-            }, 150);
-            
-            // Close sidebar on mobile after click
-            if (mobileDetected) {
-                navSidebar.classList.remove('open');
-            }
-            
-            // Close sidebar on desktop after click too
-            navSidebar.classList.remove('open');
-            
-            console.log('Scene changed to:', sectionName); // Debug
-        }
-    });
-});
-
-// Toggle navigation sidebar
-navToggle.addEventListener('click', (e) => {
-    e.stopPropagation();
-    navSidebar.classList.toggle('open');
-    console.log('Nav toggle clicked, open:', navSidebar.classList.contains('open'));
-});
-
-// Close sidebar when clicking outside
-document.addEventListener('click', (e) => {
-    if (!navSidebar.contains(e.target) && !navToggle.contains(e.target)) {
-        navSidebar.classList.remove('open');
-    }
-});
 
 // Additional touch event handling for mobile
 if (mobileDetected) {
