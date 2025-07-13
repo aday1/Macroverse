@@ -1607,17 +1607,8 @@ function createIntroScene() {
 
 const sectionThemes = {
     'intro': createIntroScene,
-    'energy': createEnergyField,
-    'particles': () => {
-        const group = new THREE.Group();
-        
-        // Create fundamental particles soup - quarks, gluons, electrons, neutrinos
-        const particleTypes = [
-            { name: 'quarks', color: 0xff0040, size: 0.3, count: 800 },
-            { name: 'gluons', color: 0x00ff80, size: 0.2, count: 600 },
-            { name: 'electrons', color: 0x4080ff, size: 0.15, count: 400 },
-            { name: 'neutrinos', color: 0xffff00, size: 0.1, count: 1000 }
-        ];
+    'energy': () => createShaderScene('energy_field'),
+    'particles': () => createShaderScene('particles'),
         
         const allParticles = [];
         
@@ -1731,7 +1722,6 @@ const sectionThemes = {
                     velocities[i * 3] += (Math.random() - 0.5) * 0.001;
                     velocities[i * 3 + 1] += (Math.random() - 0.5) * 0.001;
                     velocities[i * 3 + 2] += (Math.random() - 0.5) * 0.001;
-                    
                     // Velocity damping
                     velocities[i * 3] *= 0.99;
                     velocities[i * 3 + 1] *= 0.99;
@@ -1767,522 +1757,236 @@ const sectionThemes = {
     'performance': createCivilizationScene // Using civilization scene for performance section
 };
 
-let isTransitioning = false;
-
-// Safety function to ensure canvas is always in proper state
-function ensureCanvasState() {
-    const canvas = document.querySelector('#bg');
-    if (canvas && !isTransitioning) {
-        canvas.style.transition = '';
-        canvas.style.opacity = '1';
-        // Remove old overlay fade code since we're using shader-only fades
-    }
-}
-
-// Call safety check periodically
-setInterval(ensureCanvasState, 2000);
-
-function setScene(themeFunction, sectionName = null, forceChange = false) {
-    const now = Date.now();
-    
-    // Debounce scene changes unless forced (like navigation clicks)
-    if (!forceChange && (isTransitioning || (now - lastSceneChangeTime) < SCENE_CHANGE_DEBOUNCE)) {
-        return;
+// External GLSL shader loading system
+class ShaderLoader {
+    constructor() {
+        this.shaderCache = new Map();
+        this.vertexShader = null;
+        this.loadDefaultVertex();
     }
     
-    isTransitioning = true;
-    lastSceneChangeTime = now;
-    
-    const canvas = document.querySelector('#bg');
-    
-    // Update scene title immediately when scene change starts
-    if (sectionName) {
-        updateSceneTitle(sectionName);
-    }
-    
-    // GLSL shader-only fade transition (no section content fade)
-    canvas.style.transition = 'opacity 0.3s ease-in-out';
-    canvas.style.opacity = '0';
-    
-    setTimeout(() => {
-        // Change the scene during fade
-        if (currentSceneObject) {
-            scene.remove(currentSceneObject);
+    async loadDefaultVertex() {
+        try {
+            const response = await fetch('./shaders/default.vert');
+            this.vertexShader = await response.text();
+            console.log('Default vertex shader loaded');
+        } catch (error) {
+            console.warn('Could not load vertex shader, using default:', error);
+            this.vertexShader = `
+                varying vec2 v_coord;
+                void main() {
+                    v_coord = uv;
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                }
+            `;
         }
-        currentSceneObject = themeFunction();
-        scene.add(currentSceneObject);
+    }
+    
+    async loadShader(shaderName) {
+        if (this.shaderCache.has(shaderName)) {
+            return this.shaderCache.get(shaderName);
+        }
         
-        console.log('GLSL scene changed with shader-only fade to:', sectionName || 'unknown');
-        
-        // Fade GLSL back in
-        setTimeout(() => {
-            canvas.style.opacity = '1';
+        try {
+            const response = await fetch(`./shaders/${shaderName}.glsl`);
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+            const fragmentShader = await response.text();
             
-            setTimeout(() => {
-                canvas.style.transition = '';
-                isTransitioning = false;
-            }, 300);
-        }, 50);
-    }, 150); // Total: 0.3 seconds
-}
-
-const sections = document.querySelectorAll('section');
-
-// Enhanced mobile detection
-const isMobileDevice = () => {
-    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
-           (typeof window.orientation !== "undefined") ||
-           (navigator.userAgent.indexOf('IEMobile') !== -1) ||
-           window.innerWidth <= 768;
-};
-
-const mobileDetected = isMobileDevice();
-console.log('Mobile detected:', mobileDetected); // Debug logging
-
-// Multiple detection methods for scene changes with optimized debouncing
-let lastActiveSection = '';
-let lastSceneChangeTime = 0;
-const SCENE_CHANGE_DEBOUNCE = 300; // Reduced to 300ms for more responsive changes
-
-// Function to update scroll progress indicator
-function updateScrollProgress() {
-    const scrollProgress = document.getElementById('scroll-progress-bar');
-    const scrollIndicator = document.getElementById('scroll-progress-indicator');
+            // Convert GLSL 330 core to WebGL compatible format
+            const webglFragmentShader = this.convertToWebGL(fragmentShader);
+            
+            const shaderMaterial = new THREE.ShaderMaterial({
+                uniforms: {
+                    u_time: { value: 0 },
+                    u_resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+                    u_audio: { value: 0.0 }
+                },
+                vertexShader: this.vertexShader,
+                fragmentShader: webglFragmentShader,
+                transparent: true
+            });
+            
+            this.shaderCache.set(shaderName, shaderMaterial);
+            console.log(`GLSL shader loaded: ${shaderName}`);
+            return shaderMaterial;
+            
+        } catch (error) {
+            console.error(`Failed to load shader ${shaderName}:`, error);
+            return this.createFallbackShader(shaderName);
+        }
+    }
     
-    if (!scrollProgress || !scrollIndicator) return;
+    convertToWebGL(glsl330Core) {
+        // Convert GLSL 330 core syntax to WebGL 1.0 compatible
+        let webglShader = glsl330Core;
+        
+        // Remove version directive
+        webglShader = webglShader.replace(/#version\s+330\s+core\s*/g, '');
+        
+        // Replace 'in' with 'varying' for fragment shader
+        webglShader = webglShader.replace(/^in\s+vec2\s+v_coord;/gm, 'varying vec2 v_coord;');
+        
+        // Replace 'out vec4 FragColor' with 'gl_FragColor'
+        webglShader = webglShader.replace(/^out\s+vec4\s+FragColor;/gm, '');
+        webglShader = webglShader.replace(/FragColor\s*=/g, 'gl_FragColor =');
+        
+        // Add precision qualifier for mobile compatibility
+        if (!webglShader.includes('precision')) {
+            webglShader = 'precision mediump float;\n' + webglShader;
+        }
+        
+        return webglShader;
+    }
     
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
-    const scrollPercentage = Math.min(Math.max(scrollTop / documentHeight, 0), 1);
+    createFallbackShader(shaderName) {
+        const fallbackColors = {
+            'energy_field': 'vec3(0.0, 1.0, 1.0)',  // Cyan
+            'particles': 'vec3(1.0, 0.5, 0.0)',     // Orange
+            'blue_giants': 'vec3(0.3, 0.3, 1.0)',   // Blue
+            'orbits': 'vec3(1.0, 1.0, 0.0)',        // Yellow
+            'life': 'vec3(0.0, 1.0, 0.0)',          // Green
+            'living': 'vec3(1.0, 0.0, 1.0)'         // Magenta
+        };
+        
+        const color = fallbackColors[shaderName] || 'vec3(0.5, 0.5, 0.5)';
+        
+        const fallbackMaterial = new THREE.ShaderMaterial({
+            uniforms: {
+                u_time: { value: 0 },
+                u_resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+                u_audio: { value: 0.0 }
+            },
+            vertexShader: this.vertexShader,
+            fragmentShader: `
+                precision mediump float;
+                varying vec2 v_coord;
+                uniform float u_time;
+                uniform vec2 u_resolution;
+                uniform float u_audio;
+                
+                void main() {
+                    vec2 st = v_coord;
+                    st.x *= u_resolution.x / u_resolution.y;
+                    
+                    // Animated fallback pattern
+                    float wave = sin(st.x * 10.0 + u_time) * sin(st.y * 10.0 + u_time);
+                    vec3 color = ${color} * (0.5 + wave * 0.5);
+                    
+                    gl_FragColor = vec4(color, 1.0);
+                }
+            `,
+            transparent: true
+        });
+        
+        console.log(`Created fallback shader for: ${shaderName}`);
+        return fallbackMaterial;
+    }
     
-    // Update progress bar height
-    scrollProgress.style.height = (scrollPercentage * 100) + '%';
-    
-    // Update indicator position
-    const containerHeight = document.getElementById('scroll-progress-container').offsetHeight;
-    const indicatorPosition = scrollPercentage * (containerHeight - 16); // 16px is indicator height
-    scrollIndicator.style.top = indicatorPosition + 'px';
-    
-    // Change indicator color based on progress
-    if (scrollPercentage < 0.3) {
-        scrollIndicator.style.background = '#ff0080'; // Pink for beginning
-    } else if (scrollPercentage < 0.7) {
-        scrollIndicator.style.background = '#0ff'; // Cyan for middle
-    } else {
-        scrollIndicator.style.background = '#80ff00'; // Green for end
+    updateShaderUniforms(material, time, audioValue = 0.0) {
+        if (material && material.uniforms) {
+            material.uniforms.u_time.value = time;
+            material.uniforms.u_audio.value = audioValue;
+            material.uniforms.u_resolution.value.set(window.innerWidth, window.innerHeight);
+        }
     }
 }
 
-// Function to update scene title indicator
-function updateSceneTitle(sectionName) {
-    const indicator = document.getElementById('scene-title-indicator');
-    if (!indicator) return;
+// Initialize shader loader
+const shaderLoader = new ShaderLoader();
+
+// Enhanced scene creation functions with external GLSL shaders
+function createShaderScene(shaderName) {
+    const group = new THREE.Group();
     
-    const sceneInfo = {
-        'intro': { number: '0', name: 'Macroverse' },
-        'energy': { number: '1', name: 'Energy Field' },
-        'particles': { number: '2', name: 'Particles' },
-        'blue-giants': { number: '3', name: 'Blue Giants' },
-        'orbits': { number: '4', name: 'Orbits' },
-        'life': { number: '5', name: 'Life' },
-        'living': { number: '6', name: 'Living' },
-        'performance': { number: '7', name: 'Performance' }
+    // Create a full-screen quad for the shader
+    const geometry = new THREE.PlaneGeometry(50, 50, 1, 1);
+    
+    // Load the external GLSL shader asynchronously
+    shaderLoader.loadShader(shaderName).then(material => {
+        const mesh = new THREE.Mesh(geometry, material);
+        mesh.position.z = -10;
+        group.add(mesh);
+        group.userData.shaderMesh = mesh;
+        group.userData.shaderMaterial = material;
+        console.log(`GLSL shader scene created: ${shaderName}`);
+    }).catch(error => {
+        console.error(`Failed to create shader scene ${shaderName}:`, error);
+    });
+    
+    // Add some additional 3D elements for depth
+    const particleGeometry = new THREE.BufferGeometry();
+    const particlePositions = [];
+    const particleColors = [];
+    
+    for (let i = 0; i < 100; i++) {
+        particlePositions.push(
+            (Math.random() - 0.5) * 40,
+            (Math.random() - 0.5) * 40,
+            (Math.random() - 0.5) * 20
+        );
+        
+        const hue = Math.random();
+        const color = new THREE.Color().setHSL(hue, 0.8, 0.6);
+        particleColors.push(color.r, color.g, color.b);
+    }
+    
+    particleGeometry.setAttribute('position', new THREE.Float32BufferAttribute(particlePositions, 3));
+    particleGeometry.setAttribute('color', new THREE.Float32BufferAttribute(particleColors, 3));
+    
+    const particleMaterial = new THREE.PointsMaterial({
+        size: 0.5,
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.6,
+        blending: THREE.AdditiveBlending
+    });
+    
+    const particles = new THREE.Points(particleGeometry, particleMaterial);
+    group.add(particles);
+    
+    group.userData.animate = () => {
+        const time = Date.now() * 0.001;
+        
+        // Update shader uniforms
+        if (group.userData.shaderMaterial) {
+            shaderLoader.updateShaderUniforms(
+                group.userData.shaderMaterial, 
+                time, 
+                audioAnalyzer ? audioAnalyzer.getAverageFrequency() / 255 : 0
+            );
+        }
+        
+        // Animate particles
+        const positions = particles.geometry.attributes.position.array;
+        for (let i = 0; i < positions.length; i += 3) {
+            positions[i + 1] += Math.sin(time + positions[i] * 0.01) * 0.02;
+            // Swirl effect
+            const x = positions[i];
+            const z = positions[i + 2];
+            const distance = Math.sqrt(x * x + z * z);
+            const angle = Math.atan2(z, x) + time * 0.001;
+            positions[i] = Math.cos(angle) * distance;
+            positions[i + 2] = Math.sin(angle) * distance;
+        }
+        particles.geometry.attributes.position.needsUpdate = true;
+        
+        // Rotate particles
+        particles.rotation.y += 0.002;
     };
     
-    const info = sceneInfo[sectionName];
-    if (info) {
-        const numberSpan = indicator.querySelector('.scene-number');
-        const nameSpan = indicator.querySelector('.scene-name');
-        
-        if (numberSpan && nameSpan) {
-            numberSpan.textContent = info.number + '.';
-            nameSpan.textContent = info.name;
-        }
-        
-        // Show the indicator with animation
-        indicator.classList.add('visible');
-        console.log('Scene title updated:', info.number, info.name);
-    }
+    return group;
 }
 
-// Function to update active navigation state and highlight section titles
-function updateActiveNav(activeSection) {
-    // Update the bottom center quick-link navbar
-    updateActiveNavbar(activeSection);
-    
-    // Highlight the current section title
-    highlightCurrentSectionTitle(activeSection);
-    
-    console.log('Updated all navigation elements for:', activeSection);
-}
-
-// Function to highlight the current section title
-function highlightCurrentSectionTitle(sectionName) {
-    // Remove active class from all section titles
-    const allTitles = document.querySelectorAll('.section-title');
-    allTitles.forEach(title => {
-        title.classList.remove('active');
-    });
-    
-    // Add active class to current section title
-    const currentSection = document.getElementById(sectionName);
-    if (currentSection) {
-        const sectionTitle = currentSection.querySelector('.section-title');
-        if (sectionTitle) {
-            sectionTitle.classList.add('active');
-            console.log('Highlighted section title:', sectionName);
-        }
-    }
-}
-
-// Update navigation state based on scroll position
-function updateNavigationFromScroll(sectionName) {
-    if (sectionName) {
-        updateActiveNav(sectionName);
-        console.log('Updated navigation highlighting for:', sectionName);
-    }
-}
-
-// Fixed intersection observer with better logic and debugging
-const observer = new IntersectionObserver((entries) => {
-    // Debounce to prevent rapid firing
-    const now = Date.now();
-    if (now - lastSceneChangeTime < 800) return; // Reduced debounce time
-    
-    let bestEntry = null;
-    let bestRatio = 0;
-    
-    console.log('--- Intersection Observer Check ---');
-    
-    // Find the entry with the highest intersection ratio
-    entries.forEach(entry => {
-        console.log(`Section ${entry.target.id}: intersecting=${entry.isIntersecting}, ratio=${entry.intersectionRatio.toFixed(3)}`);
-        
-        // Consider entries that are reasonably visible
-        if (entry.isIntersecting && entry.intersectionRatio > 0.3 && entry.intersectionRatio > bestRatio) {
-            bestRatio = entry.intersectionRatio;
-            bestEntry = entry;
-        }
-    });
-    
-    // Change scene if we have a clear winner with at least 40% visibility
-    if (bestEntry && bestRatio > 0.4) {
-        const themeName = bestEntry.target.id;
-        
-        if (sectionThemes[themeName] && themeName !== lastActiveSection) {
-            console.log(`🎬 SCENE CHANGE: ${lastActiveSection} → ${themeName} (ratio: ${bestRatio.toFixed(3)})`);
-            setScene(sectionThemes[themeName], themeName);
-            updateNavigationFromScroll(themeName);
-            lastActiveSection = themeName;
-            lastSceneChangeTime = now;
-        }
-    } else if (bestEntry) {
-        console.log(`Best entry ${bestEntry.target.id} has ratio ${bestRatio.toFixed(3)} - not changing (needs >0.4)`);
-    }
-}, { 
-    threshold: [0.3, 0.4, 0.5, 0.6, 0.7],  // More granular thresholds
-    rootMargin: '-10% 0px -10% 0px'  // Smaller margins for more responsive detection
-});
-
-// Enhanced scroll handler with better section detection
-let scrollTimeout;
-const handleScroll = () => {
-    // Update scroll progress immediately for smooth animation
-    updateScrollProgress();
-    
-    // Clear previous timeout
-    if (scrollTimeout) {
-        clearTimeout(scrollTimeout);
-    }
-    
-    scrollTimeout = setTimeout(() => {
-        const scrollPosition = window.scrollY;
-        const windowHeight = window.innerHeight;
-        
-        // Handle intro section when at the very top
-        if (scrollPosition < windowHeight * 0.1) {
-            if (lastActiveSection !== 'intro') {
-                console.log('At very top - switching to intro scene');
-                setScene(sectionThemes['intro'], 'intro');
-                updateNavigationFromScroll('intro');
-                lastActiveSection = 'intro';
-                lastSceneChangeTime = Date.now();
-            }
-            return;
-        }
-        
-        // Backup detection: Find which section is most visible in viewport
-        const now = Date.now();
-        if (now - lastSceneChangeTime < 1000) return; // 1 second debounce for scroll-based changes
-        
-        let bestSection = null;
-        let bestVisibility = 0;
-        
-        sections.forEach(section => {
-            const rect = section.getBoundingClientRect();
-            
-            // Calculate how much of the section is visible
-            const visibleTop = Math.max(rect.top, 0);
-            const visibleBottom = Math.min(rect.bottom, windowHeight);
-            const visibleHeight = Math.max(0, visibleBottom - visibleTop);
-            const visibilityRatio = visibleHeight / windowHeight; // Ratio of viewport filled
-            
-            // Prefer sections that fill more of the viewport
-            if (visibilityRatio > bestVisibility && visibilityRatio > 0.3) {
-                bestVisibility = visibilityRatio;
-                bestSection = section;
-            }
-        });
-        
-        if (bestSection && bestSection.id !== lastActiveSection) {
-            const themeName = bestSection.id;
-            if (sectionThemes[themeName]) {
-                console.log('Scroll backup changing scene to:', themeName, 'visibility:', bestVisibility);
-                setScene(sectionThemes[themeName], themeName);
-                updateNavigationFromScroll(themeName);
-                lastActiveSection = themeName;
-                lastSceneChangeTime = now;
-            }
-        }
-    }, 150); // Reduced timeout for more responsive detection
-};
-
-// Use intersection observer as primary method for all devices
-console.log('Using intersection observer for scene detection');
-sections.forEach((section, index) => {
-    console.log(`Observing section ${index}: ${section.id}`);
-    observer.observe(section);
-});
-
-// Use scroll listener only for progress bar updates
-window.addEventListener('scroll', handleScroll, { passive: true });
-
-// Manual trigger on page load to set initial scene
-setTimeout(() => {
-    const scrollPosition = window.scrollY;
-    if (scrollPosition < window.innerHeight * 0.1) {
-        console.log('Page load - setting intro scene');
-        setScene(sectionThemes['intro'], 'intro');
-        updateNavigationFromScroll('intro');
-        lastActiveSection = 'intro';
-    }
-}, 500);
-
-// Navigation functionality - Right navbar only  
-const navbarLinks = document.querySelectorAll('.navbar-link');
-const navbarToggle = document.getElementById('navbar-toggle');
-const mainNavbar = document.getElementById('main-navbar');
-
-// Handle navbar clicks
-navbarLinks.forEach(link => {
-    link.addEventListener('click', (e) => {
-        e.preventDefault();
-        const sectionName = link.dataset.section;
-        const targetSection = document.getElementById(sectionName);
-        
-        console.log('Navbar clicked:', sectionName);
-        
-        if (targetSection && sectionThemes[sectionName]) {
-            // Force immediate scene change with fade transition for navigation
-            setScene(sectionThemes[sectionName], sectionName, true);
-            lastActiveSection = sectionName;
-            
-            // Update all navigation state elements to stay in sync
-            updateActiveNav(sectionName);
-            
-            // Smooth scroll to section with small delay for transition
-            setTimeout(() => {
-                targetSection.scrollIntoView({ 
-                    behavior: 'smooth',
-                    block: 'center'
-                });
-            }, 150);
-            
-            // Close navbar on mobile after click
-            if (mobileDetected) {
-                mainNavbar.classList.remove('open');
-            }
-            
-            // Close navbar on desktop after click too
-            mainNavbar.classList.remove('open');
-            
-            console.log('Scene changed to:', sectionName); // Debug
-        }
-    });
-});
-
-// Toggle navbar
-navbarToggle.addEventListener('click', (e) => {
-    e.stopPropagation();
-    mainNavbar.classList.toggle('open');
-    console.log('Navbar toggle clicked, open:', mainNavbar.classList.contains('open'));
-});
-
-// Close navbar when clicking outside
-document.addEventListener('click', (e) => {
-    if (!mainNavbar.contains(e.target) && !navbarToggle.contains(e.target)) {
-        mainNavbar.classList.remove('open');
-    }
-});
-
-// Function to update active state for navbar
-function updateActiveNavbar(sectionName) {
-    const navbarLinks = document.querySelectorAll('.navbar-link');
-    const arrows = document.querySelectorAll('.navbar-timeline-arrow');
-    
-    // Remove active class from all links and arrows
-    navbarLinks.forEach(link => {
-        link.classList.remove('active');
-    });
-    arrows.forEach(arrow => {
-        arrow.classList.remove('active');
-    });
-    
-    // Add active class to current section link and arrow
-    navbarLinks.forEach(link => {
-        if (link.dataset.section === sectionName) {
-            link.classList.add('active');
-            const arrow = link.querySelector('.navbar-timeline-arrow');
-            if (arrow) {
-                arrow.classList.add('active');
-            }
-        }
-    });
-}
-
-// Additional touch event handling for mobile
-if (mobileDetected) {
-    let touchStartY = 0;
-    let touchEndY = 0;
-    
-    document.addEventListener('touchstart', (e) => {
-        touchStartY = e.changedTouches[0].screenY;
-    }, { passive: true });
-    
-    document.addEventListener('touchend', (e) => {
-        touchEndY = e.changedTouches[0].screenY;
-        // Trigger scroll detection after touch scroll
-        setTimeout(handleScroll, 300);
-    }, { passive: true });
-    
-    // Also trigger on scroll events for mobile browsers that support it
-    document.addEventListener('scroll', handleScroll, { passive: true });
-    
-    // Periodic check for mobile (fallback)
-    setInterval(() => {
-        handleScroll();
-    }, 2000);
-}
-
-function animate() {
-    requestAnimationFrame(animate);
-    if (currentSceneObject && currentSceneObject.userData.animate) {
-        currentSceneObject.userData.animate();
-    }
-    controls.update();
-    renderer.render(scene, camera);
-}
-
-// Wait for DOM to be fully loaded before setting up navigation
-document.addEventListener('DOMContentLoaded', () => {
-    // Initialize navigation after DOM is loaded
-    setTimeout(() => {
-        updateActiveNav('energy');
-        console.log('Navigation initialized');
-    }, 100);
-    
-    // Collapsible content functionality
-    document.querySelectorAll('.collapse-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const contentDiv = this.parentElement.nextElementSibling;
-            const icon = this.querySelector('.collapse-icon');
-            
-            if (contentDiv.classList.contains('expanded')) {
-                contentDiv.classList.remove('expanded');
-                icon.textContent = '+';
-                this.setAttribute('aria-expanded', 'false');
-            } else {
-                contentDiv.classList.add('expanded');
-                icon.textContent = '−';
-                this.setAttribute('aria-expanded', 'true');
-            }
-        });
-    });
-    
-    // Clickable section titles functionality
-    document.querySelectorAll('.clickable-title').forEach(title => {
-        title.addEventListener('click', function(e) {
-            // Prevent event from bubbling to collapse button
-            if (e.target.closest('.collapse-btn')) {
-                return;
-            }
-            
-            const sectionName = this.dataset.section;
-            console.log('Section title clicked:', sectionName);
-            
-            if (sectionName && sectionThemes[sectionName]) {
-                // Force immediate scene change and highlight
-                setScene(sectionThemes[sectionName], sectionName, true);
-                lastActiveSection = sectionName;
-                updateActiveNav(sectionName);
-                
-                // Smooth scroll to the section
-                const targetSection = document.getElementById(sectionName);
-                if (targetSection) {
-                    targetSection.scrollIntoView({ 
-                        behavior: 'smooth',
-                        block: 'center'
-                    });
-                }
-                
-                console.log('Scene changed via title click to:', sectionName);
-            }
-        });
-    });
-});
-
-// Initial scene setup with snappier fade-in
+// Create initial scene with intro shader
 function initializeScene() {
-    // Start with intro scene
-    currentSceneObject = createIntroScene();
+    currentSceneObject = createShaderScene('intro');
     scene.add(currentSceneObject);
-    lastActiveSection = 'intro';
-    
-    // Create faster fade-in effect for initial load
-    const canvas = document.querySelector('#bg');
-    canvas.style.opacity = '0';
-    canvas.style.transition = 'opacity 1.2s ease-out';
     
     // Set initial navigation state and highlight intro title
     updateActiveNav('intro');
-    
-    // Show scene title indicator immediately for intro
     updateSceneTitle('intro');
-    
-    // Initialize scroll progress indicator
-    updateScrollProgress();
-    
-    // Remove loading screen and fade in the scene (with extra time for preloading)
-    setTimeout(() => {
-        const loadingScreen = document.getElementById('loading-screen');
-        if (loadingScreen) {
-            loadingScreen.style.transition = 'opacity 0.5s ease-out';
-            loadingScreen.style.opacity = '0';
-            setTimeout(() => {
-                loadingScreen.style.display = 'none';
-            }, 500);
-        }
-        
-        // Faster fade in the intro scene
-        setTimeout(() => {
-            canvas.style.opacity = '1';
-            
-            setTimeout(() => {
-                canvas.style.transition = '';
-                console.log('Initial intro scene loaded with shader-only fade-in');
-            }, 1200);
-        }, 300);
-    }, 1500); // Increased delay for better preloading
 }
 
 // Initialize and start
