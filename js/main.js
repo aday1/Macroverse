@@ -1770,14 +1770,6 @@ function setScene(themeFunction, sectionName = null, forceChange = false) {
     lastSceneChangeTime = now;
     
     const canvas = document.querySelector('#bg');
-    const navSidebar = document.getElementById('navigation-sidebar');
-    
-    // Show/hide timeline based on section
-    if (sectionName === 'intro') {
-        navSidebar.classList.add('hidden');
-    } else {
-        navSidebar.classList.remove('hidden');
-    }
     
     // Update scene title immediately when scene change starts
     if (sectionName) {
@@ -1891,35 +1883,13 @@ function updateSceneTitle(sectionName) {
 
 // Function to update active navigation state and highlight section titles
 function updateActiveNav(activeSection) {
-    const navLinks = document.querySelectorAll('.nav-link');
-    const arrows = document.querySelectorAll('.nav-timeline-arrow');
-    
-    // Remove active class from all links and arrows
-    navLinks.forEach(link => {
-        link.classList.remove('active');
-    });
-    arrows.forEach(arrow => {
-        arrow.classList.remove('active');
-    });
-    
-    // Add active class to current section link and arrow
-    navLinks.forEach(link => {
-        if (link.dataset.section === activeSection) {
-            link.classList.add('active');
-            const arrow = link.querySelector('.nav-timeline-arrow');
-            if (arrow) {
-                arrow.classList.add('active');
-            }
-        }
-    });
-    
-    // Also update the right navbar
+    // Update the bottom center quick-link navbar
     updateActiveNavbar(activeSection);
     
     // Highlight the current section title
     highlightCurrentSectionTitle(activeSection);
     
-    console.log('Updated navigation and arrow for:', activeSection);
+    console.log('Updated all navigation elements for:', activeSection);
 }
 
 // Function to highlight the current section title
@@ -2074,85 +2044,27 @@ setTimeout(() => {
     }
 }, 500);
 
-// Navigation functionality
-const navLinks = document.querySelectorAll('.nav-link');
-const navToggle = document.getElementById('nav-toggle');
-const navSidebar = document.getElementById('navigation-sidebar');
-
-// Handle navigation clicks
-navLinks.forEach(link => {
-    link.addEventListener('click', (e) => {
-        e.preventDefault();
-        const sectionName = link.dataset.section;
-        const targetSection = document.getElementById(sectionName);
-        
-        console.log('Navigation clicked:', sectionName);
-        
-        if (targetSection && sectionThemes[sectionName]) {
-            // Force immediate scene change with fade transition for navigation
-            setScene(sectionThemes[sectionName], sectionName, true);
-            lastActiveSection = sectionName;
-            
-            // Update navigation state
-            updateActiveNav(sectionName);
-            
-            // Smooth scroll to section with small delay for transition
-            setTimeout(() => {
-                targetSection.scrollIntoView({ 
-                    behavior: 'smooth',
-                    block: 'center'
-                });
-            }, 150);
-            
-            // Close sidebar on mobile after click
-            if (mobileDetected) {
-                navSidebar.classList.remove('open');
-            }
-            
-            // Close sidebar on desktop after click too
-            navSidebar.classList.remove('open');
-            
-            console.log('Scene changed to:', sectionName); // Debug
-        }
-    });
-});
-
-// Toggle navigation sidebar
-navToggle.addEventListener('click', (e) => {
-    e.stopPropagation();
-    navSidebar.classList.toggle('open');
-    console.log('Nav toggle clicked, open:', navSidebar.classList.contains('open'));
-});
-
-// Close sidebar when clicking outside
-document.addEventListener('click', (e) => {
-    if (!navSidebar.contains(e.target) && !navToggle.contains(e.target)) {
-        navSidebar.classList.remove('open');
-    }
-});
-
-// Right navbar functionality
+// Navigation functionality - Right navbar only  
 const navbarLinks = document.querySelectorAll('.navbar-link');
 const navbarToggle = document.getElementById('navbar-toggle');
 const mainNavbar = document.getElementById('main-navbar');
 
-// Handle right navbar clicks
+// Handle navbar clicks
 navbarLinks.forEach(link => {
     link.addEventListener('click', (e) => {
         e.preventDefault();
         const sectionName = link.dataset.section;
         const targetSection = document.getElementById(sectionName);
         
-        console.log('Right navbar clicked:', sectionName);
+        console.log('Navbar clicked:', sectionName);
         
         if (targetSection && sectionThemes[sectionName]) {
             // Force immediate scene change with fade transition for navigation
             setScene(sectionThemes[sectionName], sectionName, true);
             lastActiveSection = sectionName;
             
-            // Update navigation state for both navbars
+            // Update all navigation state elements to stay in sync
             updateActiveNav(sectionName);
-            updateActiveNavbar(sectionName);
             
             // Smooth scroll to section with small delay for transition
             setTimeout(() => {
@@ -2175,26 +2087,41 @@ navbarLinks.forEach(link => {
     });
 });
 
-// Toggle right navbar
+// Toggle navbar
 navbarToggle.addEventListener('click', (e) => {
     e.stopPropagation();
     mainNavbar.classList.toggle('open');
-    console.log('Right navbar toggle clicked, open:', mainNavbar.classList.contains('open'));
+    console.log('Navbar toggle clicked, open:', mainNavbar.classList.contains('open'));
 });
 
-// Close right navbar when clicking outside
+// Close navbar when clicking outside
 document.addEventListener('click', (e) => {
     if (!mainNavbar.contains(e.target) && !navbarToggle.contains(e.target)) {
         mainNavbar.classList.remove('open');
     }
 });
 
-// Function to update active state for right navbar
+// Function to update active state for navbar
 function updateActiveNavbar(sectionName) {
+    const navbarLinks = document.querySelectorAll('.navbar-link');
+    const arrows = document.querySelectorAll('.navbar-timeline-arrow');
+    
+    // Remove active class from all links and arrows
     navbarLinks.forEach(link => {
         link.classList.remove('active');
+    });
+    arrows.forEach(arrow => {
+        arrow.classList.remove('active');
+    });
+    
+    // Add active class to current section link and arrow
+    navbarLinks.forEach(link => {
         if (link.dataset.section === sectionName) {
             link.classList.add('active');
+            const arrow = link.querySelector('.navbar-timeline-arrow');
+            if (arrow) {
+                arrow.classList.add('active');
+            }
         }
     });
 }
