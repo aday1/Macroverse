@@ -24,20 +24,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Slow down header video to half speed
+// Slow down header video to quarter speed for more atmospheric effect
 document.addEventListener('DOMContentLoaded', () => {
     const headerVideo = document.getElementById('header-video');
     if (headerVideo) {
-        // Set playback rate to half speed once video is ready
+        // Set playback rate to quarter speed once video is ready
         headerVideo.addEventListener('loadedmetadata', () => {
-            headerVideo.playbackRate = 0.5;
-            console.log('Header video playback rate set to 0.5x (half speed)');
+            headerVideo.playbackRate = 0.25;
+            console.log('Header video playback rate set to 0.25x (quarter speed)');
         });
         
         // Also set it immediately in case the video is already loaded
         if (headerVideo.readyState >= 1) {
-            headerVideo.playbackRate = 0.5;
-            console.log('Header video playback rate set to 0.5x (immediate)');
+            headerVideo.playbackRate = 0.25;
+            console.log('Header video playback rate set to 0.25x (immediate)');
         }
     }
 });
