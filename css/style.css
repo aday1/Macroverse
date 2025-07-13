@@ -561,6 +561,41 @@ li {
     transition: opacity 0.25s ease-out;
 }
 
+/* Scene title indicator in top left */
+.scene-title-indicator {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 100;
+    font-family: 'Orbitron', 'JetBrains Mono', monospace;
+    font-size: 1.2em;
+    font-weight: 600;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 255, 255, 0.5);
+    border-radius: 8px;
+    padding: 10px 16px;
+    color: #0ff;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateY(-10px);
+}
+
+.scene-title-indicator.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.scene-title-indicator .scene-number {
+    color: #ff0080;
+    font-weight: 700;
+}
+
+.scene-title-indicator .scene-name {
+    color: #0ff;
+}
+
 /* Mobile optimizations */
 @media (max-width: 768px) {
     main {
@@ -656,5 +691,13 @@ li {
         width: 28px;
         height: 28px;
         font-size: 1em;
+    }
+    
+    /* Mobile responsiveness for scene title indicator */
+    .scene-title-indicator {
+        top: 10px;
+        left: 10px;
+        font-size: 1em;
+        padding: 8px 12px;
     }
 }

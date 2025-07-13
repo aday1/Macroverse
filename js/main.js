@@ -1476,13 +1476,154 @@ const sectionThemes = {
     'energy': createEnergyField,
     'particles': () => {
         const group = new THREE.Group();
-        const material = new THREE.PointsMaterial({ color: 0xff4500, size: 0.1 });
-        const geometry = new THREE.TorusKnotGeometry(10, 3, 100, 16);
-        const points = new THREE.Points(geometry, material);
-        group.add(points);
+        
+        // Create fundamental particles soup - quarks, gluons, electrons, neutrinos
+        const particleTypes = [
+            { name: 'quarks', color: 0xff0040, size: 0.3, count: 800 },
+            { name: 'gluons', color: 0x00ff80, size: 0.2, count: 600 },
+            { name: 'electrons', color: 0x4080ff, size: 0.15, count: 400 },
+            { name: 'neutrinos', color: 0xffff00, size: 0.1, count: 1000 }
+        ];
+        
+        const allParticles = [];
+        
+        particleTypes.forEach(type => {
+            const geometry = new THREE.BufferGeometry();
+            const positions = [];
+            const velocities = [];
+            const colors = [];
+            
+            for (let i = 0; i < type.count; i++) {
+                // Dense soup distribution
+                const radius = Math.random() * 15 + 5;
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.random() * Math.PI;
+                
+                positions.push(
+                    radius * Math.sin(phi) * Math.cos(theta),
+                    radius * Math.sin(phi) * Math.sin(theta),
+                    radius * Math.cos(phi)
+                );
+                
+                // High-energy random motion
+                velocities.push(
+                    (Math.random() - 0.5) * 0.1,
+                    (Math.random() - 0.5) * 0.1,
+                    (Math.random() - 0.5) * 0.1
+                );
+                
+                const color = new THREE.Color(type.color);
+                colors.push(color.r, color.g, color.b);
+            }
+            
+            geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+            
+            const material = new THREE.PointsMaterial({
+                size: type.size,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.8,
+                blending: THREE.AdditiveBlending
+            });
+            
+            const particles = new THREE.Points(geometry, material);
+            particles.userData = {
+                velocities: velocities,
+                type: type.name,
+                interactionStrength: Math.random() * 0.5 + 0.5
+            };
+            
+            allParticles.push(particles);
+            group.add(particles);
+        });
+        
+        // Add particle interaction field visualization
+        const fieldGeometry = new THREE.SphereGeometry(20, 32, 32);
+        const fieldMaterial = new THREE.MeshBasicMaterial({
+            color: 0xff8000,
+            transparent: true,
+            opacity: 0.1,
+            wireframe: true
+        });
+        const field = new THREE.Mesh(fieldGeometry, fieldMaterial);
+        group.add(field);
+        
+        // Add energy waves
+        for (let i = 0; i < 5; i++) {
+            const waveGeometry = new THREE.RingGeometry(i * 4 + 2, i * 4 + 3, 32);
+            const waveMaterial = new THREE.MeshBasicMaterial({
+                color: 0xff4000,
+                transparent: true,
+                opacity: 0.3,
+                side: THREE.DoubleSide
+            });
+            const wave = new THREE.Mesh(waveGeometry, waveMaterial);
+            wave.rotation.x = Math.random() * Math.PI;
+            wave.rotation.y = Math.random() * Math.PI;
+            wave.userData.speed = (Math.random() + 0.5) * 0.01;
+            group.add(wave);
+        }
+        
         group.userData.animate = () => {
-            points.rotation.y += 0.005;
+            const time = Date.now() * 0.001;
+            
+            // Animate particle soup with high-energy interactions
+            allParticles.forEach(particleSystem => {
+                const positions = particleSystem.geometry.attributes.position.array;
+                const velocities = particleSystem.userData.velocities;
+                const strength = particleSystem.userData.interactionStrength;
+                
+                for (let i = 0; i < positions.length; i += 3) {
+                    // Update positions with velocity
+                    positions[i] += velocities[i * 3];
+                    positions[i + 1] += velocities[i * 3 + 1];
+                    positions[i + 2] += velocities[i * 3 + 2];
+                    
+                    // Add quantum fluctuations
+                    positions[i] += Math.sin(time * 10 + i) * 0.02 * strength;
+                    positions[i + 1] += Math.cos(time * 12 + i) * 0.02 * strength;
+                    positions[i + 2] += Math.sin(time * 8 + i) * 0.02 * strength;
+                    
+                    // Containment field (particles stay in hot soup)
+                    const distance = Math.sqrt(positions[i]**2 + positions[i + 1]**2 + positions[i + 2]**2);
+                    if (distance > 25) {
+                        velocities[i * 3] *= -0.8;
+                        velocities[i * 3 + 1] *= -0.8;
+                        velocities[i * 3 + 2] *= -0.8;
+                    }
+                    
+                    // Add brownian motion
+                    velocities[i * 3] += (Math.random() - 0.5) * 0.001;
+                    velocities[i * 3 + 1] += (Math.random() - 0.5) * 0.001;
+                    velocities[i * 3 + 2] += (Math.random() - 0.5) * 0.001;
+                    
+                    // Velocity damping
+                    velocities[i * 3] *= 0.99;
+                    velocities[i * 3 + 1] *= 0.99;
+                    velocities[i * 3 + 2] *= 0.99;
+                }
+                
+                particleSystem.geometry.attributes.position.needsUpdate = true;
+                
+                // Particle system rotation for dynamic effect
+                particleSystem.rotation.y += 0.002 * strength;
+            });
+            
+            // Animate field
+            field.rotation.x += 0.005;
+            field.rotation.y += 0.003;
+            field.material.opacity = 0.05 + Math.sin(time * 2) * 0.05;
+            
+            // Animate energy waves
+            group.children.forEach(child => {
+                if (child.userData.speed) {
+                    child.rotation.z += child.userData.speed;
+                    child.material.opacity = 0.2 + Math.sin(time * 3 + child.position.x) * 0.1;
+                }
+            });
         };
+        
         return group;
     },
     'blue-giants': createGasCloud,
@@ -1564,6 +1705,38 @@ let lastActiveSection = '';
 let lastSceneChangeTime = 0;
 const SCENE_CHANGE_DEBOUNCE = 400; // Reduced from 800ms to 400ms for snappier response
 
+// Function to update scene title indicator
+function updateSceneTitle(sectionName) {
+    const indicator = document.getElementById('scene-title-indicator');
+    if (!indicator) return;
+    
+    const sceneInfo = {
+        'intro': { number: '0', name: 'Cosmic Intro' },
+        'energy': { number: '1', name: 'Energy Field' },
+        'particles': { number: '2', name: 'Particles' },
+        'blue-giants': { number: '3', name: 'Blue Giants' },
+        'orbits': { number: '4', name: 'Orbits' },
+        'life': { number: '5', name: 'Life' },
+        'living': { number: '6', name: 'Living' },
+        'performance': { number: '7', name: 'Performance' }
+    };
+    
+    const info = sceneInfo[sectionName];
+    if (info) {
+        const numberSpan = indicator.querySelector('.scene-number');
+        const nameSpan = indicator.querySelector('.scene-name');
+        
+        if (numberSpan && nameSpan) {
+            numberSpan.textContent = info.number + '.';
+            nameSpan.textContent = info.name;
+        }
+        
+        // Show the indicator with animation
+        indicator.classList.add('visible');
+        console.log('Scene title updated:', info.number, info.name);
+    }
+}
+
 // Function to update active navigation state and highlight section titles
 function updateActiveNav(activeSection) {
     const navLinks = document.querySelectorAll('.nav-link');
@@ -1576,6 +1749,9 @@ function updateActiveNav(activeSection) {
     
     // Highlight the current section title
     highlightCurrentSectionTitle(activeSection);
+    
+    // Update scene title indicator
+    updateSceneTitle(activeSection);
 }
 
 // Function to highlight the current section title
