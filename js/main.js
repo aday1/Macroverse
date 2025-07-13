@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
-// Handle video loading and loading screen
+// Enhanced video loading and mobile playback optimization
 document.addEventListener('DOMContentLoaded', () => {
     const video = document.getElementById('header-video');
     const loadingScreen = document.getElementById('loading-screen');
@@ -12,6 +12,30 @@ document.addEventListener('DOMContentLoaded', () => {
             loadingScreen.style.display = 'none';
         }, 500);
     };
+    
+    // Enhanced mobile video setup
+    if (video) {
+        // Force video attributes for mobile compatibility
+        video.setAttribute('playsinline', 'true');
+        video.setAttribute('webkit-playsinline', 'true');
+        video.setAttribute('muted', 'true');
+        video.setAttribute('loop', 'true');
+        video.setAttribute('autoplay', 'true');
+        
+        // Mobile-specific video optimization
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        if (isMobile) {
+            // Ensure video plays on mobile
+            video.load();
+            video.play().catch(e => {
+                console.log('Video autoplay prevented on mobile, trying user interaction approach');
+                // Fallback for mobile autoplay restrictions
+                document.addEventListener('touchstart', () => {
+                    video.play();
+                }, { once: true });
+            });
+        }
+    }
     
     // Check if video is ready
     if (video.readyState >= 3) {

@@ -75,8 +75,12 @@ body {
     
     .main-navbar .navbar-link {
         padding: 0.3em 0.5em;
-        min-width: 50px;
+        min-width: 70px;
         font-size: 0.85em;
+    }
+    
+    .main-navbar .navbar-list {
+        gap: 0.3em;
     }
     
     /* Make sure left sidebar doesn't overlap */
@@ -114,8 +118,12 @@ body {
     
     .main-navbar .navbar-link {
         padding: 0.25em 0.4em;
-        min-width: 45px;
+        min-width: 60px;
         font-size: 0.8em;
+    }
+    
+    .main-navbar .navbar-list {
+        gap: 0.2em;
     }
     
     main {
@@ -173,13 +181,18 @@ header {
     mix-blend-mode: screen;
 }
 
-/* Mobile video scaling - ensure full video is visible without cropping */
+/* Enhanced mobile video scaling - ensure video plays and loops properly */
 @media (max-width: 768px) {
     #header-video {
-        object-fit: contain;
+        object-fit: cover;
         width: 100vw;
         height: 100vh;
         opacity: 0.5;
+        /* Force hardware acceleration for smoother mobile playback */
+        transform: translate(-50%, -50%) translateZ(0);
+        -webkit-transform: translate(-50%, -50%) translateZ(0);
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
     }
 }
 
@@ -758,6 +771,24 @@ li {
     display: flex;
     flex-direction: column;
     align-items: center;
+    position: relative;
+}
+
+/* Scroll indicator for timeline navbar */
+.main-navbar::after {
+    content: '←→';
+    position: absolute;
+    bottom: 2px;
+    right: 8px;
+    font-size: 0.7em;
+    color: rgba(0,255,255,0.4);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.main-navbar:hover::after {
+    opacity: 1;
 }
 
 /* Bottom navbar specific overrides */
@@ -769,10 +800,33 @@ li {
     display: flex;
     flex-direction: row;
     gap: 0.5em;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     padding: 0;
     margin: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    max-width: 100%;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0,255,255,0.3) transparent;
+}
+
+.main-navbar .navbar-list::-webkit-scrollbar {
+    height: 4px;
+}
+
+.main-navbar .navbar-list::-webkit-scrollbar-track {
+    background: rgba(0,255,255,0.1);
+    border-radius: 2px;
+}
+
+.main-navbar .navbar-list::-webkit-scrollbar-thumb {
+    background: rgba(0,255,255,0.4);
+    border-radius: 2px;
+}
+
+.main-navbar .navbar-list::-webkit-scrollbar-thumb:hover {
+    background: rgba(0,255,255,0.6);
 }
 
 .main-navbar .navbar-list li {
@@ -792,7 +846,9 @@ li {
     border-radius: 8px;
     transition: background 0.2s, color 0.2s;
     cursor: pointer;
-    min-width: 60px;
+    min-width: 80px;
+    flex-shrink: 0;
+    white-space: nowrap;
 }
 
 .main-navbar .navbar-link.active, 
@@ -802,9 +858,13 @@ li {
 }
 
 .main-navbar .navbar-link-content {
+    display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     margin-bottom: 0.1em;
+    text-align: center;
+    width: 100%;
 }
 
 .main-navbar .navbar-number {
