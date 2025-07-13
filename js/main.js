@@ -1745,15 +1745,31 @@ function updateSceneTitle(sectionName) {
 // Function to update active navigation state and highlight section titles
 function updateActiveNav(activeSection) {
     const navLinks = document.querySelectorAll('.nav-link');
+    const arrows = document.querySelectorAll('.nav-timeline-arrow');
+    
+    // Remove active class from all links and arrows
     navLinks.forEach(link => {
         link.classList.remove('active');
+    });
+    arrows.forEach(arrow => {
+        arrow.classList.remove('active');
+    });
+    
+    // Add active class to current section link and arrow
+    navLinks.forEach(link => {
         if (link.dataset.section === activeSection) {
             link.classList.add('active');
+            const arrow = link.querySelector('.nav-timeline-arrow');
+            if (arrow) {
+                arrow.classList.add('active');
+            }
         }
     });
     
     // Highlight the current section title
     highlightCurrentSectionTitle(activeSection);
+    
+    console.log('Updated navigation and arrow for:', activeSection);
 }
 
 // Function to highlight the current section title
