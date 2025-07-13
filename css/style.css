@@ -39,8 +39,8 @@ body {
     width: 100%;
     height: 100%;
     z-index: -1;
-    transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), 
-                filter 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: opacity 0.15s ease-out, 
+                filter 0.15s ease-out;
 }
 
 #vignette {
@@ -355,27 +355,27 @@ li {
     margin-bottom: 0.5em;
 }
 
-/* Navigation Sidebar */
+/* Navigation Sidebar - Right Side */
 .nav-sidebar {
     position: fixed;
     top: 0;
-    left: 0;
+    right: 0;
     width: 200px;
     height: 100vh;
     background: rgba(0, 0, 0, 0.95);
     backdrop-filter: blur(15px);
     z-index: 150;
     padding: 1.5em 0;
-    transform: translateX(-160px);
+    transform: translateX(160px);
     transition: transform 0.3s ease;
-    border-right: 2px solid rgba(0, 255, 255, 0.3);
-    box-shadow: 2px 0 20px rgba(0, 255, 255, 0.1);
+    border-left: 2px solid rgba(0, 255, 255, 0.3);
+    box-shadow: -2px 0 20px rgba(0, 255, 255, 0.1);
 }
 
 .nav-sidebar:hover,
 .nav-sidebar.open {
     transform: translateX(0);
-    box-shadow: 2px 0 30px rgba(0, 255, 255, 0.2);
+    box-shadow: -2px 0 30px rgba(0, 255, 255, 0.2);
 }
 
 .nav-header {
@@ -483,14 +483,14 @@ li {
 .nav-toggle {
     position: absolute;
     top: 50%;
-    right: -35px;
+    left: -35px;
     transform: translateY(-50%);
     width: 35px;
     height: 45px;
     background: rgba(0, 0, 0, 0.9);
     border: 2px solid rgba(0, 255, 255, 0.3);
     color: #fff;
-    border-radius: 0 8px 8px 0;
+    border-radius: 8px 0 0 8px;
     cursor: pointer;
     font-size: 1.2em;
     transition: all 0.3s ease;
@@ -523,7 +523,7 @@ li {
     text-align: center;
 }
 
-/* Enhanced fade overlay for smoother transitions */
+/* Enhanced fade overlay for snappier transitions */
 .scene-transition-overlay {
     position: fixed;
     top: 0;
@@ -531,19 +531,19 @@ li {
     width: 100%;
     height: 100%;
     background: radial-gradient(circle, 
-        rgba(0, 10, 30, 0.95) 0%, 
-        rgba(0, 0, 0, 0.98) 100%);
+        rgba(0, 10, 30, 0.9) 0%, 
+        rgba(0, 0, 0, 0.95) 100%);
     opacity: 0;
     pointer-events: none;
     z-index: 1500;
-    transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: opacity 0.15s ease-out;
 }
 
 /* Mobile optimizations */
 @media (max-width: 768px) {
     main {
         padding: 1em;
-        padding-left: 3em; /* Add extra left padding to avoid nav overlap */
+        padding-right: 3em; /* Add extra right padding to avoid nav overlap */
     }
     
     h1 {
@@ -577,10 +577,10 @@ li {
         pointer-events: none;
     }
     
-    /* Mobile navigation adjustments */
+    /* Mobile navigation adjustments - Right Side */
     .nav-sidebar {
         width: 180px;
-        transform: translateX(-145px);
+        transform: translateX(145px);
         font-size: 0.9em;
         z-index: 150; /* Increase z-index to ensure nav stays above content */
     }
@@ -606,7 +606,7 @@ li {
     }
     
     .nav-toggle {
-        right: -35px;
+        left: -35px;
         width: 35px;
         height: 35px;
         font-size: 1em;

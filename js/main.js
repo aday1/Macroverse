@@ -1501,32 +1501,38 @@ function setScene(themeFunction, forceChange = false) {
     const overlay = createFadeOverlay();
     const canvas = document.querySelector('#bg');
     
-    // Enhanced fade transition with improved timing
+    // Much snappier fade transition - reduced from 800ms to 300ms total
+    overlay.style.transition = 'opacity 0.15s ease-out';
+    canvas.style.transition = 'filter 0.15s ease-out, opacity 0.15s ease-out';
+    
     overlay.style.opacity = '1';
-    canvas.style.filter = 'blur(4px) brightness(0.2) contrast(1.2)';
-    canvas.style.opacity = '0.1';
+    canvas.style.filter = 'blur(2px) brightness(0.4)';
+    canvas.style.opacity = '0.3';
     
     setTimeout(() => {
-        // Change the scene during peak fade
+        // Change the scene during quick fade
         if (currentSceneObject) {
             scene.remove(currentSceneObject);
         }
         currentSceneObject = themeFunction();
         scene.add(currentSceneObject);
         
-        console.log('Scene changed with enhanced fade transition');
+        console.log('Scene changed with snappy fade transition');
         
-        // Fade back in with smooth reveal
+        // Quick fade back in
         setTimeout(() => {
+            overlay.style.transition = 'opacity 0.2s ease-in';
+            canvas.style.transition = 'filter 0.2s ease-in, opacity 0.2s ease-in';
+            
             overlay.style.opacity = '0';
-            canvas.style.filter = 'blur(0px) brightness(1) contrast(1)';
+            canvas.style.filter = 'blur(0px) brightness(1)';
             canvas.style.opacity = '1';
             
             setTimeout(() => {
                 isTransitioning = false;
-            }, 800);
-        }, 150);
-    }, 400); // Peak of fade transition
+            }, 200);
+        }, 50);
+    }, 150); // Much faster peak transition
 }
 
 const sections = document.querySelectorAll('section');
@@ -1542,10 +1548,10 @@ const isMobileDevice = () => {
 const mobileDetected = isMobileDevice();
 console.log('Mobile detected:', mobileDetected); // Debug logging
 
-// Multiple detection methods for scene changes with debouncing
+// Multiple detection methods for scene changes with snappier debouncing
 let lastActiveSection = '';
 let lastSceneChangeTime = 0;
-const SCENE_CHANGE_DEBOUNCE = 800; // Minimum time between scene changes in ms
+const SCENE_CHANGE_DEBOUNCE = 400; // Reduced from 800ms to 400ms for snappier response
 
 // Function to update active navigation state
 function updateActiveNav(activeSection) {
@@ -1784,44 +1790,44 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// Initial scene setup with fade-in
+// Initial scene setup with snappier fade-in
 function initializeScene() {
     // Start with intro scene
     currentSceneObject = createIntroScene();
     scene.add(currentSceneObject);
     lastActiveSection = 'intro';
     
-    // Create fade-in effect for initial load
+    // Create faster fade-in effect for initial load
     const canvas = document.querySelector('#bg');
     canvas.style.opacity = '0';
-    canvas.style.filter = 'blur(8px) brightness(0.5)';
-    canvas.style.transition = 'opacity 2.5s cubic-bezier(0.4, 0, 0.2, 1), filter 2.5s cubic-bezier(0.4, 0, 0.2, 1)';
+    canvas.style.filter = 'blur(4px) brightness(0.5)';
+    canvas.style.transition = 'opacity 1.2s ease-out, filter 1.2s ease-out';
     
     // Set initial navigation state
     updateActiveNav('intro');
     
-    // Remove loading screen and fade in the scene
+    // Remove loading screen and fade in the scene more quickly
     setTimeout(() => {
         const loadingScreen = document.getElementById('loading-screen');
         if (loadingScreen) {
-            loadingScreen.style.transition = 'opacity 1s ease-out';
+            loadingScreen.style.transition = 'opacity 0.5s ease-out';
             loadingScreen.style.opacity = '0';
             setTimeout(() => {
                 loadingScreen.style.display = 'none';
-            }, 1000);
+            }, 500);
         }
         
-        // Fade in the intro scene with dramatic effect
+        // Faster fade in the intro scene
         setTimeout(() => {
             canvas.style.opacity = '1';
             canvas.style.filter = 'blur(0px) brightness(1)';
             
             setTimeout(() => {
                 canvas.style.transition = '';
-                console.log('Initial intro scene loaded with fade-in effect');
-            }, 2500);
-        }, 500);
-    }, 800); // Allow time for everything to load
+                console.log('Initial intro scene loaded with snappy fade-in');
+            }, 1200);
+        }, 300);
+    }, 500); // Reduced initial delay
 }
 
 // Initialize and start
