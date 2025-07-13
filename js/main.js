@@ -1828,117 +1828,87 @@ function updateNavigationFromScroll(sectionName) {
     }
 }
 
-// Enhanced intersection observer with intro section support
+// Enhanced intersection observer with consistent thresholds
 const observer = new IntersectionObserver((entries) => {
+    let bestEntry = null;
+    let bestRatio = 0;
+    
+    // Find the entry with the highest intersection ratio
     entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            const themeName = entry.target.id;
-            console.log('Section intersecting:', themeName, 'Ratio:', entry.intersectionRatio);
-            
-            // Special threshold for intro section (more sensitive)
-            const threshold = themeName === 'intro' ? 0.2 : 0.3;
-            
-            // Only change scene if enough of section is visible
-            if (entry.intersectionRatio > threshold && sectionThemes[themeName] && themeName !== lastActiveSection) {
-                console.log('Changing scene to:', themeName);
-                setScene(sectionThemes[themeName], themeName);
-                updateNavigationFromScroll(themeName);
-                lastActiveSection = themeName;
-            }
+        if (entry.isIntersecting && entry.intersectionRatio > bestRatio) {
+            bestRatio = entry.intersectionRatio;
+            bestEntry = entry;
         }
     });
+    
+    // Only change scene if we have a clear winner with sufficient visibility
+    if (bestEntry && bestRatio > 0.4) {
+        const themeName = bestEntry.target.id;
+        
+        // Add debouncing to prevent rapid changes
+        const now = Date.now();
+        if (now - lastSceneChangeTime < 1000) return; // Wait 1 second between changes
+        
+        if (sectionThemes[themeName] && themeName !== lastActiveSection) {
+            console.log('IntersectionObserver changing scene to:', themeName, 'Ratio:', bestRatio);
+            setScene(sectionThemes[themeName], themeName);
+            updateNavigationFromScroll(themeName);
+            lastActiveSection = themeName;
+            lastSceneChangeTime = now;
+        }
+    }
 }, { 
-    threshold: [0.1, 0.2, 0.3, 0.5, 0.7],  // More granular thresholds
-    rootMargin: mobileDetected ? '-10% 0px -10% 0px' : '-5% 0px -5% 0px'  // Tighter margins for accuracy
+    threshold: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8],  // More granular thresholds
+    rootMargin: '-10% 0px -10% 0px'  // Consistent margins
 });
 
-// Enhanced scroll detection to include intro section and prevent blank states
+// Simplified scroll handler - only for progress bar updates
 let scrollTimeout;
 const handleScroll = () => {
+    // Update scroll progress immediately for smooth animation
+    updateScrollProgress();
+    
+    // Optional: Handle special intro section at very top
     if (scrollTimeout) {
         clearTimeout(scrollTimeout);
     }
     
-    // Update scroll progress immediately for smooth animation
-    updateScrollProgress();
-    
-    const throttleTime = mobileDetected ? 50 : 100;
-    
     scrollTimeout = setTimeout(() => {
         const scrollPosition = window.scrollY;
         const windowHeight = window.innerHeight;
-        const documentHeight = document.documentElement.scrollHeight;
         
-        console.log('Scroll position:', scrollPosition, 'Window height:', windowHeight, 'Doc height:', documentHeight);
-        
-        // Special handling for intro section at the top
-        if (scrollPosition < windowHeight * 0.5) {
+        // Only handle intro section when at the very top
+        if (scrollPosition < windowHeight * 0.1) {
             if (lastActiveSection !== 'intro') {
-                console.log('At top - switching to intro scene');
+                console.log('At very top - switching to intro scene');
                 setScene(sectionThemes['intro'], 'intro');
                 updateNavigationFromScroll('intro');
                 lastActiveSection = 'intro';
-            }
-            return;
-        }
-        
-        // Special handling for end of page - maintain last valid scene
-        if (scrollPosition + windowHeight >= documentHeight - 100) {
-            console.log('Near end of page - maintaining current scene:', lastActiveSection);
-            return; // Don't change scene at the very end
-        }
-        
-        let mostVisibleSection = null;
-        let maxVisibleArea = 0;
-        
-        // Find the section with the most visible area
-        sections.forEach((section) => {
-            if (section.id === 'intro') return; // Skip intro, handled above
-            
-            const rect = section.getBoundingClientRect();
-            const sectionTop = Math.max(0, -rect.top);
-            const sectionBottom = Math.min(rect.height, windowHeight - rect.top);
-            const visibleHeight = Math.max(0, sectionBottom - sectionTop);
-            const visibleArea = visibleHeight / rect.height;
-            
-            if (visibleArea > maxVisibleArea && visibleArea > 0.3) { // Must be at least 30% visible
-                maxVisibleArea = visibleArea;
-                mostVisibleSection = section;
-            }
-        });
-        
-        if (mostVisibleSection) {
-            const themeName = mostVisibleSection.id;
-            console.log('Most visible section:', themeName, 'Visibility:', maxVisibleArea);
-            if (sectionThemes[themeName] && themeName !== lastActiveSection) {
-                console.log('Scroll changing scene to:', themeName);
-                setScene(sectionThemes[themeName], themeName);
-                updateNavigationFromScroll(themeName);
-                lastActiveSection = themeName;
+                lastSceneChangeTime = Date.now();
             }
         }
-    }, throttleTime);
+    }, 100);
 };
 
-// Use scroll detection as primary method on mobile, intersection observer on desktop
-if (mobileDetected) {
-    console.log('Using scroll detection for mobile');
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    // Also use intersection observer as backup
-    sections.forEach(section => {
-        observer.observe(section);
-    });
-} else {
-    console.log('Using intersection observer for desktop');
-    sections.forEach(section => {
-        observer.observe(section);
-    });
-}
+// Use intersection observer as primary method for all devices
+console.log('Using intersection observer for scene detection');
+sections.forEach(section => {
+    observer.observe(section);
+});
+
+// Use scroll listener only for progress bar updates
+window.addEventListener('scroll', handleScroll, { passive: true });
 
 // Manual trigger on page load to set initial scene
 setTimeout(() => {
-    handleScroll();
-}, 1000);
+    const scrollPosition = window.scrollY;
+    if (scrollPosition < window.innerHeight * 0.1) {
+        console.log('Page load - setting intro scene');
+        setScene(sectionThemes['intro'], 'intro');
+        updateNavigationFromScroll('intro');
+        lastActiveSection = 'intro';
+    }
+}, 500);
 
 // Navigation functionality
 const navLinks = document.querySelectorAll('.nav-link');
