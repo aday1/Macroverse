@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Macroverse</title>
+    <!-- Google Fonts for space typewriter aesthetics -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Mono:wght@400;700&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="loading-screen" id="loading-screen">
+        <div>Loading Macroverse...</div>
+    </div>
+    
+    <!-- Scene Title Indicator -->
+    <div class="scene-title-indicator" id="scene-title-indicator">
+        <span class="scene-number">0.</span> <span class="scene-name">Cosmic Intro</span>
+    </div>
+    
+    <!-- Scroll Progress Timeline -->
+    <div class="scroll-progress-container" id="scroll-progress-container">
+        <div class="scroll-progress-bar" id="scroll-progress-bar"></div>
+        <div class="scroll-progress-indicator" id="scroll-progress-indicator"></div>
+    </div>
+    
+    <!-- Right Side Navbar with Timeline -->
+    <div class="navbar-subtitle" id="timeline-subtitle">Journey Through 13.8 Billion Years</div>
+    <nav id="main-navbar" class="main-navbar">
+        <div class="navbar-header">COSMIC TIMELINE</div>
+        <ul class="navbar-list">
+            <li><a href="#intro" class="navbar-link" data-section="intro">
+                <div class="navbar-timeline-arrow"></div>
+                <div class="navbar-link-content">
+                    <span class="navbar-number">0</span>
+                    <span class="navbar-title">The Beginning</span>
+                </div>
+                <span class="navbar-time">13.8 Billion Years Ago</span>
+            </a></li>
+            <li><a href="#energy" class="navbar-link" data-section="energy">
+                <div class="navbar-timeline-arrow"></div>
+                <div class="navbar-link-content">
+                    <span class="navbar-number">1</span>
+                    <span class="navbar-title">Energy Field</span>
+                </div>
+                <span class="navbar-time">13.8 Billion Years Ago</span>
+            </a></li>
+            <li><a href="#particles" class="navbar-link" data-section="particles">
+                <div class="navbar-timeline-arrow"></div>
+                <div class="navbar-link-content">
+                    <span class="navbar-number">2</span>
+                    <span class="navbar-title">First Particles</span>
+                </div>
+                <span class="navbar-time">13.7 Billion Years Ago</span>
+            </a></li>
+            <li><a href="#blue-giants" class="navbar-link" data-section="blue-giants">
+                <div class="navbar-timeline-arrow"></div>
+                <div class="navbar-link-content">
+                    <span class="navbar-number">3</span>
+                    <span class="navbar-title">Blue Giants</span>
+                </div>
+                <span class="navbar-time">13.2 Billion Years Ago</span>
+            </a></li>
+            <li><a href="#orbits" class="navbar-link" data-section="orbits">
+                <div class="navbar-timeline-arrow"></div>
+                <div class="navbar-link-content">
+                    <span class="navbar-number">4</span>
+                    <span class="navbar-title">Solar Systems</span>
+                </div>
+                <span class="navbar-time">4.6 Billion Years Ago</span>
+            </a></li>
+            <li><a href="#life" class="navbar-link" data-section="life">
+                <div class="navbar-timeline-arrow"></div>
+                <div class="navbar-link-content">
+                    <span class="navbar-number">5</span>
+                    <span class="navbar-title">First Life</span>
+                </div>
+                <span class="navbar-time">3.8 Billion Years Ago</span>
+            </a></li>
+            <li><a href="#living" class="navbar-link" data-section="living">
+                <div class="navbar-timeline-arrow"></div>
+                <div class="navbar-link-content">
+                    <span class="navbar-number">6</span>
+                    <span class="navbar-title">Civilization</span>
+                </div>
+                <span class="navbar-time">300,000 Years Ago</span>
+            </a></li>
+            <li><a href="#performance" class="navbar-link" data-section="performance">
+                <div class="navbar-timeline-arrow"></div>
+                <div class="navbar-link-content">
+                    <span class="navbar-number">7</span>
+                    <span class="navbar-title">Future</span>
+                </div>
+                <span class="navbar-time">Today & Beyond</span>
+            </a></li>
+        </ul>
+        <button id="navbar-toggle" class="navbar-toggle">☰</button>
+    </nav>
+    
+    <canvas id="bg"></canvas>
+    <div id="vignette"></div>
+    <main>
+        <section id="intro" class="intro-section">
+            <header>
+                <video id="header-video" 
+                       src="https://github.com/aday1/Macroverse/raw/refs/heads/main/samples-rgb.mp4" 
+                       autoplay muted loop playsinline webkit-playsinline
+                       preload="auto" 
+                       crossorigin="anonymous"
+                       poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1' height='1'%3E%3C/svg%3E"></video>
+                <div id="header-content">
+                    <h1>Macroverse</h1>
+                    <p>A Microvirtuosity Performance by Nick Wilson A.K.A Reductionist and An AV Collaboration with Aday.</p>
+                    <p>
+                        <a href="https://aday.net.au" target="_blank">aday.net.au</a> and 
+                        <a href="https://nickewilson.net/reductionist/" target="_blank">Nick Wilson</a>
+                    </p>
+                </div>
+            </header>
+        </section>
+
+        <section id="energy">
+            <div class="content-box">
+                <h2 class="section-title clickable-title" data-section="energy">1. Energy Field (before the Big Bang and the beginning of time…)
+                    <button class="collapse-btn" data-target="energy-content">
+                        <span class="collapse-icon">+</span>
+                    </button>
+                </h2>
+                <div id="energy-content" class="collapsible-content">
+                    <blockquote>
+                        <p>There was no matter. All that existed was space/time and energy. An ocean of energy, almost still but gently rippling. A near still ocean of energy filling the void.</p>
+                        <footer>— Brian Cox, Universe (BBC, 2021)</footer>
+                    </blockquote>
+                    <h3>Instruments:</h3>
+                    <ul>
+                        <li>Korg Volca Modular</li>
+                        <li>Korg Monotron</li>
+                        <li>Korg Monotron Duo</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="particles">
+            <div class="content-box">
+                <h2 class="section-title clickable-title" data-section="particles">2. Particles. (13.8 billion years ago…)
+                    <button class="collapse-btn" data-target="particles-content">
+                        <span class="collapse-icon">+</span>
+                    </button>
+                </h2>
+                <div id="particles-content" class="collapsible-content">
+                    <blockquote>
+                        <p>Less than a trillionth of a second after the Big Bang, the energy transformed into tiny particles and radiation. These particles formed a very dense and hot 'soup" of quarks, gluons, electronics, neutrinos and other particles – these are the tiniest known building blocks of everything in the universe.</p>
+                        <footer>— Tilda Swinton, Big Bang AR iPhone app, (CERN, 2019)</footer>
+                    </blockquote>
+                    <h3>Instruments:</h3>
+                    <ul>
+                        <li>Korg LittleBits</li>
+                        <li>Casio Trackformer XW-PD1</li>
+                        <li>FM3 Buddha Machine</li>
+                        <li>Korg Monotron</li>
+                        <li>Korg Monotron Duo</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="blue-giants">
+            <div class="content-box">
+                <h2 class="section-title clickable-title" data-section="blue-giants">3. Blue Giants (13.6 billion years ago…)
+                    <button class="collapse-btn" data-target="blue-giants-content">
+                        <span class="collapse-icon">+</span>
+                    </button>
+                </h2>
+                <div id="blue-giants-content" class="collapsible-content">
+                    <blockquote>
+                        <p>Hydrogen and helium poured into the regions where the filaments crossed, gathering into ever-denser clouds. Gravity asserted its grip and the clouds of gas began to collapse, becoming denser and denser. In the densest regions the gas became so hot that nuclear fusion reactions began. Hundreds of times as massive as our sun, they shone with such ferocity that they shone blue. With surface temperatures in excess of 100,000 degrees, they were the largest stars ever to have lived.</p>
+                        <footer>— Brian Cox, Universe (BBC, 2021)</footer>
+                    </blockquote>
+                    <h3>Instruments:</h3>
+                    <ul>
+                        <li>Korg Volca Modular</li>
+                        <li>Casio Trackformer XW-PD1</li>
+                        <li>Gakken SX-150</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="orbits">
+            <div class="content-box">
+                <h2 class="section-title clickable-title" data-section="orbits">4. Orbits. (11.2 billion years ago…)
+                    <button class="collapse-btn" data-target="orbits-content">
+                        <span class="collapse-icon">+</span>
+                    </button>
+                </h2>
+                <div id="orbits-content" class="collapsible-content">
+                    <blockquote>
+                        <p>Over time these elements gathered together, creating rich clouds of gas and dust, nurseries where new generations of stars were born. And not just stars, but families of stars, the first galaxies. And around this time some of the earlier star systems formed in our own galaxy, the Milky Way. A new age of complexity was dawning in the universe. And crucially, new bodies had appeared, planets. Places where the rich chemical elements built by previous generations of stars could finally find a home.</p>
+                        <footer>— Brian Cox, Universe (BBC, 2021)</footer>
+                    </blockquote>
+                    <h3>Instruments:</h3>
+                    <ul>
+                        <li>Korg LittleBits</li>
+                        <li>Korg Volca Modular</li>
+                        <li>Casio Trackformer XW-PD1</li>
+                        <li>Korg Monotron</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="life">
+            <div class="content-box">
+                <h2 class="section-title clickable-title" data-section="life">5. Life As We Know It (3.5 billion years ago…)
+                    <button class="collapse-btn" data-target="life-content">
+                        <span class="collapse-icon">+</span>
+                    </button>
+                </h2>
+                <div id="life-content" class="collapsible-content">
+                    <blockquote>
+                    <p>The universe abounds in complexity, from everyday systems such as turbulent streams and snowflakes to grand cosmic structures like nebulae and spiral galaxies. However, one class of complex systems – life – stands out as especially remarkable… Schrödinger identified life's ability to buck the trend of the second law of thermodynamics as a defining quality. Living organisms achieve this entropy-defying feat by garnering and processing information and directing it into purposeful activity. By coupling patterns of information to patterns of chemical reactions… life conjures coherence and organisation from molecular chaos.</p>
+                    <footer>— Paul Davies, The Demon in the Machine (Allen Lane, 2019)</footer>
+                </blockquote>
+                <h3>Instruments:</h3>
+                <ul>
+                    <li>Casio Trackformer XW-PD1</li>
+                    <li>Korg Volca Modular (sampled)</li>
+                    <li>Teenage Engineering Pocket Operator Speak PO-35</li>
+                    <li>Korg Monotron</li>
+                    <li>Korg Monotron Duo</li>
+                    <li>Gakken SX-150</li>
+                </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="living">
+            <div class="content-box">
+                <h2 class="section-title clickable-title" data-section="living">6. Living Our Best Life (now and beyond…)
+                    <button class="collapse-btn" data-target="living-content">
+                        <span class="collapse-icon">+</span>
+                    </button>
+                </h2>
+                <div id="living-content" class="collapsible-content">
+                    <blockquote>
+                    <p>We are living in the age of stars, an era of light and life in the cosmos. From our fleeting human perspective, stars seem eternal.</p>
+                    <footer>— Brian Cox, Universe (BBC, 2021)</footer>
+                </blockquote>
+                <h3>Instruments:</h3>
+                <ul>
+                    <li>Casio Trackformer XW-PD1</li>
+                    <li>Teenage Engineering Pocket Operator Speak PO-35</li>
+                    <li>Korg Volca Modular</li>
+                </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="performance" class="performance-section">
+            <div class="content-box">
+                <h2 class="section-title clickable-title" data-section="performance">🎭 Live Performance
+                    <button class="collapse-btn" data-target="performance-content">
+                        <span class="collapse-icon">+</span>
+                    </button>
+                </h2>
+                <div id="performance-content" class="collapsible-content">
+                    <div class="performance-info">
+                        <h3>Experience Macroverse Live</h3>
+                        <p class="performance-description">
+                            Join us for an immersive audiovisual journey through 13.8 billion years of cosmic evolution. 
+                            A live microvirtuosity performance featuring battery powered synthesizers, custom visuals, and the complete 
+                            Macroverse experience in a multi-sensory environment.
+                        </p>
+                        
+                        <div class="performance-details">
+                            <div class="date-info">
+                                <h4>📅 Performance Dates</h4>
+                                <p class="dates">September 29th - October 1st, 2025</p>
+                                <p class="venue">Abbotsford Convent, Melbourne</p>
+                            </div>
+                            
+                            <div class="ticket-info">
+                                <h4>🎫 Tickets & Information</h4>
+                                <div class="ticket-links">
+                                    <a href="https://abbotsfordconvent.com.au/events" target="_blank" class="ticket-btn primary">
+                                        Buy Tickets
+                                    </a>
+                                    <a href="https://aday.net.au" target="_blank" class="ticket-btn secondary">
+                                        Visualist Info
+                                    </a>
+                                    <a href="https://nickewilson.net/reductionist/" target="_blank" class="ticket-btn secondary">
+                                        Composer Info
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="performance-note">
+                            <p>An unprecedented fusion of scientific narrative, electronic composition, and real-time visual synthesis.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.138.0/build/three.module.js",
+                "three/examples/jsm/controls/OrbitControls.js": "https://unpkg.com/three@0.138.0/examples/jsm/controls/OrbitControls.js"
+            }
+        }
+    </script>
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>
