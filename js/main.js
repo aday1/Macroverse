@@ -489,22 +489,33 @@ function createCivilizationScene() {
     const cityLights = new THREE.Points(lightsGeometry, lightsMaterial);
     planet.add(cityLights);
 
-    // Advanced Spaceships - different types
+    // Bright Wireframe Spaceships - different types
     const spaceships = [];
     for (let i = 0; i < 15; i++) {
         let spaceship;
         const shipType = Math.floor(Math.random() * 3);
+        const shipColor = [0x00ffff, 0xff00ff, 0xffff00, 0xff0080, 0x80ff00][Math.floor(Math.random() * 5)];
         
         switch(shipType) {
             case 0: // Fighters
                 const fighterGroup = new THREE.Group();
                 const body = new THREE.Mesh(
                     new THREE.ConeGeometry(0.15, 1.2, 6),
-                    new THREE.MeshStandardMaterial({ color: 0xaaaaaa })
+                    new THREE.MeshBasicMaterial({ 
+                        color: shipColor, 
+                        wireframe: true,
+                        transparent: true,
+                        opacity: 0.8
+                    })
                 );
                 const wing1 = new THREE.Mesh(
                     new THREE.BoxGeometry(0.8, 0.05, 0.3),
-                    new THREE.MeshStandardMaterial({ color: 0x666666 })
+                    new THREE.MeshBasicMaterial({ 
+                        color: shipColor, 
+                        wireframe: true,
+                        transparent: true,
+                        opacity: 0.8
+                    })
                 );
                 const wing2 = wing1.clone();
                 wing1.position.set(0.4, 0, 0);
@@ -516,7 +527,12 @@ function createCivilizationScene() {
             case 1: // Cruisers
                 spaceship = new THREE.Mesh(
                     new THREE.CylinderGeometry(0.2, 0.3, 1.5, 8),
-                    new THREE.MeshStandardMaterial({ color: 0x888888 })
+                    new THREE.MeshBasicMaterial({ 
+                        color: shipColor, 
+                        wireframe: true,
+                        transparent: true,
+                        opacity: 0.8
+                    })
                 );
                 break;
                 
@@ -524,11 +540,21 @@ function createCivilizationScene() {
                 const capitalGroup = new THREE.Group();
                 const hull = new THREE.Mesh(
                     new THREE.BoxGeometry(0.4, 0.6, 2.0),
-                    new THREE.MeshStandardMaterial({ color: 0x999999 })
+                    new THREE.MeshBasicMaterial({ 
+                        color: shipColor, 
+                        wireframe: true,
+                        transparent: true,
+                        opacity: 0.8
+                    })
                 );
                 const tower = new THREE.Mesh(
                     new THREE.BoxGeometry(0.2, 0.4, 0.8),
-                    new THREE.MeshStandardMaterial({ color: 0xbbbbbb })
+                    new THREE.MeshBasicMaterial({ 
+                        color: shipColor, 
+                        wireframe: true,
+                        transparent: true,
+                        opacity: 0.8
+                    })
                 );
                 tower.position.y = 0.5;
                 capitalGroup.add(hull, tower);
@@ -556,21 +582,33 @@ function createCivilizationScene() {
         group.add(spaceship);
     }
 
-    // Satellites - various types
+    // Bright Wireframe Satellites - various types
     for (let i = 0; i < 20; i++) {
         let satellite;
         const satType = Math.floor(Math.random() * 4);
+        const satColor = [0x00ffff, 0xff4000, 0x40ff00, 0xff0040, 0x4000ff][Math.floor(Math.random() * 5)];
         
         switch(satType) {
             case 0: // Communication satellites
                 const commGroup = new THREE.Group();
                 const commBody = new THREE.Mesh(
                     new THREE.BoxGeometry(0.4, 0.4, 0.2),
-                    new THREE.MeshStandardMaterial({ color: 0xcccccc })
+                    new THREE.MeshBasicMaterial({ 
+                        color: satColor, 
+                        wireframe: true,
+                        transparent: true,
+                        opacity: 0.9
+                    })
                 );
                 const panel1 = new THREE.Mesh(
                     new THREE.PlaneGeometry(0.8, 0.3),
-                    new THREE.MeshStandardMaterial({ color: 0x000080 })
+                    new THREE.MeshBasicMaterial({ 
+                        color: 0x00ffff, 
+                        wireframe: true,
+                        transparent: true,
+                        opacity: 0.7,
+                        side: THREE.DoubleSide
+                    })
                 );
                 const panel2 = panel1.clone();
                 panel1.position.set(0.6, 0, 0);
@@ -585,12 +623,22 @@ function createCivilizationScene() {
                 const stationGroup = new THREE.Group();
                 const central = new THREE.Mesh(
                     new THREE.SphereGeometry(0.3, 8, 8),
-                    new THREE.MeshStandardMaterial({ color: 0xdddddd })
+                    new THREE.MeshBasicMaterial({ 
+                        color: 0xff8000, 
+                        wireframe: true,
+                        transparent: true,
+                        opacity: 0.9
+                    })
                 );
                 for (let j = 0; j < 6; j++) {
                     const module = new THREE.Mesh(
                         new THREE.CylinderGeometry(0.1, 0.1, 0.6, 6),
-                        new THREE.MeshStandardMaterial({ color: 0xaaaaaa })
+                        new THREE.MeshBasicMaterial({ 
+                            color: 0x00ff80, 
+                            wireframe: true,
+                            transparent: true,
+                            opacity: 0.8
+                        })
                     );
                     const angle = (j / 6) * Math.PI * 2;
                     module.position.set(Math.cos(angle) * 0.5, 0, Math.sin(angle) * 0.5);
@@ -603,7 +651,12 @@ function createCivilizationScene() {
             case 2: // Research probes
                 satellite = new THREE.Mesh(
                     new THREE.OctahedronGeometry(0.2),
-                    new THREE.MeshStandardMaterial({ color: 0xff6600 })
+                    new THREE.MeshBasicMaterial({ 
+                        color: 0xff4080, 
+                        wireframe: true,
+                        transparent: true,
+                        opacity: 0.9
+                    })
                 );
                 break;
                 
@@ -611,11 +664,21 @@ function createCivilizationScene() {
                 const defenseGroup = new THREE.Group();
                 const platform = new THREE.Mesh(
                     new THREE.CylinderGeometry(0.3, 0.3, 0.1, 8),
-                    new THREE.MeshStandardMaterial({ color: 0x660000 })
+                    new THREE.MeshBasicMaterial({ 
+                        color: 0xff0040, 
+                        wireframe: true,
+                        transparent: true,
+                        opacity: 0.9
+                    })
                 );
                 const weapon = new THREE.Mesh(
                     new THREE.CylinderGeometry(0.05, 0.05, 0.4, 8),
-                    new THREE.MeshStandardMaterial({ color: 0x333333 })
+                    new THREE.MeshBasicMaterial({ 
+                        color: 0x40ff80, 
+                        wireframe: true,
+                        transparent: true,
+                        opacity: 0.8
+                    })
                 );
                 weapon.position.y = 0.25;
                 defenseGroup.add(platform, weapon);
@@ -659,7 +722,7 @@ function createCivilizationScene() {
         const material = new THREE.LineBasicMaterial({ 
             color: 0x00ffff, 
             transparent: true, 
-            opacity: 0.2 
+            opacity: 0.4 
         });
         const lane = new THREE.Line(geometry, material);
         lane.userData.baseOpacity = 0.2;
