@@ -39,8 +39,7 @@ body {
     width: 100%;
     height: 100%;
     z-index: -1;
-    transition: opacity 0.15s ease-out, 
-                filter 0.15s ease-out;
+    transition: opacity 0.3s ease-in-out;
 }
 
 #vignette {
@@ -162,6 +161,29 @@ h2 {
 .section-title:hover {
     color: #0ff;
     text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+}
+
+/* Active section title highlighting */
+.section-title.active {
+    color: #ff0080;
+    text-shadow: 0 0 20px rgba(255, 0, 128, 0.8);
+    border-bottom-color: #ff0080;
+    background: linear-gradient(90deg, 
+        rgba(255, 0, 128, 0.1) 0%, 
+        rgba(255, 0, 128, 0.05) 50%, 
+        transparent 100%);
+    animation: activeGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes activeGlow {
+    0% {
+        text-shadow: 0 0 20px rgba(255, 0, 128, 0.8);
+        box-shadow: 0 0 10px rgba(255, 0, 128, 0.3);
+    }
+    100% {
+        text-shadow: 0 0 30px rgba(255, 0, 128, 1.0);
+        box-shadow: 0 0 20px rgba(255, 0, 128, 0.5);
+    }
 }
 
 .collapse-btn {
@@ -523,7 +545,7 @@ li {
     text-align: center;
 }
 
-/* Enhanced fade overlay for snappier transitions */
+/* Enhanced fade overlay for 0.5s transitions */
 .scene-transition-overlay {
     position: fixed;
     top: 0;
@@ -536,7 +558,7 @@ li {
     opacity: 0;
     pointer-events: none;
     z-index: 1500;
-    transition: opacity 0.15s ease-out;
+    transition: opacity 0.25s ease-out;
 }
 
 /* Mobile optimizations */

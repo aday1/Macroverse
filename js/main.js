@@ -24,6 +24,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+// Slow down header video to half speed
+document.addEventListener('DOMContentLoaded', () => {
+    const headerVideo = document.getElementById('header-video');
+    if (headerVideo) {
+        // Set playback rate to half speed once video is ready
+        headerVideo.addEventListener('loadedmetadata', () => {
+            headerVideo.playbackRate = 0.5;
+            console.log('Header video playback rate set to 0.5x (half speed)');
+        });
+        
+        // Also set it immediately in case the video is already loaded
+        if (headerVideo.readyState >= 1) {
+            headerVideo.playbackRate = 0.5;
+            console.log('Header video playback rate set to 0.5x (immediate)');
+        }
+    }
+});
+
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.position.z = 20;
@@ -1475,17 +1493,19 @@ const sectionThemes = {
 };
 
 let isTransitioning = false;
-let fadeOverlay = null;
 
-// Create enhanced fade overlay for smooth transitions
-function createFadeOverlay() {
-    if (!fadeOverlay) {
-        fadeOverlay = document.createElement('div');
-        fadeOverlay.className = 'scene-transition-overlay';
-        document.body.appendChild(fadeOverlay);
+// Safety function to ensure canvas is always in proper state
+function ensureCanvasState() {
+    const canvas = document.querySelector('#bg');
+    if (canvas && !isTransitioning) {
+        canvas.style.transition = '';
+        canvas.style.opacity = '1';
+        // Remove old overlay fade code since we're using shader-only fades
     }
-    return fadeOverlay;
 }
+
+// Call safety check periodically
+setInterval(ensureCanvasState, 2000);
 
 function setScene(themeFunction, forceChange = false) {
     const now = Date.now();
@@ -1498,41 +1518,32 @@ function setScene(themeFunction, forceChange = false) {
     isTransitioning = true;
     lastSceneChangeTime = now;
     
-    const overlay = createFadeOverlay();
     const canvas = document.querySelector('#bg');
     
-    // Much snappier fade transition - reduced from 800ms to 300ms total
-    overlay.style.transition = 'opacity 0.15s ease-out';
-    canvas.style.transition = 'filter 0.15s ease-out, opacity 0.15s ease-out';
-    
-    overlay.style.opacity = '1';
-    canvas.style.filter = 'blur(2px) brightness(0.4)';
-    canvas.style.opacity = '0.3';
+    // GLSL shader-only fade transition (no section content fade)
+    canvas.style.transition = 'opacity 0.3s ease-in-out';
+    canvas.style.opacity = '0';
     
     setTimeout(() => {
-        // Change the scene during quick fade
+        // Change the scene during fade
         if (currentSceneObject) {
             scene.remove(currentSceneObject);
         }
         currentSceneObject = themeFunction();
         scene.add(currentSceneObject);
         
-        console.log('Scene changed with snappy fade transition');
+        console.log('GLSL scene changed with shader-only fade');
         
-        // Quick fade back in
+        // Fade GLSL back in
         setTimeout(() => {
-            overlay.style.transition = 'opacity 0.2s ease-in';
-            canvas.style.transition = 'filter 0.2s ease-in, opacity 0.2s ease-in';
-            
-            overlay.style.opacity = '0';
-            canvas.style.filter = 'blur(0px) brightness(1)';
             canvas.style.opacity = '1';
             
             setTimeout(() => {
+                canvas.style.transition = '';
                 isTransitioning = false;
-            }, 200);
+            }, 300);
         }, 50);
-    }, 150); // Much faster peak transition
+    }, 150); // Total: 0.3 seconds
 }
 
 const sections = document.querySelectorAll('section');
@@ -1553,7 +1564,7 @@ let lastActiveSection = '';
 let lastSceneChangeTime = 0;
 const SCENE_CHANGE_DEBOUNCE = 400; // Reduced from 800ms to 400ms for snappier response
 
-// Function to update active navigation state
+// Function to update active navigation state and highlight section titles
 function updateActiveNav(activeSection) {
     const navLinks = document.querySelectorAll('.nav-link');
     navLinks.forEach(link => {
@@ -1562,6 +1573,28 @@ function updateActiveNav(activeSection) {
             link.classList.add('active');
         }
     });
+    
+    // Highlight the current section title
+    highlightCurrentSectionTitle(activeSection);
+}
+
+// Function to highlight the current section title
+function highlightCurrentSectionTitle(sectionName) {
+    // Remove active class from all section titles
+    const allTitles = document.querySelectorAll('.section-title');
+    allTitles.forEach(title => {
+        title.classList.remove('active');
+    });
+    
+    // Add active class to current section title
+    const currentSection = document.getElementById(sectionName);
+    if (currentSection) {
+        const sectionTitle = currentSection.querySelector('.section-title');
+        if (sectionTitle) {
+            sectionTitle.classList.add('active');
+            console.log('Highlighted section title:', sectionName);
+        }
+    }
 }
 
 // Update navigation state based on scroll position
@@ -1595,7 +1628,7 @@ const observer = new IntersectionObserver((entries) => {
     rootMargin: mobileDetected ? '-10% 0px -10% 0px' : '-5% 0px -5% 0px'  // Tighter margins for accuracy
 });
 
-// Enhanced scroll detection to include intro section
+// Enhanced scroll detection to include intro section and prevent blank states
 let scrollTimeout;
 const handleScroll = () => {
     if (scrollTimeout) {
@@ -1607,8 +1640,9 @@ const handleScroll = () => {
     scrollTimeout = setTimeout(() => {
         const scrollPosition = window.scrollY;
         const windowHeight = window.innerHeight;
+        const documentHeight = document.documentElement.scrollHeight;
         
-        console.log('Scroll position:', scrollPosition, 'Window height:', windowHeight);
+        console.log('Scroll position:', scrollPosition, 'Window height:', windowHeight, 'Doc height:', documentHeight);
         
         // Special handling for intro section at the top
         if (scrollPosition < windowHeight * 0.5) {
@@ -1619,6 +1653,12 @@ const handleScroll = () => {
                 updateNavigationFromScroll('intro');
             }
             return;
+        }
+        
+        // Special handling for end of page - maintain last valid scene
+        if (scrollPosition + windowHeight >= documentHeight - 100) {
+            console.log('Near end of page - maintaining current scene:', lastActiveSection);
+            return; // Don't change scene at the very end
         }
         
         let mostVisibleSection = null;
@@ -1634,7 +1674,7 @@ const handleScroll = () => {
             const visibleHeight = Math.max(0, sectionBottom - sectionTop);
             const visibleArea = visibleHeight / rect.height;
             
-            if (visibleArea > maxVisibleArea && visibleArea > 0.4) { // Must be at least 40% visible
+            if (visibleArea > maxVisibleArea && visibleArea > 0.3) { // Must be at least 30% visible
                 maxVisibleArea = visibleArea;
                 mostVisibleSection = section;
             }
@@ -1800,10 +1840,9 @@ function initializeScene() {
     // Create faster fade-in effect for initial load
     const canvas = document.querySelector('#bg');
     canvas.style.opacity = '0';
-    canvas.style.filter = 'blur(4px) brightness(0.5)';
-    canvas.style.transition = 'opacity 1.2s ease-out, filter 1.2s ease-out';
+    canvas.style.transition = 'opacity 1.2s ease-out';
     
-    // Set initial navigation state
+    // Set initial navigation state and highlight intro title
     updateActiveNav('intro');
     
     // Remove loading screen and fade in the scene more quickly
@@ -1820,11 +1859,10 @@ function initializeScene() {
         // Faster fade in the intro scene
         setTimeout(() => {
             canvas.style.opacity = '1';
-            canvas.style.filter = 'blur(0px) brightness(1)';
             
             setTimeout(() => {
                 canvas.style.transition = '';
-                console.log('Initial intro scene loaded with snappy fade-in');
+                console.log('Initial intro scene loaded with shader-only fade-in');
             }, 1200);
         }, 300);
     }, 500); // Reduced initial delay
