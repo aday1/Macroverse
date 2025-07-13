@@ -249,193 +249,601 @@ function createSolarSystem() {
 function createLifeScene() {
     const group = new THREE.Group();
     
-    // Create terrain/earth-like base
-    const terrainGeometry = new THREE.PlaneGeometry(60, 60, 32, 32);
+    // Create diverse ecosystem terrain with biomes
+    const terrainGeometry = new THREE.PlaneGeometry(80, 80, 64, 64);
     const terrainVertices = terrainGeometry.attributes.position.array;
+    const terrainColors = [];
     
-    // Add height variation to create terrain
+    // Create realistic biome terrain with elevation and color
     for (let i = 0; i < terrainVertices.length; i += 3) {
-        terrainVertices[i + 2] = Math.sin(terrainVertices[i] * 0.1) * Math.cos(terrainVertices[i + 1] * 0.1) * 3;
+        const x = terrainVertices[i];
+        const y = terrainVertices[i + 1];
+        
+        // Create diverse elevation using multiple noise layers
+        const elevation1 = Math.sin(x * 0.05) * Math.cos(y * 0.05) * 5;
+        const elevation2 = Math.sin(x * 0.1 + y * 0.08) * 2;
+        const elevation3 = Math.sin(x * 0.2 - y * 0.15) * 1;
+        const totalElevation = elevation1 + elevation2 + elevation3;
+        
+        terrainVertices[i + 2] = totalElevation;
+        
+        // Determine biome based on position and elevation
+        const biomeNoise = Math.sin(x * 0.03) + Math.cos(y * 0.04);
+        
+        if (totalElevation < -2) {
+            // Deep water/ocean floor
+            terrainColors.push(0.1, 0.2, 0.4);
+        } else if (totalElevation < 0) {
+            // Shallow water/wetlands
+            terrainColors.push(0.2, 0.4, 0.6);
+        } else if (biomeNoise > 0.5) {
+            // Forest biome
+            terrainColors.push(0.2, 0.4, 0.1);
+        } else if (biomeNoise > -0.5) {
+            // Grassland biome
+            terrainColors.push(0.3, 0.5, 0.2);
+        } else {
+            // Desert/rocky biome
+            terrainColors.push(0.6, 0.4, 0.2);
+        }
     }
+    
     terrainGeometry.attributes.position.needsUpdate = true;
+    terrainGeometry.setAttribute('color', new THREE.Float32BufferAttribute(terrainColors, 3));
     terrainGeometry.computeVertexNormals();
     
     const terrainMaterial = new THREE.MeshLambertMaterial({ 
-        color: 0x8B4513,
+        vertexColors: true,
         transparent: true,
-        opacity: 0.8
+        opacity: 0.9
     });
     const terrain = new THREE.Mesh(terrainGeometry, terrainMaterial);
     terrain.rotation.x = -Math.PI / 2;
     terrain.position.y = -15;
     group.add(terrain);
-    
-    // Add vegetation/life patches
-    for (let i = 0; i < 20; i++) {
-        const patchGeometry = new THREE.CircleGeometry(Math.random() * 3 + 1, 8);
-        const patchMaterial = new THREE.MeshBasicMaterial({ 
-            color: new THREE.Color(0.1 + Math.random() * 0.3, 0.4 + Math.random() * 0.4, 0.1),
-            transparent: true,
-            opacity: 0.7
-        });
-        const patch = new THREE.Mesh(patchGeometry, patchMaterial);
-        patch.rotation.x = -Math.PI / 2;
-        patch.position.set(
-            (Math.random() - 0.5) * 50,
-            -14.5,
-            (Math.random() - 0.5) * 50
-        );
-        group.add(patch);
-    }
-    
-    // Water bodies
-    for (let i = 0; i < 5; i++) {
-        const waterGeometry = new THREE.CircleGeometry(Math.random() * 4 + 2, 16);
-        const waterMaterial = new THREE.MeshBasicMaterial({ 
-            color: 0x4682B4,
-            transparent: true,
-            opacity: 0.6
-        });
-        const water = new THREE.Mesh(waterGeometry, waterMaterial);
-        water.rotation.x = -Math.PI / 2;
-        water.position.set(
-            (Math.random() - 0.5) * 40,
-            -14.8,
-            (Math.random() - 0.5) * 40
-        );
-        water.userData.baseY = water.position.y;
-        group.add(water);
-    }
-    
-    // Mountains/hills in the distance
-    for (let i = 0; i < 8; i++) {
-        const mountainGeometry = new THREE.ConeGeometry(Math.random() * 3 + 2, Math.random() * 8 + 5, 8);
-        const mountainMaterial = new THREE.MeshLambertMaterial({ 
-            color: 0x696969,
-            transparent: true,
-            opacity: 0.6
-        });
-        const mountain = new THREE.Mesh(mountainGeometry, mountainMaterial);
-        mountain.position.set(
-            (Math.random() - 0.5) * 80,
-            -10 + Math.random() * 5,
-            (Math.random() - 0.5) * 80
-        );
-        group.add(mountain);
-    }
-    
-    // Complex life patterns (fractal-like structures)
-    for (let i = 0; i < 15; i++) {
-        const complexity = Math.random() * 0.5 + 0.5;
-        const lifeForm = new THREE.Group();
+
+    // Create living microorganisms (bacteria, cells)
+    const microorganisms = [];
+    for (let i = 0; i < 200; i++) {
+        const organism = new THREE.Group();
         
-        // Central structure
-        const coreGeometry = new THREE.SphereGeometry(complexity * 2, 8, 8);
-        const coreMaterial = new THREE.MeshBasicMaterial({ 
-            color: new THREE.Color(0.2, 0.6 + Math.random() * 0.4, 0.3),
+        // Cell membrane
+        const membraneGeometry = new THREE.SphereGeometry(0.3 + Math.random() * 0.2, 8, 8);
+        const membraneMaterial = new THREE.MeshBasicMaterial({ 
+            color: new THREE.Color(
+                0.4 + Math.random() * 0.4,
+                0.6 + Math.random() * 0.4,
+                0.2 + Math.random() * 0.3
+            ),
             transparent: true,
-            opacity: 0.7
+            opacity: 0.6,
+            wireframe: Math.random() > 0.7
         });
-        const core = new THREE.Mesh(coreGeometry, coreMaterial);
-        lifeForm.add(core);
+        const membrane = new THREE.Mesh(membraneGeometry, membraneMaterial);
+        organism.add(membrane);
         
-        // Branching structures
-        for (let j = 0; j < 6; j++) {
-            const branchGeometry = new THREE.CylinderGeometry(0.1, 0.3, complexity * 3, 4);
-            const branchMaterial = new THREE.MeshBasicMaterial({ 
-                color: 0x228B22,
+        // Nucleus/DNA core
+        const nucleusGeometry = new THREE.SphereGeometry(0.1, 6, 6);
+        const nucleusMaterial = new THREE.MeshBasicMaterial({ 
+            color: 0xff4444,
+            transparent: true,
+            opacity: 0.8
+        });
+        const nucleus = new THREE.Mesh(nucleusGeometry, nucleusMaterial);
+        organism.add(nucleus);
+        
+        // Organelles (mitochondria, etc.)
+        for (let j = 0; j < 3 + Math.floor(Math.random() * 4); j++) {
+            const organelleGeometry = new THREE.SphereGeometry(0.05 + Math.random() * 0.05, 4, 4);
+            const organelleMaterial = new THREE.MeshBasicMaterial({ 
+                color: new THREE.Color(Math.random(), Math.random(), Math.random()),
                 transparent: true,
-                opacity: 0.6
+                opacity: 0.7
             });
-            const branch = new THREE.Mesh(branchGeometry, branchMaterial);
-            const angle = (j / 6) * Math.PI * 2;
-            branch.position.set(
-                Math.cos(angle) * complexity * 2,
-                complexity,
-                Math.sin(angle) * complexity * 2
+            const organelle = new THREE.Mesh(organelleGeometry, organelleMaterial);
+            organelle.position.set(
+                (Math.random() - 0.5) * 0.4,
+                (Math.random() - 0.5) * 0.4,
+                (Math.random() - 0.5) * 0.4
             );
-            branch.rotation.z = angle;
-            lifeForm.add(branch);
+            organism.add(organelle);
         }
         
-        lifeForm.position.set(
-            (Math.random() - 0.5) * 40,
-            -10 + Math.random() * 10,
-            (Math.random() - 0.5) * 40
+        // Position organisms in clusters (colonies)
+        const clusterX = (Math.random() - 0.5) * 60;
+        const clusterZ = (Math.random() - 0.5) * 60;
+        organism.position.set(
+            clusterX + (Math.random() - 0.5) * 10,
+            -10 + Math.random() * 20,
+            clusterZ + (Math.random() - 0.5) * 10
         );
-        lifeForm.userData.rotSpeed = (Math.random() - 0.5) * 0.01;
-        group.add(lifeForm);
+        
+        // Movement and behavior properties
+        organism.userData = {
+            velocity: new THREE.Vector3(
+                (Math.random() - 0.5) * 0.02,
+                (Math.random() - 0.5) * 0.01,
+                (Math.random() - 0.5) * 0.02
+            ),
+            lifespan: Math.random() * 1000 + 500,
+            age: 0,
+            reproductionRate: Math.random() * 0.001,
+            species: Math.floor(Math.random() * 5),
+            energy: Math.random() * 100 + 50
+        };
+        
+        microorganisms.push(organism);
+        group.add(organism);
     }
 
-    // Atmospheric particles
-    const atmosphereGeometry = new THREE.BufferGeometry();
-    const atmospherePositions = [];
-    for (let i = 0; i < 800; i++) {
-        atmospherePositions.push(
+    // Create DNA helix structures (genetic information visualization)
+    for (let i = 0; i < 8; i++) {
+        const dnaGroup = new THREE.Group();
+        const helixHeight = 4 + Math.random() * 6;
+        
+        // Create double helix structure
+        for (let j = 0; j < 50; j++) {
+            const t = (j / 50) * helixHeight;
+            const angle1 = t * Math.PI * 2 * 2; // Two complete turns
+            const angle2 = angle1 + Math.PI; // Opposite strand
+            
+            // First strand
+            const sphere1 = new THREE.Mesh(
+                new THREE.SphereGeometry(0.1, 6, 6),
+                new THREE.MeshBasicMaterial({ 
+                    color: Math.random() > 0.5 ? 0x00ff00 : 0x0000ff,
+                    transparent: true,
+                    opacity: 0.8
+                })
+            );
+            sphere1.position.set(
+                Math.cos(angle1) * 0.5,
+                t - helixHeight/2,
+                Math.sin(angle1) * 0.5
+            );
+            
+            // Second strand
+            const sphere2 = new THREE.Mesh(
+                new THREE.SphereGeometry(0.1, 6, 6),
+                new THREE.MeshBasicMaterial({ 
+                    color: Math.random() > 0.5 ? 0xff0000 : 0xffff00,
+                    transparent: true,
+                    opacity: 0.8
+                })
+            );
+            sphere2.position.set(
+                Math.cos(angle2) * 0.5,
+                t - helixHeight/2,
+                Math.sin(angle2) * 0.5
+            );
+            
+            dnaGroup.add(sphere1, sphere2);
+            
+            // Base pairs (connecting strands)
+            if (j % 3 === 0) {
+                const connector = new THREE.Mesh(
+                    new THREE.CylinderGeometry(0.02, 0.02, 1, 6),
+                    new THREE.MeshBasicMaterial({ 
+                        color: 0x888888,
+                        transparent: true,
+                        opacity: 0.6
+                    })
+                );
+                connector.position.set(
+                    (Math.cos(angle1) * 0.5 + Math.cos(angle2) * 0.5) / 2,
+                    t - helixHeight/2,
+                    (Math.sin(angle1) * 0.5 + Math.sin(angle2) * 0.5) / 2
+                );
+                connector.rotation.z = Math.PI / 2;
+                dnaGroup.add(connector);
+            }
+        }
+        
+        dnaGroup.position.set(
+            (Math.random() - 0.5) * 50,
+            Math.random() * 10,
+            (Math.random() - 0.5) * 50
+        );
+        dnaGroup.userData.rotSpeed = (Math.random() - 0.5) * 0.01;
+        group.add(dnaGroup);
+    }
+
+    // Create plant life with growth simulation
+    const plants = [];
+    for (let i = 0; i < 30; i++) {
+        const plant = new THREE.Group();
+        const growth = Math.random() * 0.8 + 0.2;
+        
+        // Stem
+        const stemGeometry = new THREE.CylinderGeometry(
+            0.05 * growth, 
+            0.1 * growth, 
+            2 * growth, 
+            8
+        );
+        const stemMaterial = new THREE.MeshBasicMaterial({ color: 0x228B22 });
+        const stem = new THREE.Mesh(stemGeometry, stemMaterial);
+        stem.position.y = growth;
+        plant.add(stem);
+        
+        // Leaves (fractal branching)
+        for (let j = 0; j < 5 + Math.floor(growth * 10); j++) {
+            const leafGeometry = new THREE.ConeGeometry(
+                0.2 * growth, 
+                0.8 * growth, 
+                4
+            );
+            const leafMaterial = new THREE.MeshBasicMaterial({ 
+                color: new THREE.Color(
+                    0.1 + Math.random() * 0.3,
+                    0.4 + Math.random() * 0.4,
+                    0.1 + Math.random() * 0.2
+                ),
+                transparent: true,
+                opacity: 0.7
+            });
+            const leaf = new THREE.Mesh(leafGeometry, leafMaterial);
+            const angle = (j / 5) * Math.PI * 2;
+            const height = j * 0.3 * growth;
+            leaf.position.set(
+                Math.cos(angle) * 0.5 * growth,
+                height + growth,
+                Math.sin(angle) * 0.5 * growth
+            );
+            leaf.rotation.z = angle;
+            plant.add(leaf);
+        }
+        
+        // Position on terrain
+        plant.position.set(
+            (Math.random() - 0.5) * 70,
+            -15,
+            (Math.random() - 0.5) * 70
+        );
+        
+        plant.userData = {
+            growth: growth,
+            maxGrowth: Math.random() * 0.5 + 0.8,
+            growthRate: Math.random() * 0.001 + 0.0005
+        };
+        
+        plants.push(plant);
+        group.add(plant);
+    }
+
+    // Create animal life (simple creatures)
+    const animals = [];
+    for (let i = 0; i < 15; i++) {
+        const animal = new THREE.Group();
+        
+        // Body
+        const bodyGeometry = new THREE.CapsuleGeometry(0.2, 0.8, 4, 8);
+        const bodyMaterial = new THREE.MeshBasicMaterial({ 
+            color: new THREE.Color(
+                Math.random() * 0.8 + 0.2,
+                Math.random() * 0.6 + 0.2,
+                Math.random() * 0.4 + 0.1
+            ),
+            transparent: true,
+            opacity: 0.8
+        });
+        const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+        animal.add(body);
+        
+        // Simple limbs/appendages
+        for (let j = 0; j < 4; j++) {
+            const limbGeometry = new THREE.CylinderGeometry(0.05, 0.05, 0.3, 6);
+            const limbMaterial = new THREE.MeshBasicMaterial({ color: 0x654321 });
+            const limb = new THREE.Mesh(limbGeometry, limbMaterial);
+            const angle = (j / 4) * Math.PI * 2;
+            limb.position.set(
+                Math.cos(angle) * 0.3,
+                -0.2,
+                Math.sin(angle) * 0.3
+            );
+            limb.rotation.z = angle;
+            animal.add(limb);
+        }
+        
+        animal.position.set(
+            (Math.random() - 0.5) * 60,
+            -10 + Math.random() * 5,
+            (Math.random() - 0.5) * 60
+        );
+        
+        animal.userData = {
+            velocity: new THREE.Vector3(
+                (Math.random() - 0.5) * 0.05,
+                0,
+                (Math.random() - 0.5) * 0.05
+            ),
+            wanderAngle: Math.random() * Math.PI * 2,
+            energy: Math.random() * 100 + 50,
+            species: Math.floor(Math.random() * 3)
+        };
+        
+        animals.push(animal);
+        group.add(animal);
+    }
+
+    // Atmospheric particles and spores (reproduction)
+    const sporeGeometry = new THREE.BufferGeometry();
+    const sporePositions = [];
+    const sporeColors = [];
+    const sporeVelocities = [];
+    
+    for (let i = 0; i < 1000; i++) {
+        sporePositions.push(
             (Math.random() - 0.5) * 100,
             Math.random() * 40 - 20,
             (Math.random() - 0.5) * 100
         );
+        
+        // Different types of airborne particles
+        const sporeType = Math.random();
+        if (sporeType > 0.7) {
+            sporeColors.push(1, 1, 0); // Pollen - yellow
+        } else if (sporeType > 0.4) {
+            sporeColors.push(0, 1, 0.5); // Spores - green
+        } else {
+            sporeColors.push(0.8, 0.8, 0.8); // Dust/debris - gray
+        }
+        
+        sporeVelocities.push(
+            (Math.random() - 0.5) * 0.01,
+            Math.random() * 0.005,
+            (Math.random() - 0.5) * 0.01
+        );
     }
-    atmosphereGeometry.setAttribute('position', new THREE.Float32BufferAttribute(atmospherePositions, 3));
-    const atmosphereMaterial = new THREE.PointsMaterial({ 
-        color: 0xffffff, 
-        size: 0.2, 
+    
+    sporeGeometry.setAttribute('position', new THREE.Float32BufferAttribute(sporePositions, 3));
+    sporeGeometry.setAttribute('color', new THREE.Float32BufferAttribute(sporeColors, 3));
+    const sporeMaterial = new THREE.PointsMaterial({ 
+        size: 0.1, 
         transparent: true, 
-        opacity: 0.4 
+        opacity: 0.6,
+        vertexColors: true
     });
-    const atmosphere = new THREE.Points(atmosphereGeometry, atmosphereMaterial);
-    group.add(atmosphere);
+    const spores = new THREE.Points(sporeGeometry, sporeMaterial);
+    spores.userData.velocities = sporeVelocities;
+    group.add(spores);
 
-    // Add ambient lighting for the scene
-    const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
+    // Food web visualization (energy flow)
+    const foodWeb = [];
+    for (let i = 0; i < 20; i++) {
+        const points = [];
+        const startPoint = new THREE.Vector3(
+            (Math.random() - 0.5) * 60,
+            -10 + Math.random() * 15,
+            (Math.random() - 0.5) * 60
+        );
+        points.push(startPoint);
+        
+        // Create flowing energy lines between organisms
+        for (let j = 1; j < 8; j++) {
+            const nextPoint = startPoint.clone().add(new THREE.Vector3(
+                (Math.random() - 0.5) * 10,
+                (Math.random() - 0.5) * 5,
+                (Math.random() - 0.5) * 10
+            ));
+            points.push(nextPoint);
+        }
+        
+        const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
+        const lineMaterial = new THREE.LineBasicMaterial({ 
+            color: 0x00ff88,
+            transparent: true,
+            opacity: 0.3
+        });
+        const line = new THREE.Line(lineGeometry, lineMaterial);
+        line.userData.flow = 0;
+        foodWeb.push(line);
+        group.add(line);
+    }
+
+    // Add enhanced lighting for biological processes
+    const ambientLight = new THREE.AmbientLight(0x404040, 0.4);
     group.add(ambientLight);
     
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-    directionalLight.position.set(10, 20, 10);
-    group.add(directionalLight);
+    const sunLight = new THREE.DirectionalLight(0xffffe0, 0.8);
+    sunLight.position.set(20, 30, 10);
+    group.add(sunLight);
+    
+    // Bioluminescent lighting (from organisms)
+    for (let i = 0; i < 10; i++) {
+        const bioLight = new THREE.PointLight(
+            new THREE.Color(Math.random(), Math.random() * 0.5 + 0.5, Math.random()), 
+            0.5, 
+            10
+        );
+        bioLight.position.set(
+            (Math.random() - 0.5) * 60,
+            -5 + Math.random() * 10,
+            (Math.random() - 0.5) * 60
+        );
+        bioLight.userData.flicker = Math.random() * 0.002 + 0.001;
+        group.add(bioLight);
+    }
     
     group.userData.animate = () => {
         const time = Date.now() * 0.001;
         
-        // Animate terrain (subtle breathing effect)
+        // Animate terrain with geological processes
         const terrainVertices = terrain.geometry.attributes.position.array;
         for (let i = 0; i < terrainVertices.length; i += 3) {
             const x = terrainVertices[i];
             const y = terrainVertices[i + 1];
-            terrainVertices[i + 2] = Math.sin(x * 0.1 + time * 0.5) * Math.cos(y * 0.1 + time * 0.3) * 3 + Math.sin(time * 2) * 0.2;
+            const baseHeight = Math.sin(x * 0.05) * Math.cos(y * 0.05) * 5 + 
+                              Math.sin(x * 0.1 + y * 0.08) * 2 + 
+                              Math.sin(x * 0.2 - y * 0.15) * 1;
+            terrainVertices[i + 2] = baseHeight + Math.sin(time * 0.5 + x * 0.01) * 0.1;
         }
         terrain.geometry.attributes.position.needsUpdate = true;
         terrain.geometry.computeVertexNormals();
         
-        // Animate water
-        group.children.forEach(child => {
-            if (child.material && child.material.color && child.material.color.b > 0.5) { // Water detection
-                child.position.y = child.userData.baseY + Math.sin(time * 3) * 0.1;
-                child.material.opacity = 0.6 + Math.sin(time * 4) * 0.2;
+        // Simulate microorganism behavior (movement, reproduction, death)
+        microorganisms.forEach((organism, index) => {
+            if (!organism.parent) return; // Skip if removed
+            
+            organism.userData.age += 1;
+            
+            // Movement simulation (chemotaxis, random walk)
+            const velocity = organism.userData.velocity;
+            velocity.add(new THREE.Vector3(
+                (Math.random() - 0.5) * 0.001,
+                (Math.random() - 0.5) * 0.0005,
+                (Math.random() - 0.5) * 0.001
+            ));
+            
+            // Boundary conditions
+            if (Math.abs(organism.position.x) > 30) velocity.x *= -1;
+            if (Math.abs(organism.position.z) > 30) velocity.z *= -1;
+            if (organism.position.y > 10 || organism.position.y < -20) velocity.y *= -1;
+            
+            organism.position.add(velocity);
+            
+            // Metabolism and energy consumption
+            organism.userData.energy -= 0.1;
+            if (organism.userData.energy <= 0) {
+                // Death and decomposition
+                organism.material.opacity *= 0.99;
+                if (organism.material.opacity < 0.1) {
+                    group.remove(organism);
+                    microorganisms.splice(index, 1);
+                }
             }
+            
+            // Reproduction
+            if (organism.userData.energy > 80 && Math.random() < organism.userData.reproductionRate) {
+                organism.userData.energy *= 0.6; // Cost of reproduction
+                // Create offspring nearby (simplified)
+                if (microorganisms.length < 150) {
+                    // Reproduction logic would create new organism here
+                }
+            }
+            
+            // Cell division animation
+            const scale = 1 + Math.sin(time * 10 + organism.position.x) * 0.1;
+            organism.scale.setScalar(scale);
+            
+            // Rotate organelles
+            organism.children.forEach((child, childIndex) => {
+                if (childIndex > 1) { // Skip membrane and nucleus
+                    child.rotation.x += 0.01;
+                    child.rotation.y += 0.005;
+                }
+            });
         });
         
-        // Animate life forms
+        // Animate DNA helixes (genetic transcription)
         group.children.forEach(child => {
             if (child.userData.rotSpeed !== undefined) {
                 child.rotation.y += child.userData.rotSpeed;
-                child.children.forEach(subChild => {
-                    if (subChild.geometry instanceof THREE.SphereGeometry) {
-                        subChild.scale.setScalar(1 + Math.sin(time * 5 + child.position.x) * 0.1);
+                child.rotation.x += child.userData.rotSpeed * 0.3;
+                
+                // Breathing effect for DNA
+                const breathe = 1 + Math.sin(time * 3) * 0.1;
+                child.scale.setScalar(breathe);
+            }
+        });
+        
+        // Plant growth simulation
+        plants.forEach(plant => {
+            if (plant.userData.growth < plant.userData.maxGrowth) {
+                plant.userData.growth += plant.userData.growthRate;
+                const growth = plant.userData.growth;
+                
+                // Update plant size
+                plant.scale.setScalar(growth);
+                
+                // Phototropism (leaning toward light)
+                plant.rotation.z += Math.sin(time * 0.5) * 0.001;
+                
+                // Leaf movement (heliotropism)
+                plant.children.forEach((leaf, index) => {
+                    if (index > 0) { // Skip stem
+                        leaf.rotation.y += Math.sin(time * 2 + index) * 0.002;
                     }
                 });
             }
         });
         
-        // Animate atmosphere
-        atmosphere.rotation.y += 0.0002;
-        const positions = atmosphere.geometry.attributes.position.array;
-        for (let i = 0; i < positions.length; i += 3) {
-            positions[i + 1] += Math.sin(time + positions[i] * 0.01) * 0.01;
-            if (positions[i + 1] > 20) positions[i + 1] = -20;
+        // Animal behavior simulation
+        animals.forEach(animal => {
+            // Wandering behavior
+            animal.userData.wanderAngle += (Math.random() - 0.5) * 0.1;
+            animal.userData.velocity.x = Math.cos(animal.userData.wanderAngle) * 0.02;
+            animal.userData.velocity.z = Math.sin(animal.userData.wanderAngle) * 0.02;
+            
+            // Boundary avoidance
+            if (Math.abs(animal.position.x) > 25) {
+                animal.userData.wanderAngle += Math.PI;
+            }
+            if (Math.abs(animal.position.z) > 25) {
+                animal.userData.wanderAngle += Math.PI;
+            }
+            
+            animal.position.add(animal.userData.velocity);
+            
+            // Look in direction of movement
+            animal.lookAt(animal.position.clone().add(animal.userData.velocity));
+            
+            // Animate limbs (walking)
+            animal.children.forEach((limb, index) => {
+                if (index > 0) { // Skip body
+                    limb.rotation.x = Math.sin(time * 5 + index) * 0.3;
+                }
+            });
+            
+            // Energy and foraging
+            animal.userData.energy -= 0.05;
+            if (animal.userData.energy < 30) {
+                // Seek food behavior would go here
+                animal.userData.energy += 0.1;
+            }
+        });
+        
+        // Animate atmospheric spores and pollen
+        const sporePositions = spores.geometry.attributes.position.array;
+        const velocities = spores.userData.velocities;
+        
+        for (let i = 0; i < sporePositions.length; i += 3) {
+            const idx = i / 3;
+            
+            // Wind and gravity effects
+            sporePositions[i] += velocities[idx * 3] + Math.sin(time + sporePositions[i] * 0.01) * 0.002;
+            sporePositions[i + 1] += velocities[idx * 3 + 1] - 0.001; // Gravity
+            sporePositions[i + 2] += velocities[idx * 3 + 2] + Math.cos(time + sporePositions[i + 2] * 0.01) * 0.002;
+            
+            // Reset particles that fall too low or drift too far
+            if (sporePositions[i + 1] < -25 || Math.abs(sporePositions[i]) > 50 || Math.abs(sporePositions[i + 2]) > 50) {
+                sporePositions[i] = (Math.random() - 0.5) * 60;
+                sporePositions[i + 1] = 20 + Math.random() * 10;
+                sporePositions[i + 2] = (Math.random() - 0.5) * 60;
+            }
         }
-        atmosphere.geometry.attributes.position.needsUpdate = true;
+        spores.geometry.attributes.position.needsUpdate = true;
+        
+        // Animate food web energy flows
+        foodWeb.forEach(web => {
+            web.userData.flow += 0.02;
+            if (web.userData.flow > 1) web.userData.flow = 0;
+            
+            // Create flowing effect along the line
+            web.material.opacity = 0.2 + Math.sin(web.userData.flow * Math.PI * 2) * 0.2;
+        });
+        
+        // Animate bioluminescent lights (breathing effect)
+        group.children.forEach(child => {
+            if (child.userData.flicker) {
+                child.intensity = 0.3 + Math.sin(time * 60 * child.userData.flicker) * 0.2;
+            }
+        });
+        
+        // Simulate seasonal changes
+        const season = Math.sin(time * 0.1);
+        sunLight.intensity = 0.6 + season * 0.3;
+        sunLight.color.setHSL(0.1 + season * 0.05, 0.8, 0.7);
     };
     return group;
 }
@@ -443,50 +851,173 @@ function createLifeScene() {
 function createCivilizationScene() {
     const group = new THREE.Group();
     
-    // Enhanced planet with more detailed surface
-    const planetGeometry = new THREE.SphereGeometry(5, 64, 64);
+    // Create a detailed Earth-like planet with continents and oceans
+    const planetGeometry = new THREE.SphereGeometry(5, 128, 128);
     const planetVertices = planetGeometry.attributes.position.array;
+    const planetColors = [];
+    const planetUvs = planetGeometry.attributes.uv.array;
     
-    // Add surface variation
+    // Add realistic surface variation and color mapping
     for (let i = 0; i < planetVertices.length; i += 3) {
-        const length = Math.sqrt(planetVertices[i] ** 2 + planetVertices[i + 1] ** 2 + planetVertices[i + 2] ** 2);
-        const noise = Math.sin(planetVertices[i] * 0.8) * Math.cos(planetVertices[i + 1] * 0.8) * 0.1;
-        planetVertices[i] *= (1 + noise / length);
-        planetVertices[i + 1] *= (1 + noise / length);
-        planetVertices[i + 2] *= (1 + noise / length);
+        const x = planetVertices[i];
+        const y = planetVertices[i + 1];
+        const z = planetVertices[i + 2];
+        const length = Math.sqrt(x * x + y * y + z * z);
+        
+        // Calculate spherical coordinates for continent mapping
+        const lat = Math.asin(y / length);
+        const lon = Math.atan2(z, x);
+        
+        // Create continent patterns using noise functions
+        const continentNoise1 = Math.sin(lat * 3) * Math.cos(lon * 2);
+        const continentNoise2 = Math.sin(lat * 5 + lon * 3) * 0.5;
+        const continentNoise3 = Math.sin(lat * 7 - lon * 2) * 0.3;
+        const continentValue = continentNoise1 + continentNoise2 + continentNoise3;
+        
+        // Add surface elevation variation
+        const elevation = continentValue * 0.08;
+        planetVertices[i] *= (1 + elevation / length);
+        planetVertices[i + 1] *= (1 + elevation / length);
+        planetVertices[i + 2] *= (1 + elevation / length);
+        
+        // Determine if this point is land or ocean
+        const isLand = continentValue > -0.2;
+        
+        if (isLand) {
+            // Land colors - greens and browns
+            const landType = Math.sin(lat * 8 + lon * 6) + Math.cos(lat * 12);
+            if (landType > 0.5) {
+                // Mountains/deserts - browns
+                planetColors.push(0.6, 0.4, 0.2);
+            } else if (landType > -0.2) {
+                // Forests - greens
+                planetColors.push(0.2, 0.6, 0.2);
+            } else {
+                // Plains - lighter greens
+                planetColors.push(0.4, 0.7, 0.3);
+            }
+        } else {
+            // Ocean colors - blues
+            const depth = Math.abs(continentValue + 0.2) * 3;
+            if (depth > 0.8) {
+                // Deep ocean - dark blue
+                planetColors.push(0.0, 0.1, 0.4);
+            } else {
+                // Shallow water - lighter blue
+                planetColors.push(0.1, 0.3, 0.8);
+            }
+        }
     }
+    
     planetGeometry.attributes.position.needsUpdate = true;
+    planetGeometry.setAttribute('color', new THREE.Float32BufferAttribute(planetColors, 3));
     planetGeometry.computeVertexNormals();
     
     const planetMaterial = new THREE.MeshStandardMaterial({ 
-        color: 0x2288ff, 
-        roughness: 0.8,
-        metalness: 0.1
+        vertexColors: true,
+        roughness: 0.7,
+        metalness: 0.1,
+        transparent: true,
+        opacity: 0.95
     });
     const planet = new THREE.Mesh(planetGeometry, planetMaterial);
     group.add(planet);
     
-    // Enhanced city lights with different patterns
-    const lightsMaterial = new THREE.PointsMaterial({ color: 0xffff00, size: 0.08 });
+    // Add atmospheric glow effect
+    const atmosphereGeometry = new THREE.SphereGeometry(5.2, 64, 64);
+    const atmosphereMaterial = new THREE.MeshLambertMaterial({
+        color: 0x87CEEB,
+        transparent: true,
+        opacity: 0.15,
+        side: THREE.BackSide
+    });
+    const atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
+    group.add(atmosphere);
+    
+    // Add cloud layer for more realism
+    const cloudGeometry = new THREE.SphereGeometry(5.15, 64, 64);
+    const cloudVertices = cloudGeometry.attributes.position.array;
+    const cloudColors = [];
+    
+    // Create realistic cloud patterns
+    for (let i = 0; i < cloudVertices.length; i += 3) {
+        const x = cloudVertices[i];
+        const y = cloudVertices[i + 1];
+        const z = cloudVertices[i + 2];
+        const length = Math.sqrt(x * x + y * y + z * z);
+        
+        const lat = Math.asin(y / length);
+        const lon = Math.atan2(z, x);
+        
+        // Create cloud patterns using multiple noise layers
+        const cloudNoise1 = Math.sin(lat * 4 + lon * 3) * 0.5;
+        const cloudNoise2 = Math.sin(lat * 8 - lon * 5) * 0.3;
+        const cloudNoise3 = Math.sin(lat * 12 + lon * 7) * 0.2;
+        const cloudDensity = (cloudNoise1 + cloudNoise2 + cloudNoise3 + 1) / 2;
+        
+        // Clouds are more likely near equator and storm systems
+        const cloudThreshold = 0.4 + Math.abs(lat) * 0.2;
+        const opacity = cloudDensity > cloudThreshold ? (cloudDensity - cloudThreshold) * 2 : 0;
+        
+        cloudColors.push(1, 1, 1, opacity); // White clouds with varying opacity
+    }
+    
+    cloudGeometry.setAttribute('color', new THREE.Float32BufferAttribute(cloudColors, 4));
+    const cloudMaterial = new THREE.MeshLambertMaterial({
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.6,
+        alphaTest: 0.1
+    });
+    const clouds = new THREE.Mesh(cloudGeometry, cloudMaterial);
+    group.add(clouds);
+    
+    // Enhanced city lights following continental patterns
+    const lightsMaterial = new THREE.PointsMaterial({ 
+        color: 0xffff00, 
+        size: 0.1,
+        transparent: true,
+        opacity: 0.8
+    });
     const lightsGeometry = new THREE.BufferGeometry();
     const lightPositions = [];
+    const lightColors = [];
     
-    // Create city clusters
-    for (let cluster = 0; cluster < 8; cluster++) {
-        const clusterLat = (Math.random() - 0.5) * Math.PI;
-        const clusterLon = Math.random() * Math.PI * 2;
-        
-        for (let i = 0; i < 100; i++) {
-            const lat = clusterLat + (Math.random() - 0.5) * 0.5;
-            const lon = clusterLon + (Math.random() - 0.5) * 0.5;
-            const p = new THREE.Vector3();
-            p.setFromSphericalCoords(5.05, Math.PI/2 - lat, lon);
-            lightPositions.push(p.x, p.y, p.z);
+    // Create realistic city distributions on continents
+    for (let lat = -Math.PI/2; lat < Math.PI/2; lat += 0.1) {
+        for (let lon = -Math.PI; lon < Math.PI; lon += 0.1) {
+            const continentNoise1 = Math.sin(lat * 3) * Math.cos(lon * 2);
+            const continentNoise2 = Math.sin(lat * 5 + lon * 3) * 0.5;
+            const continentNoise3 = Math.sin(lat * 7 - lon * 2) * 0.3;
+            const continentValue = continentNoise1 + continentNoise2 + continentNoise3;
+            
+            // Only place cities on land areas
+            if (continentValue > -0.1 && Math.random() < 0.15) {
+                const p = new THREE.Vector3();
+                p.setFromSphericalCoords(5.08, Math.PI/2 - lat, lon);
+                lightPositions.push(p.x, p.y, p.z);
+                
+                // Different city types have different colors
+                const cityType = Math.random();
+                if (cityType > 0.8) {
+                    lightColors.push(1, 0.5, 0); // Orange - industrial
+                } else if (cityType > 0.6) {
+                    lightColors.push(0, 1, 1); // Cyan - tech hubs
+                } else {
+                    lightColors.push(1, 1, 0.7); // Warm white - residential
+                }
+            }
         }
     }
     
     lightsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(lightPositions, 3));
-    const cityLights = new THREE.Points(lightsGeometry, lightsMaterial);
+    lightsGeometry.setAttribute('color', new THREE.Float32BufferAttribute(lightColors, 3));
+    const cityLights = new THREE.Points(lightsGeometry, new THREE.PointsMaterial({ 
+        size: 0.1,
+        transparent: true,
+        opacity: 0.8,
+        vertexColors: true
+    }));
     planet.add(cityLights);
 
     // Bright Wireframe Spaceships - different types
@@ -732,11 +1263,21 @@ function createCivilizationScene() {
     group.userData.animate = () => {
         const time = Date.now() * 0.001;
         
-        // Animate planet
+        // Animate planet rotation
         planet.rotation.y += 0.001;
         
-        // Animate city lights (flickering effect)
-        cityLights.material.size = 0.08 + Math.sin(time * 10) * 0.02;
+        // Animate atmosphere with subtle pulsing
+        atmosphere.rotation.y += 0.0005;
+        atmosphere.material.opacity = 0.15 + Math.sin(time * 0.5) * 0.05;
+        
+        // Animate clouds at different speed than planet
+        clouds.rotation.y += 0.0008;
+        clouds.rotation.x += 0.0002;
+        
+        // Animate city lights with realistic day/night cycle effect
+        const nightSide = Math.sin(planet.rotation.y);
+        cityLights.material.opacity = 0.6 + Math.abs(nightSide) * 0.4;
+        cityLights.material.size = 0.08 + Math.sin(time * 8) * 0.02;
         
         // Animate spaceships and satellites
         group.children.forEach(child => {
@@ -755,15 +1296,17 @@ function createCivilizationScene() {
                     const nextZ = Math.sin(child.userData.angle + 0.1) * child.userData.pathRadius * Math.cos(child.userData.inclination);
                     child.lookAt(new THREE.Vector3(nextX, y, nextZ));
                 } else if (child.userData.type === 'satellite') {
-                    // Satellites rotate on their axis
+                    // Satellites rotate on their axis and stay oriented toward planet
                     child.rotation.y += child.userData.rotSpeed;
                     child.rotation.x += child.userData.rotSpeed * 0.5;
+                    // Keep communication arrays pointed toward planet
+                    child.lookAt(new THREE.Vector3(0, 0, 0));
                 }
             }
             
-            // Animate traffic lanes
+            // Animate traffic lanes with flowing effect
             if (child.material && child.material.color && child.material.color.r === 0) {
-                child.material.opacity = child.userData.baseOpacity + Math.sin(time * 3 + child.position.x) * 0.1;
+                child.material.opacity = child.userData.baseOpacity + Math.sin(time * 3 + child.position.x) * 0.15;
             }
         });
     };
@@ -771,7 +1314,147 @@ function createCivilizationScene() {
 }
 
 
+// Create intro/header scene with cosmic intro GLSL effects
+function createIntroScene() {
+    const group = new THREE.Group();
+    
+    // Central cosmic portal/vortex
+    const portalGeometry = new THREE.RingGeometry(1, 8, 32, 8);
+    const portalMaterial = new THREE.ShaderMaterial({
+        uniforms: {
+            time: { value: 0 },
+            resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) }
+        },
+        vertexShader: `
+            varying vec2 vUv;
+            void main() {
+                vUv = uv;
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            }
+        `,
+        fragmentShader: `
+            uniform float time;
+            uniform vec2 resolution;
+            varying vec2 vUv;
+            
+            float noise(vec2 p) {
+                return sin(p.x * 10.0 + time) * sin(p.y * 10.0 + time * 0.8) * 0.5 + 0.5;
+            }
+            
+            void main() {
+                vec2 center = vec2(0.5);
+                float dist = distance(vUv, center);
+                
+                // Spiral pattern
+                float angle = atan(vUv.y - center.y, vUv.x - center.x) + time * 2.0;
+                float spiral = sin(angle * 8.0 + dist * 20.0 - time * 5.0) * 0.5 + 0.5;
+                
+                // Cosmic colors
+                vec3 color1 = vec3(0.1, 0.3, 0.8); // Deep blue
+                vec3 color2 = vec3(0.8, 0.2, 0.9); // Purple
+                vec3 color3 = vec3(0.9, 0.7, 0.1); // Gold
+                
+                float n = noise(vUv * 3.0 + time * 0.1);
+                vec3 color = mix(color1, color2, spiral);
+                color = mix(color, color3, n * spiral);
+                
+                // Fade from center
+                float fade = 1.0 - smoothstep(0.0, 0.8, dist);
+                
+                gl_FragColor = vec4(color * fade, fade * 0.8);
+            }
+        `,
+        transparent: true,
+        side: THREE.DoubleSide
+    });
+    
+    const portal = new THREE.Mesh(portalGeometry, portalMaterial);
+    portal.rotation.x = -Math.PI / 2;
+    group.add(portal);
+    
+    // Floating cosmic particles
+    const particleCount = 500;
+    const particleGeometry = new THREE.BufferGeometry();
+    const particlePositions = [];
+    const particleColors = [];
+    
+    for (let i = 0; i < particleCount; i++) {
+        particlePositions.push(
+            (Math.random() - 0.5) * 50,
+            Math.random() * 30 - 15,
+            (Math.random() - 0.5) * 50
+        );
+        
+        const hue = Math.random();
+        const color = new THREE.Color().setHSL(hue, 0.8, 0.6);
+        particleColors.push(color.r, color.g, color.b);
+    }
+    
+    particleGeometry.setAttribute('position', new THREE.Float32BufferAttribute(particlePositions, 3));
+    particleGeometry.setAttribute('color', new THREE.Float32BufferAttribute(particleColors, 3));
+    
+    const particleMaterial = new THREE.PointsMaterial({
+        size: 0.2,
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.8,
+        blending: THREE.AdditiveBlending
+    });
+    
+    const particles = new THREE.Points(particleGeometry, particleMaterial);
+    group.add(particles);
+    
+    // Cosmic rings
+    for (let i = 0; i < 5; i++) {
+        const ringGeometry = new THREE.RingGeometry(5 + i * 3, 6 + i * 3, 32);
+        const ringMaterial = new THREE.MeshBasicMaterial({
+            color: new THREE.Color().setHSL(i * 0.2, 0.6, 0.4),
+            transparent: true,
+            opacity: 0.2,
+            side: THREE.DoubleSide
+        });
+        const ring = new THREE.Mesh(ringGeometry, ringMaterial);
+        ring.rotation.x = -Math.PI / 2 + (Math.random() - 0.5) * 0.5;
+        ring.rotation.z = Math.random() * Math.PI;
+        ring.userData.rotSpeed = (Math.random() - 0.5) * 0.002;
+        group.add(ring);
+    }
+    
+    group.userData.animate = () => {
+        const time = Date.now() * 0.001;
+        
+        // Update portal shader
+        portal.material.uniforms.time.value = time;
+        portal.rotation.z += 0.005;
+        
+        // Animate particles
+        const positions = particles.geometry.attributes.position.array;
+        for (let i = 0; i < positions.length; i += 3) {
+            positions[i + 1] += Math.sin(time + positions[i] * 0.01) * 0.02;
+            // Swirl effect
+            const x = positions[i];
+            const z = positions[i + 2];
+            const distance = Math.sqrt(x * x + z * z);
+            const angle = Math.atan2(z, x) + time * 0.001;
+            positions[i] = Math.cos(angle) * distance;
+            positions[i + 2] = Math.sin(angle) * distance;
+        }
+        particles.geometry.attributes.position.needsUpdate = true;
+        
+        // Animate rings
+        group.children.forEach(child => {
+            if (child.userData.rotSpeed) {
+                child.rotation.z += child.userData.rotSpeed;
+                child.material.opacity = 0.1 + Math.sin(time * 2 + child.position.y) * 0.1;
+            }
+        });
+    };
+    
+    return group;
+}
+
 const sectionThemes = {
+    'intro': createIntroScene,
     'energy': createEnergyField,
     'particles': () => {
         const group = new THREE.Group();
@@ -791,24 +1474,59 @@ const sectionThemes = {
     'performance': createCivilizationScene // Using civilization scene for performance section
 };
 
-function setScene(themeFunction) {
-    if (currentSceneObject) {
-        scene.remove(currentSceneObject);
+let isTransitioning = false;
+let fadeOverlay = null;
+
+// Create enhanced fade overlay for smooth transitions
+function createFadeOverlay() {
+    if (!fadeOverlay) {
+        fadeOverlay = document.createElement('div');
+        fadeOverlay.className = 'scene-transition-overlay';
+        document.body.appendChild(fadeOverlay);
     }
-    currentSceneObject = themeFunction();
-    scene.add(currentSceneObject);
+    return fadeOverlay;
+}
+
+function setScene(themeFunction, forceChange = false) {
+    const now = Date.now();
     
-    // Debug: Add visual indicator for mobile
-    const isMobileCheck = isMobileDevice();
-    if (isMobileCheck) {
-        console.log('Scene changed successfully');
-        // Temporarily flash the screen to indicate scene change (for debugging)
-        const canvas = document.querySelector('#bg');
-        canvas.style.filter = 'brightness(1.2)';
-        setTimeout(() => {
-            canvas.style.filter = 'brightness(1)';
-        }, 200);
+    // Debounce scene changes unless forced (like navigation clicks)
+    if (!forceChange && (isTransitioning || (now - lastSceneChangeTime) < SCENE_CHANGE_DEBOUNCE)) {
+        return;
     }
+    
+    isTransitioning = true;
+    lastSceneChangeTime = now;
+    
+    const overlay = createFadeOverlay();
+    const canvas = document.querySelector('#bg');
+    
+    // Enhanced fade transition with improved timing
+    overlay.style.opacity = '1';
+    canvas.style.filter = 'blur(4px) brightness(0.2) contrast(1.2)';
+    canvas.style.opacity = '0.1';
+    
+    setTimeout(() => {
+        // Change the scene during peak fade
+        if (currentSceneObject) {
+            scene.remove(currentSceneObject);
+        }
+        currentSceneObject = themeFunction();
+        scene.add(currentSceneObject);
+        
+        console.log('Scene changed with enhanced fade transition');
+        
+        // Fade back in with smooth reveal
+        setTimeout(() => {
+            overlay.style.opacity = '0';
+            canvas.style.filter = 'blur(0px) brightness(1) contrast(1)';
+            canvas.style.opacity = '1';
+            
+            setTimeout(() => {
+                isTransitioning = false;
+            }, 800);
+        }, 150);
+    }, 400); // Peak of fade transition
 }
 
 const sections = document.querySelectorAll('section');
@@ -824,8 +1542,10 @@ const isMobileDevice = () => {
 const mobileDetected = isMobileDevice();
 console.log('Mobile detected:', mobileDetected); // Debug logging
 
-// Multiple detection methods for scene changes
+// Multiple detection methods for scene changes with debouncing
 let lastActiveSection = '';
+let lastSceneChangeTime = 0;
+const SCENE_CHANGE_DEBOUNCE = 800; // Minimum time between scene changes in ms
 
 // Function to update active navigation state
 function updateActiveNav(activeSection) {
@@ -845,14 +1565,19 @@ function updateNavigationFromScroll(sectionName) {
     }
 }
 
-// Intersection Observer
+// Enhanced intersection observer with intro section support
 const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
             const themeName = entry.target.id;
-            console.log('Section intersecting:', themeName); // Debug logging
-            if (sectionThemes[themeName] && themeName !== lastActiveSection) {
-                console.log('Changing scene to:', themeName); // Debug logging
+            console.log('Section intersecting:', themeName, 'Ratio:', entry.intersectionRatio);
+            
+            // Special threshold for intro section (more sensitive)
+            const threshold = themeName === 'intro' ? 0.2 : 0.3;
+            
+            // Only change scene if enough of section is visible
+            if (entry.intersectionRatio > threshold && sectionThemes[themeName] && themeName !== lastActiveSection) {
+                console.log('Changing scene to:', themeName);
                 setScene(sectionThemes[themeName]);
                 lastActiveSection = themeName;
                 updateNavigationFromScroll(themeName);
@@ -860,51 +1585,66 @@ const observer = new IntersectionObserver((entries) => {
         }
     });
 }, { 
-    threshold: mobileDetected ? [0.1, 0.25, 0.5] : [0.5, 0.7],  // Multiple thresholds for mobile
-    rootMargin: mobileDetected ? '-15% 0px -15% 0px' : '0px'  // Adjust margins for mobile
+    threshold: [0.1, 0.2, 0.3, 0.5, 0.7],  // More granular thresholds
+    rootMargin: mobileDetected ? '-10% 0px -10% 0px' : '-5% 0px -5% 0px'  // Tighter margins for accuracy
 });
 
-// Fallback scroll detection for mobile
+// Enhanced scroll detection to include intro section
 let scrollTimeout;
 const handleScroll = () => {
     if (scrollTimeout) {
         clearTimeout(scrollTimeout);
     }
     
-    const throttleTime = mobileDetected ? 50 : 100; // Faster response on mobile
+    const throttleTime = mobileDetected ? 50 : 100;
     
     scrollTimeout = setTimeout(() => {
         const scrollPosition = window.scrollY;
         const windowHeight = window.innerHeight;
-        const documentHeight = document.documentElement.scrollHeight;
         
-        console.log('Scroll position:', scrollPosition, 'Window height:', windowHeight); // Debug
+        console.log('Scroll position:', scrollPosition, 'Window height:', windowHeight);
         
-        // Calculate which section should be active based on scroll position
-        sections.forEach((section, index) => {
+        // Special handling for intro section at the top
+        if (scrollPosition < windowHeight * 0.5) {
+            if (lastActiveSection !== 'intro') {
+                console.log('At top - switching to intro scene');
+                setScene(sectionThemes['intro']);
+                lastActiveSection = 'intro';
+                updateNavigationFromScroll('intro');
+            }
+            return;
+        }
+        
+        let mostVisibleSection = null;
+        let maxVisibleArea = 0;
+        
+        // Find the section with the most visible area
+        sections.forEach((section) => {
+            if (section.id === 'intro') return; // Skip intro, handled above
+            
             const rect = section.getBoundingClientRect();
-            const sectionTop = rect.top + window.scrollY;
-            const sectionHeight = rect.height;
-            const sectionCenter = sectionTop + sectionHeight / 2;
+            const sectionTop = Math.max(0, -rect.top);
+            const sectionBottom = Math.min(rect.height, windowHeight - rect.top);
+            const visibleHeight = Math.max(0, sectionBottom - sectionTop);
+            const visibleArea = visibleHeight / rect.height;
             
-            // More lenient detection for mobile
-            const viewportCenter = scrollPosition + windowHeight / 2;
-            const sectionStart = sectionTop + (mobileDetected ? sectionHeight * 0.2 : sectionHeight * 0.3);
-            const sectionEnd = sectionTop + sectionHeight - (mobileDetected ? sectionHeight * 0.2 : sectionHeight * 0.3);
-            
-            // Check if viewport center is within section bounds
-            if (viewportCenter >= sectionStart && viewportCenter <= sectionEnd) {
-                const themeName = section.id;
-                console.log('Scroll detected section:', themeName, 'at position:', viewportCenter); // Debug logging
-                if (sectionThemes[themeName] && themeName !== lastActiveSection) {
-                    console.log('Scroll changing scene to:', themeName); // Debug logging
-                    setScene(sectionThemes[themeName]);
-                    lastActiveSection = themeName;
-                    updateNavigationFromScroll(themeName);
-                }
+            if (visibleArea > maxVisibleArea && visibleArea > 0.4) { // Must be at least 40% visible
+                maxVisibleArea = visibleArea;
+                mostVisibleSection = section;
             }
         });
-    }, throttleTime); // Faster throttle for mobile
+        
+        if (mostVisibleSection) {
+            const themeName = mostVisibleSection.id;
+            console.log('Most visible section:', themeName, 'Visibility:', maxVisibleArea);
+            if (sectionThemes[themeName] && themeName !== lastActiveSection) {
+                console.log('Scroll changing scene to:', themeName);
+                setScene(sectionThemes[themeName]);
+                lastActiveSection = themeName;
+                updateNavigationFromScroll(themeName);
+            }
+        }
+    }, throttleTime);
 };
 
 // Use scroll detection as primary method on mobile, intersection observer on desktop
@@ -939,29 +1679,23 @@ navLinks.forEach(link => {
         const sectionName = link.dataset.section;
         const targetSection = document.getElementById(sectionName);
         
-        console.log('Navigation clicked:', sectionName); // Debug
+        console.log('Navigation clicked:', sectionName);
         
         if (targetSection && sectionThemes[sectionName]) {
-            // Immediately change the scene
-            setScene(sectionThemes[sectionName]);
+            // Force immediate scene change with fade transition for navigation
+            setScene(sectionThemes[sectionName], true);
             lastActiveSection = sectionName;
             
             // Update navigation state
             updateActiveNav(sectionName);
             
-            // Add visual feedback for scene change
-            const canvas = document.querySelector('#bg');
-            canvas.style.transition = 'filter 0.3s ease';
-            canvas.style.filter = 'brightness(1.3) contrast(1.1)';
+            // Smooth scroll to section with small delay for transition
             setTimeout(() => {
-                canvas.style.filter = 'brightness(1) contrast(1)';
-            }, 300);
-            
-            // Scroll to the section with smooth behavior
-            targetSection.scrollIntoView({ 
-                behavior: 'smooth',
-                block: 'center'
-            });
+                targetSection.scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+            }, 150);
             
             // Close sidebar on mobile after click
             if (mobileDetected) {
@@ -1050,8 +1784,48 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// Initial scene
-setScene(sectionThemes['energy']);
+// Initial scene setup with fade-in
+function initializeScene() {
+    // Start with intro scene
+    currentSceneObject = createIntroScene();
+    scene.add(currentSceneObject);
+    lastActiveSection = 'intro';
+    
+    // Create fade-in effect for initial load
+    const canvas = document.querySelector('#bg');
+    canvas.style.opacity = '0';
+    canvas.style.filter = 'blur(8px) brightness(0.5)';
+    canvas.style.transition = 'opacity 2.5s cubic-bezier(0.4, 0, 0.2, 1), filter 2.5s cubic-bezier(0.4, 0, 0.2, 1)';
+    
+    // Set initial navigation state
+    updateActiveNav('intro');
+    
+    // Remove loading screen and fade in the scene
+    setTimeout(() => {
+        const loadingScreen = document.getElementById('loading-screen');
+        if (loadingScreen) {
+            loadingScreen.style.transition = 'opacity 1s ease-out';
+            loadingScreen.style.opacity = '0';
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+            }, 1000);
+        }
+        
+        // Fade in the intro scene with dramatic effect
+        setTimeout(() => {
+            canvas.style.opacity = '1';
+            canvas.style.filter = 'blur(0px) brightness(1)';
+            
+            setTimeout(() => {
+                canvas.style.transition = '';
+                console.log('Initial intro scene loaded with fade-in effect');
+            }, 2500);
+        }, 500);
+    }, 800); // Allow time for everything to load
+}
+
+// Initialize and start
+initializeScene();
 animate();
 
 window.addEventListener('resize', () => {
