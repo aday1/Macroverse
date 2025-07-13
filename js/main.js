@@ -1027,112 +1027,112 @@ function createCivilizationScene() {
     planetGeometry.setAttribute('color', new THREE.Float32BufferAttribute(planetColors, 3));
     planetGeometry.computeVertexNormals();
     
-    const planetMaterial = new THREE.MeshStandardMaterial({ 
-        vertexColors: true,
-        roughness: 0.7,
-        metalness: 0.1,
+    const planetMaterial = new THREE.MeshBasicMaterial({ 
+        color: 0xffff00, // Bright yellow
+        wireframe: true,
         transparent: true,
-        opacity: 0.95
+        opacity: 0.8
     });
     const planet = new THREE.Mesh(planetGeometry, planetMaterial);
     group.add(planet);
     
     // Add atmospheric glow effect
     const atmosphereGeometry = new THREE.SphereGeometry(5.2, 64, 64);
-    const atmosphereMaterial = new THREE.MeshLambertMaterial({
+    const atmosphereMaterial = new THREE.MeshBasicMaterial({
         color: 0x87CEEB,
         transparent: true,
-        opacity: 0.15,
+        opacity: 0.1,
         side: THREE.BackSide
     });
     const atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
     group.add(atmosphere);
     
-    // Add cloud layer for more realism
-    const cloudGeometry = new THREE.SphereGeometry(5.15, 64, 64);
-    const cloudVertices = cloudGeometry.attributes.position.array;
-    const cloudColors = [];
+    // Subtle energy field around the planet instead of clouds
+    const energyGeometry = new THREE.SphereGeometry(5.3, 32, 32);
+    const energyMaterial = new THREE.MeshBasicMaterial({
+        color: 0xffff88,
+        wireframe: true,
+        transparent: true,
+        opacity: 0.2
+    });
+    const energyField = new THREE.Mesh(energyGeometry, energyMaterial);
+    group.add(energyField);
     
-    // Create realistic cloud patterns
-    for (let i = 0; i < cloudVertices.length; i += 3) {
-        const x = cloudVertices[i];
-        const y = cloudVertices[i + 1];
-        const z = cloudVertices[i + 2];
-        const length = Math.sqrt(x * x + y * y + z * z);
+    // Enhanced cities with buildings and structures on the wireframe planet
+    const cities = [];
+    const cityGeometry = new THREE.BufferGeometry();
+    const cityPositions = [];
+    const cityColors = [];
+    
+    // Create major cities with 3D structures
+    for (let i = 0; i < 50; i++) {
+        const cityGroup = new THREE.Group();
         
-        const lat = Math.asin(y / length);
-        const lon = Math.atan2(z, x);
+        // City location on planet surface
+        const lat = (Math.random() - 0.5) * Math.PI;
+        const lon = (Math.random() - 0.5) * Math.PI * 2;
+        const cityPos = new THREE.Vector3();
+        cityPos.setFromSphericalCoords(5.1, Math.PI/2 - lat, lon);
         
-        // Create cloud patterns using multiple noise layers
-        const cloudNoise1 = Math.sin(lat * 4 + lon * 3) * 0.5;
-        const cloudNoise2 = Math.sin(lat * 8 - lon * 5) * 0.3;
-        const cloudNoise3 = Math.sin(lat * 12 + lon * 7) * 0.2;
-        const cloudDensity = (cloudNoise1 + cloudNoise2 + cloudNoise3 + 1) / 2;
+        // Create different types of buildings
+        const numBuildings = 5 + Math.floor(Math.random() * 10);
+        for (let j = 0; j < numBuildings; j++) {
+            const buildingHeight = 0.2 + Math.random() * 0.8;
+            const buildingWidth = 0.05 + Math.random() * 0.1;
+            
+            const buildingGeometry = new THREE.BoxGeometry(buildingWidth, buildingHeight, buildingWidth);
+            const buildingMaterial = new THREE.MeshBasicMaterial({
+                color: Math.random() > 0.5 ? 0x00ffff : 0xff6600, // Cyan or orange
+                wireframe: true,
+                transparent: true,
+                opacity: 0.9
+            });
+            
+            const building = new THREE.Mesh(buildingGeometry, buildingMaterial);
+            
+            // Position buildings in a cluster around the city center
+            const offsetX = (Math.random() - 0.5) * 0.3;
+            const offsetZ = (Math.random() - 0.5) * 0.3;
+            building.position.set(offsetX, buildingHeight/2, offsetZ);
+            
+            cityGroup.add(building);
+        }
         
-        // Clouds are more likely near equator and storm systems
-        const cloudThreshold = 0.4 + Math.abs(lat) * 0.2;
-        const opacity = cloudDensity > cloudThreshold ? (cloudDensity - cloudThreshold) * 2 : 0;
+        // Add city lights/glow effects
+        const cityLightGeometry = new THREE.SphereGeometry(0.1, 8, 8);
+        const cityLightMaterial = new THREE.MeshBasicMaterial({
+            color: 0xffff00,
+            transparent: true,
+            opacity: 0.6
+        });
+        const cityLight = new THREE.Mesh(cityLightGeometry, cityLightMaterial);
+        cityGroup.add(cityLight);
         
-        cloudColors.push(1, 1, 1, opacity); // White clouds with varying opacity
+        // Position the entire city on the planet surface
+        cityGroup.position.copy(cityPos);
+        cityGroup.lookAt(new THREE.Vector3(0, 0, 0));
+        cityGroup.rotateX(Math.PI);
+        
+        cities.push(cityGroup);
+        group.add(cityGroup);
     }
     
-    cloudGeometry.setAttribute('color', new THREE.Float32BufferAttribute(cloudColors, 4));
-    const cloudMaterial = new THREE.MeshLambertMaterial({
-        vertexColors: true,
-        transparent: true,
-        opacity: 0.6,
-        alphaTest: 0.1
-    });
-    const clouds = new THREE.Mesh(cloudGeometry, cloudMaterial);
-    group.add(clouds);
-    
-    // Enhanced city lights following continental patterns
-    const lightsMaterial = new THREE.PointsMaterial({ 
-        color: 0xffff00, 
-        size: 0.1,
-        transparent: true,
-        opacity: 0.8
-    });
-    const lightsGeometry = new THREE.BufferGeometry();
-    const lightPositions = [];
-    const lightColors = [];
-    
-    // Create realistic city distributions on continents
-    for (let lat = -Math.PI/2; lat < Math.PI/2; lat += 0.1) {
-        for (let lon = -Math.PI; lon < Math.PI; lon += 0.1) {
-            const continentNoise1 = Math.sin(lat * 3) * Math.cos(lon * 2);
-            const continentNoise2 = Math.sin(lat * 5 + lon * 3) * 0.5;
-            const continentNoise3 = Math.sin(lat * 7 - lon * 2) * 0.3;
-            const continentValue = continentNoise1 + continentNoise2 + continentNoise3;
+    // Add communication/transport networks between cities
+    for (let i = 0; i < cities.length - 1; i++) {
+        if (Math.random() < 0.3) { // 30% chance of connection
+            const start = cities[i].position;
+            const end = cities[i + 1].position;
             
-            // Only place cities on land areas
-            if (continentValue > -0.1 && Math.random() < 0.15) {
-                const p = new THREE.Vector3();
-                p.setFromSphericalCoords(5.08, Math.PI/2 - lat, lon);
-                lightPositions.push(p.x, p.y, p.z);
-                
-                // Different city types have different colors
-                const cityType = Math.random();
-                if (cityType > 0.8) {
-                    lightColors.push(1, 0.5, 0); // Orange - industrial
-                } else if (cityType > 0.6) {
-                    lightColors.push(0, 1, 1); // Cyan - tech hubs
-                } else {
-                    lightColors.push(1, 1, 0.7); // Warm white - residential
-                }
-            }
+            const lineGeometry = new THREE.BufferGeometry().setFromPoints([start, end]);
+            const lineMaterial = new THREE.LineBasicMaterial({
+                color: 0x00ff88,
+                transparent: true,
+                opacity: 0.4
+            });
+            const line = new THREE.Line(lineGeometry, lineMaterial);
+            group.add(line);
         }
     }
-    
-    lightsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(lightPositions, 3));
-    lightsGeometry.setAttribute('color', new THREE.Float32BufferAttribute(lightColors, 3));
-    const cityLights = new THREE.Points(lightsGeometry, new THREE.PointsMaterial({ 
-        size: 0.1,
-        transparent: true,
-        opacity: 0.8,
-        vertexColors: true
-    }));
-    planet.add(cityLights);
 
     // Bright Wireframe Spaceships - different types
     const spaceships = [];
@@ -1382,16 +1382,30 @@ function createCivilizationScene() {
         
         // Animate atmosphere with subtle pulsing
         atmosphere.rotation.y += 0.0005;
-        atmosphere.material.opacity = 0.15 + Math.sin(time * 0.5) * 0.05;
+        atmosphere.material.opacity = 0.1 + Math.sin(time * 0.5) * 0.03;
         
-        // Animate clouds at different speed than planet
-        clouds.rotation.y += 0.0008;
-        clouds.rotation.x += 0.0002;
+        // Animate energy field around the planet
+        energyField.rotation.y -= 0.0012;
+        energyField.rotation.x += 0.0003;
+        energyField.material.opacity = 0.2 + Math.sin(time * 2.0) * 0.1;
         
-        // Animate city lights with realistic day/night cycle effect
-        const nightSide = Math.sin(planet.rotation.y);
-        cityLights.material.opacity = 0.6 + Math.abs(nightSide) * 0.4;
-        cityLights.material.size = 0.08 + Math.sin(time * 8) * 0.02;
+        // Animate cities with pulsing lights and building effects
+        cities.forEach((city, index) => {
+            // City lights pulse at different rates
+            const pulseRate = 0.5 + (index % 3) * 0.3;
+            city.children.forEach(building => {
+                if (building.material && building.material.color) {
+                    building.material.opacity = 0.8 + Math.sin(time * pulseRate + index) * 0.2;
+                    // Occasionally flash brighter
+                    if (Math.sin(time * 10 + index * 0.1) > 0.95) {
+                        building.material.opacity = 1.0;
+                    }
+                }
+            });
+            
+            // Subtle city rotation/activity
+            city.rotation.y += 0.0001 * (1 + index % 2);
+        });
         
         // Animate spaceships and satellites
         group.children.forEach(child => {
