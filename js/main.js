@@ -724,7 +724,8 @@ const sectionThemes = {
     'blue-giants': createGasCloud,
     'orbits': createSolarSystem,
     'life': createLifeScene,
-    'living': createCivilizationScene
+    'living': createCivilizationScene,
+    'performance': createCivilizationScene // Using civilization scene for performance section
 };
 
 function setScene(themeFunction) {
@@ -964,6 +965,24 @@ document.addEventListener('DOMContentLoaded', () => {
         updateActiveNav('energy');
         console.log('Navigation initialized');
     }, 100);
+    
+    // Collapsible content functionality
+    document.querySelectorAll('.collapse-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const contentDiv = this.parentElement.nextElementSibling;
+            const icon = this.querySelector('.collapse-icon');
+            
+            if (contentDiv.style.display === 'none') {
+                contentDiv.style.display = 'block';
+                icon.textContent = '−';
+                this.setAttribute('aria-expanded', 'true');
+            } else {
+                contentDiv.style.display = 'none';
+                icon.textContent = '+';
+                this.setAttribute('aria-expanded', 'false');
+            }
+        });
+    });
 });
 
 // Initial scene
