@@ -3,8 +3,12 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 // Enhanced video loading and mobile playback optimization
 document.addEventListener('DOMContentLoaded', () => {
-    const video = document.getElementById('header-video');
+    const headerVideo = document.getElementById('header-video');
+    const performanceVideo = document.getElementById('performance-video');
     const loadingScreen = document.getElementById('loading-screen');
+    
+    let videosLoaded = 0;
+    const totalVideos = (headerVideo ? 1 : 0) + (performanceVideo ? 1 : 0);
     
     const hideLoadingScreen = () => {
         loadingScreen.classList.add('hidden');
@@ -13,47 +17,99 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 500);
     };
     
-    // Enhanced mobile video setup
-    if (video) {
+    const checkAllVideosLoaded = () => {
+        videosLoaded++;
+        console.log(`Video loaded: ${videosLoaded}/${totalVideos}`);
+        if (videosLoaded >= totalVideos) {
+            hideLoadingScreen();
+        }
+    };
+    
+    // Enhanced mobile video setup for header video
+    if (headerVideo) {
         // Force video attributes for mobile compatibility
-        video.setAttribute('playsinline', 'true');
-        video.setAttribute('webkit-playsinline', 'true');
-        video.setAttribute('muted', 'true');
-        video.setAttribute('loop', 'true');
-        video.setAttribute('autoplay', 'true');
+        headerVideo.setAttribute('playsinline', 'true');
+        headerVideo.setAttribute('webkit-playsinline', 'true');
+        headerVideo.setAttribute('muted', 'true');
+        headerVideo.setAttribute('loop', 'true');
+        headerVideo.setAttribute('autoplay', 'true');
         
         // Mobile-specific video optimization
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         if (isMobile) {
             // Ensure video plays on mobile
-            video.load();
-            video.play().catch(e => {
-                console.log('Video autoplay prevented on mobile, trying user interaction approach');
+            headerVideo.load();
+            headerVideo.play().catch(e => {
+                console.log('Header video autoplay prevented on mobile, trying user interaction approach');
                 // Fallback for mobile autoplay restrictions
                 document.addEventListener('touchstart', () => {
-                    video.play();
+                    headerVideo.play();
                 }, { once: true });
             });
         }
+        
+        // Check if header video is ready
+        if (headerVideo.readyState >= 3) {
+            checkAllVideosLoaded();
+        } else {
+            headerVideo.addEventListener('canplaythrough', checkAllVideosLoaded, { once: true });
+            headerVideo.addEventListener('loadeddata', checkAllVideosLoaded, { once: true });
+        }
     }
     
-    // Check if video is ready
-    if (video.readyState >= 3) {
-        hideLoadingScreen();
-    } else {
-        video.addEventListener('canplaythrough', hideLoadingScreen);
-        video.addEventListener('loadeddata', hideLoadingScreen);
-        // Fallback timeout - ensure loading screen disappears
-        setTimeout(hideLoadingScreen, 2000);
+    // Setup performance video with 0.3x speed
+    if (performanceVideo) {
+        // Force video attributes for mobile compatibility
+        performanceVideo.setAttribute('playsinline', 'true');
+        performanceVideo.setAttribute('webkit-playsinline', 'true');
+        performanceVideo.setAttribute('muted', 'true');
+        performanceVideo.setAttribute('loop', 'true');
+        performanceVideo.setAttribute('autoplay', 'true');
+        
+        // Set 0.3x playback speed
+        performanceVideo.addEventListener('loadedmetadata', () => {
+            performanceVideo.playbackRate = 0.3;
+            console.log('Performance video playback rate set to 0.3x');
+        });
+        
+        // Mobile-specific video optimization
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        if (isMobile) {
+            // Ensure video plays on mobile
+            performanceVideo.load();
+            performanceVideo.play().catch(e => {
+                console.log('Performance video autoplay prevented on mobile, trying user interaction approach');
+                // Fallback for mobile autoplay restrictions
+                document.addEventListener('touchstart', () => {
+                    performanceVideo.play();
+                }, { once: true });
+            });
+        }
+        
+        // Check if performance video is ready
+        if (performanceVideo.readyState >= 3) {
+            checkAllVideosLoaded();
+        } else {
+            performanceVideo.addEventListener('canplaythrough', checkAllVideosLoaded, { once: true });
+            performanceVideo.addEventListener('loadeddata', checkAllVideosLoaded, { once: true });
+        }
     }
+    
+    // Fallback timeout - ensure loading screen disappears
+    setTimeout(() => {
+        if (videosLoaded < totalVideos) {
+            console.log('Some videos not loaded, hiding loading screen anyway');
+            hideLoadingScreen();
+        }
+    }, 3000);
     
     // Force loading screen to hide if it takes too long
     setTimeout(() => {
         if (loadingScreen && !loadingScreen.classList.contains('hidden')) {
-            console.log('Forcing loading screen to hide after 4 seconds');
+            console.log('Forcing loading screen to hide after 6 seconds');
             hideLoadingScreen();
         }
-    }, 4000);
+    }, 6000);
 });
 
 // Slow down header video with optimized atmospheric speed

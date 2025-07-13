@@ -199,27 +199,52 @@ header {
 #header-content {
     position: relative;
     z-index: 1;
-    background: rgba(0, 0, 0, 0.4);
-    padding: 2em;
-    border-radius: 10px;
-    border: 1px solid rgba(0, 255, 255, 0.2);
+    color: white;
+    text-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
 }
 
-h1 {
-    font-family: 'Orbitron', 'JetBrains Mono', monospace;
-    font-size: 3em;
-    font-weight: 900;
-    margin-bottom: 0.2em;
-    text-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+/* Performance video styling */
+.performance-video-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 2em auto;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 255, 255, 0.3);
+    border: 2px solid rgba(0, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
-a {
-    color: #0ff;
-    text-decoration: none;
+#performance-video {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 8px;
+    background: #000;
 }
 
-a:hover {
-    text-decoration: underline;
+/* Mobile adjustments for performance video */
+@media (max-width: 768px) {
+    .performance-video-container {
+        max-width: 90vw;
+        margin: 1.5em auto;
+        border-radius: 8px;
+        box-shadow: 0 4px 16px rgba(0, 255, 255, 0.2);
+    }
+    
+    #performance-video {
+        border-radius: 6px;
+    }
+}
+
+@media (max-width: 480px) {
+    .performance-video-container {
+        max-width: 95vw;
+        margin: 1em auto;
+        border-radius: 6px;
+    }
 }
 
 section {
