@@ -85,6 +85,16 @@ header {
     mix-blend-mode: screen;
 }
 
+/* Mobile video scaling - ensure full video is visible without cropping */
+@media (max-width: 768px) {
+    #header-video {
+        object-fit: contain;
+        width: 100vw;
+        height: 100vh;
+        opacity: 0.5;
+    }
+}
+
 #header-content {
     position: relative;
     z-index: 1;

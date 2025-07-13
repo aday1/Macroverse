@@ -2078,7 +2078,7 @@ function initializeScene() {
     // Initialize scroll progress indicator
     updateScrollProgress();
     
-    // Remove loading screen and fade in the scene more quickly
+    // Remove loading screen and fade in the scene (with extra time for preloading)
     setTimeout(() => {
         const loadingScreen = document.getElementById('loading-screen');
         if (loadingScreen) {
@@ -2098,7 +2098,7 @@ function initializeScene() {
                 console.log('Initial intro scene loaded with shader-only fade-in');
             }, 1200);
         }, 300);
-    }, 500); // Reduced initial delay
+    }, 1500); // Increased delay for better preloading
 }
 
 // Initialize and start
