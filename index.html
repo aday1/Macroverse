@@ -2,19 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Macroverse</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    <div class="loading-screen" id="loading-screen">
+        <div>Loading Macroverse...</div>
+    </div>
     <canvas id="bg"></canvas>
     <div id="vignette"></div>
     <main>
         <header>
-            <video id="header-video" src="https://github.com/aday1/Macroverse/raw/refs/heads/main/samples-rgb.mp4" autoplay muted loop playsinline></video>
+            <video id="header-video" src="https://github.com/aday1/Macroverse/raw/refs/heads/main/samples-rgb.mp4" 
+                   autoplay muted loop playsinline preload="auto"></video>
             <div id="header-content">
                 <h1>Macroverse</h1>
-                <p>A Microvirtuosity Performance by Nick Wilson and An AV Collaboration with Aday.</p>
+                <p>A Microvirtuosity Performance by Nick Wilson A.K.A Reductionist and An AV Collaboration with Aday.</p>
                 <p>
                     <a href="https://aday.net.au" target="_blank">aday.net.au</a> and 
                     <a href="https://nickewilson.net/reductionist/" target="_blank">Nick Wilson</a>

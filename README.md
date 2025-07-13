@@ -1,6 +1,8 @@
 # Macroverse
 
-A Microvirtuosity Performance by Nick Wilson and An AV Collaboration with Aday.
+A Microvirtuosity Performance by Nick Wilson A.K.A reductionist and An AV Collaboration with Aday.
+
+**Project Website:** [https://aday1.github.io/Macroverse/](https://aday1.github.io/Macroverse/)
 
 [aday.net.au](https://aday.net.au) and Nick Wilson [https://nickewilson.net/reductionist/](https://nickewilson.net/reductionist/)
 

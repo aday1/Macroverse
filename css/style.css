@@ -4,6 +4,32 @@ body {
     background-color: #000;
     color: #fff;
     overflow-x: hidden;
+    /* Ensure smooth scrolling on mobile */
+    -webkit-overflow-scrolling: touch;
+    /* Prevent zoom on mobile */
+    touch-action: pan-y;
+}
+
+/* Loading screen for video */
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    font-size: 1.5em;
+    opacity: 1;
+    transition: opacity 0.5s ease;
+}
+
+.loading-screen.hidden {
+    opacity: 0;
+    pointer-events: none;
 }
 
 #bg {
@@ -21,7 +47,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: radial-gradient(ellipse at center, rgba(0,0,0,0) 50%, rgba(0,0,0,0.9) 100%);
+    background: radial-gradient(ellipse at center, rgba(0,0,0,0) 50%, rgba(0,0,0,0.7) 100%);
     z-index: 0;
     pointer-events: none;
 }
@@ -59,7 +85,7 @@ header {
 #header-content {
     position: relative;
     z-index: 1;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.6);
     padding: 2em;
     border-radius: 10px;
 }
@@ -124,4 +150,65 @@ ul {
 
 li {
     margin-bottom: 0.5em;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+    main {
+        padding: 1em;
+    }
+    
+    h1 {
+        font-size: 2em;
+    }
+    
+    #header-content {
+        padding: 1.5em;
+    }
+    
+    #header-video {
+        /* Better video fitting on mobile */
+        object-fit: cover;
+        width: 100vw;
+        height: 100vh;
+    }
+    
+    .content-box {
+        padding: 1.5em;
+    }
+    
+    section {
+        margin-bottom: 3em;
+        padding: 1.5em;
+        /* Ensure sections are properly sized for intersection detection */
+        min-height: 50vh;
+    }
+    
+    /* Ensure the canvas doesn't interfere with touch events */
+    #bg {
+        pointer-events: none;
+    }
+}
+
+/* Ensure proper scroll behavior on all devices */
+html {
+    scroll-behavior: smooth;
+}
+
+@media (max-width: 480px) {
+    main {
+        padding: 0.5em;
+    }
+    
+    h1 {
+        font-size: 1.8em;
+    }
+    
+    #header-content {
+        padding: 1em;
+    }
+    
+    .content-box {
+        padding: 1em;
+    }
 }
