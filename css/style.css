@@ -566,7 +566,7 @@ li {
     position: fixed;
     top: 20px;
     left: 20px;
-    z-index: 100;
+    z-index: 1000;
     font-family: 'Orbitron', 'JetBrains Mono', monospace;
     font-size: 1.2em;
     font-weight: 600;
@@ -578,8 +578,9 @@ li {
     color: #0ff;
     text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
     transition: all 0.3s ease;
-    opacity: 0;
-    transform: translateY(-10px);
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: none;
 }
 
 .scene-title-indicator.visible {

@@ -1648,7 +1648,7 @@ function ensureCanvasState() {
 // Call safety check periodically
 setInterval(ensureCanvasState, 2000);
 
-function setScene(themeFunction, forceChange = false) {
+function setScene(themeFunction, sectionName = null, forceChange = false) {
     const now = Date.now();
     
     // Debounce scene changes unless forced (like navigation clicks)
@@ -1660,6 +1660,11 @@ function setScene(themeFunction, forceChange = false) {
     lastSceneChangeTime = now;
     
     const canvas = document.querySelector('#bg');
+    
+    // Update scene title immediately when scene change starts
+    if (sectionName) {
+        updateSceneTitle(sectionName);
+    }
     
     // GLSL shader-only fade transition (no section content fade)
     canvas.style.transition = 'opacity 0.3s ease-in-out';
@@ -1673,7 +1678,7 @@ function setScene(themeFunction, forceChange = false) {
         currentSceneObject = themeFunction();
         scene.add(currentSceneObject);
         
-        console.log('GLSL scene changed with shader-only fade');
+        console.log('GLSL scene changed with shader-only fade to:', sectionName || 'unknown');
         
         // Fade GLSL back in
         setTimeout(() => {
@@ -1749,9 +1754,6 @@ function updateActiveNav(activeSection) {
     
     // Highlight the current section title
     highlightCurrentSectionTitle(activeSection);
-    
-    // Update scene title indicator
-    updateSceneTitle(activeSection);
 }
 
 // Function to highlight the current section title
@@ -1793,7 +1795,7 @@ const observer = new IntersectionObserver((entries) => {
             // Only change scene if enough of section is visible
             if (entry.intersectionRatio > threshold && sectionThemes[themeName] && themeName !== lastActiveSection) {
                 console.log('Changing scene to:', themeName);
-                setScene(sectionThemes[themeName]);
+                setScene(sectionThemes[themeName], themeName);
                 lastActiveSection = themeName;
                 updateNavigationFromScroll(themeName);
             }
@@ -1824,7 +1826,7 @@ const handleScroll = () => {
         if (scrollPosition < windowHeight * 0.5) {
             if (lastActiveSection !== 'intro') {
                 console.log('At top - switching to intro scene');
-                setScene(sectionThemes['intro']);
+                setScene(sectionThemes['intro'], 'intro');
                 lastActiveSection = 'intro';
                 updateNavigationFromScroll('intro');
             }
@@ -1861,7 +1863,7 @@ const handleScroll = () => {
             console.log('Most visible section:', themeName, 'Visibility:', maxVisibleArea);
             if (sectionThemes[themeName] && themeName !== lastActiveSection) {
                 console.log('Scroll changing scene to:', themeName);
-                setScene(sectionThemes[themeName]);
+                setScene(sectionThemes[themeName], themeName);
                 lastActiveSection = themeName;
                 updateNavigationFromScroll(themeName);
             }
@@ -1905,7 +1907,7 @@ navLinks.forEach(link => {
         
         if (targetSection && sectionThemes[sectionName]) {
             // Force immediate scene change with fade transition for navigation
-            setScene(sectionThemes[sectionName], true);
+            setScene(sectionThemes[sectionName], sectionName, true);
             lastActiveSection = sectionName;
             
             // Update navigation state
@@ -2020,6 +2022,9 @@ function initializeScene() {
     
     // Set initial navigation state and highlight intro title
     updateActiveNav('intro');
+    
+    // Show scene title indicator immediately for intro
+    updateSceneTitle('intro');
     
     // Remove loading screen and fade in the scene more quickly
     setTimeout(() => {
