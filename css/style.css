@@ -407,17 +407,26 @@ li {
 .nav-sidebar:hover,
 .nav-sidebar.open {
     transform: translateX(0);
-    box-shadow: -2px 0 30px rgba(0, 255, 255, 0.2);
+    box-shadow: 2px 0 30px rgba(0, 255, 255, 0.2);
 }
 
 .nav-header {
     color: #0ff;
     text-align: center;
-    font-size: 1em;
+    font-size: 1.1em;
     font-weight: bold;
-    margin-bottom: 1em;
+    margin-bottom: 0.5em;
     padding: 0 1em;
     text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+}
+
+.timeline-subtitle {
+    color: #888;
+    text-align: center;
+    font-size: 0.7em;
+    margin-bottom: 1.5em;
+    padding: 0 1em;
+    line-height: 1.3;
 }
 
 .nav-list {
@@ -432,7 +441,8 @@ li {
 
 .nav-link {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
     padding: 0.8em 1em;
     color: #fff;
     text-decoration: none;
@@ -440,7 +450,43 @@ li {
     border-left: 3px solid transparent;
     cursor: pointer;
     position: relative;
-    overflow: visible; /* Changed from hidden to show arrow */
+    overflow: visible;
+    line-height: 1.2;
+}
+
+.nav-link-content {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 0.3em;
+}
+
+.nav-number {
+    display: inline-block;
+    width: 1.8em;
+    height: 1.8em;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    text-align: center;
+    line-height: 1.8em;
+    margin-right: 0.8em;
+    flex-shrink: 0;
+    font-size: 0.85em;
+    font-weight: bold;
+}
+
+.nav-title {
+    font-weight: bold;
+    font-size: 0.9em;
+    flex-grow: 1;
+}
+
+.nav-time {
+    font-size: 0.75em;
+    color: rgba(255, 255, 255, 0.6);
+    font-style: italic;
+    margin-left: 2.6em; /* Align with title */
+    line-height: 1.1;
 }
 
 .nav-link::before {
@@ -476,34 +522,6 @@ li {
 .nav-link.active::before {
     width: 100%;
     background: linear-gradient(90deg, rgba(0, 255, 255, 0.2), transparent);
-}
-
-.nav-number {
-    display: inline-block;
-    width: 1.8em;
-    height: 1.8em;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 50%;
-    text-align: center;
-    line-height: 1.8em;
-    margin-right: 0.8em;
-    font-size: 0.8em;
-    transition: all 0.3s ease;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.nav-link:hover .nav-number {
-    background: rgba(0, 255, 255, 0.2);
-    border-color: #0ff;
-    box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
-}
-
-.nav-link.active .nav-number {
-    background: #0ff;
-    color: #000;
-    border-color: #0ff;
-    box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
-    font-weight: bold;
 }
 
 .nav-title {
