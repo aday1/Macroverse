@@ -24,20 +24,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Slow down header video to quarter speed for more atmospheric effect
+// Slow down header video with optimized atmospheric speed
 document.addEventListener('DOMContentLoaded', () => {
     const headerVideo = document.getElementById('header-video');
     if (headerVideo) {
-        // Set playback rate to quarter speed once video is ready
+        // Set playback rate to optimized atmospheric speed once video is ready
         headerVideo.addEventListener('loadedmetadata', () => {
-            headerVideo.playbackRate = 0.25;
-            console.log('Header video playback rate set to 0.25x (quarter speed)');
+            headerVideo.playbackRate = 0.3;
+            console.log('Header video playback rate set to 0.3x (atmospheric speed)');
         });
         
         // Also set it immediately in case the video is already loaded
         if (headerVideo.readyState >= 1) {
-            headerVideo.playbackRate = 0.25;
-            console.log('Header video playback rate set to 0.25x (immediate)');
+            headerVideo.playbackRate = 0.3;
+            console.log('Header video playback rate set to 0.3x (immediate)');
         }
     }
 });
@@ -2052,6 +2052,37 @@ document.addEventListener('DOMContentLoaded', () => {
                 contentDiv.classList.add('expanded');
                 icon.textContent = '−';
                 this.setAttribute('aria-expanded', 'true');
+            }
+        });
+    });
+    
+    // Clickable section titles functionality
+    document.querySelectorAll('.clickable-title').forEach(title => {
+        title.addEventListener('click', function(e) {
+            // Prevent event from bubbling to collapse button
+            if (e.target.closest('.collapse-btn')) {
+                return;
+            }
+            
+            const sectionName = this.dataset.section;
+            console.log('Section title clicked:', sectionName);
+            
+            if (sectionName && sectionThemes[sectionName]) {
+                // Force immediate scene change and highlight
+                setScene(sectionThemes[sectionName], sectionName, true);
+                lastActiveSection = sectionName;
+                updateActiveNav(sectionName);
+                
+                // Smooth scroll to the section
+                const targetSection = document.getElementById(sectionName);
+                if (targetSection) {
+                    targetSection.scrollIntoView({ 
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+                }
+                
+                console.log('Scene changed via title click to:', sectionName);
             }
         });
     });

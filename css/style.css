@@ -693,3 +693,36 @@ li {
         right: -6px;
     }
 }
+
+/* Clickable section titles */
+.clickable-title {
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.clickable-title:hover {
+    color: #0ff;
+    text-shadow: 0 0 15px rgba(0, 255, 255, 0.7);
+    transform: translateX(5px);
+}
+
+.clickable-title:active {
+    transform: translateX(3px) scale(0.98);
+}
+
+.clickable-title::before {
+    content: '▶';
+    position: absolute;
+    left: -25px;
+    opacity: 0;
+    color: #ff0080;
+    transition: all 0.3s ease;
+    font-size: 0.8em;
+}
+
+.clickable-title:hover::before {
+    opacity: 1;
+    left: -30px;
+}
