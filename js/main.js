@@ -1770,6 +1770,14 @@ function setScene(themeFunction, sectionName = null, forceChange = false) {
     lastSceneChangeTime = now;
     
     const canvas = document.querySelector('#bg');
+    const navSidebar = document.getElementById('navigation-sidebar');
+    
+    // Show/hide timeline based on section
+    if (sectionName === 'intro') {
+        navSidebar.classList.add('hidden');
+    } else {
+        navSidebar.classList.remove('hidden');
+    }
     
     // Update scene title immediately when scene change starts
     if (sectionName) {
