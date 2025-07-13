@@ -109,17 +109,17 @@ a:hover {
 }
 
 section {
-    margin-bottom: 4em;
-    padding: 2em;
-    border-radius: 10px;
+    margin-bottom: 3em;
+    padding: 1.5em;
+    border-radius: 8px;
     transition: background-color 0.5s ease;
     position: relative;
 }
 
 .content-box {
     background-color: rgba(0, 0, 0, 0.4);
-    padding: 2em;
-    border-radius: 10px;
+    padding: 1.5em;
+    border-radius: 8px;
     border: 1px solid rgba(0, 255, 255, 0.1);
     backdrop-filter: blur(5px);
 }
@@ -146,11 +146,11 @@ h2 {
     justify-content: space-between;
     align-items: center;
     font-family: 'Orbitron', 'JetBrains Mono', monospace;
-    font-size: 2em;
+    font-size: 1.6em;
     font-weight: 700;
     border-bottom: 1px solid var(--accent-color, #0ff);
-    padding-bottom: 0.5em;
-    margin-bottom: 1em;
+    padding-bottom: 0.3em;
+    margin-bottom: 0.8em;
     cursor: pointer;
     transition: all 0.3s ease;
 }
@@ -165,9 +165,9 @@ h2 {
     border: 1px solid #0ff;
     color: #0ff;
     border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    font-size: 1.5em;
+    width: 32px;
+    height: 32px;
+    font-size: 1.2em;
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -525,12 +525,12 @@ li {
     }
     
     .content-box {
-        padding: 1.5em;
+        padding: 1em;
     }
     
     section {
-        margin-bottom: 3em;
-        padding: 1.5em;
+        margin-bottom: 2.5em;
+        padding: 1em;
         /* Ensure sections are properly sized for intersection detection */
         min-height: 50vh;
     }
@@ -593,9 +593,9 @@ li {
     }
     
     .collapse-btn {
-        width: 35px;
-        height: 35px;
-        font-size: 1.2em;
+        width: 28px;
+        height: 28px;
+        font-size: 1em;
     }
 }
 
@@ -618,6 +618,10 @@ html {
     }
     
     .content-box {
-        padding: 1em;
+        padding: 0.8em;
+    }
+    
+    .section-title {
+        font-size: 1.4em;
     }
 }
