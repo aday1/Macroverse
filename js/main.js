@@ -1745,7 +1745,7 @@ function updateSceneTitle(sectionName) {
     if (!indicator) return;
     
     const sceneInfo = {
-        'intro': { number: '0', name: 'Cosmic Intro' },
+        'intro': { number: '0', name: 'Macroverse' },
         'energy': { number: '1', name: 'Energy Field' },
         'particles': { number: '2', name: 'Particles' },
         'blue-giants': { number: '3', name: 'Blue Giants' },
