@@ -1705,10 +1705,10 @@ const isMobileDevice = () => {
 const mobileDetected = isMobileDevice();
 console.log('Mobile detected:', mobileDetected); // Debug logging
 
-// Multiple detection methods for scene changes with snappier debouncing
+// Multiple detection methods for scene changes with optimized debouncing
 let lastActiveSection = '';
 let lastSceneChangeTime = 0;
-const SCENE_CHANGE_DEBOUNCE = 400; // Reduced from 800ms to 400ms for snappier response
+const SCENE_CHANGE_DEBOUNCE = 300; // Reduced to 300ms for more responsive changes
 
 // Function to update scroll progress indicator
 function updateScrollProgress() {
@@ -1828,42 +1828,48 @@ function updateNavigationFromScroll(sectionName) {
     }
 }
 
-// Robust intersection observer with proper debouncing
+// Fixed intersection observer with better logic and debugging
 const observer = new IntersectionObserver((entries) => {
-    // Debounce immediately to prevent rapid firing
+    // Debounce to prevent rapid firing
     const now = Date.now();
-    if (now - lastSceneChangeTime < 1500) return; // Increased to 1.5 seconds
+    if (now - lastSceneChangeTime < 800) return; // Reduced debounce time
     
     let bestEntry = null;
     let bestRatio = 0;
     
+    console.log('--- Intersection Observer Check ---');
+    
     // Find the entry with the highest intersection ratio
     entries.forEach(entry => {
-        // Only consider entries that are significantly visible
-        if (entry.isIntersecting && entry.intersectionRatio > 0.6 && entry.intersectionRatio > bestRatio) {
+        console.log(`Section ${entry.target.id}: intersecting=${entry.isIntersecting}, ratio=${entry.intersectionRatio.toFixed(3)}`);
+        
+        // Consider entries that are reasonably visible
+        if (entry.isIntersecting && entry.intersectionRatio > 0.3 && entry.intersectionRatio > bestRatio) {
             bestRatio = entry.intersectionRatio;
             bestEntry = entry;
         }
     });
     
-    // Only change scene if we have a very clear winner
-    if (bestEntry && bestRatio > 0.6) {
+    // Change scene if we have a clear winner with at least 40% visibility
+    if (bestEntry && bestRatio > 0.4) {
         const themeName = bestEntry.target.id;
         
         if (sectionThemes[themeName] && themeName !== lastActiveSection) {
-            console.log('IntersectionObserver changing scene to:', themeName, 'Ratio:', bestRatio);
+            console.log(`🎬 SCENE CHANGE: ${lastActiveSection} → ${themeName} (ratio: ${bestRatio.toFixed(3)})`);
             setScene(sectionThemes[themeName], themeName);
             updateNavigationFromScroll(themeName);
             lastActiveSection = themeName;
             lastSceneChangeTime = now;
         }
+    } else if (bestEntry) {
+        console.log(`Best entry ${bestEntry.target.id} has ratio ${bestRatio.toFixed(3)} - not changing (needs >0.4)`);
     }
 }, { 
-    threshold: [0.6, 0.7, 0.8],  // Much higher thresholds - only very visible sections
-    rootMargin: '-20% 0px -20% 0px'  // Larger margins - section must be well within viewport
+    threshold: [0.3, 0.4, 0.5, 0.6, 0.7],  // More granular thresholds
+    rootMargin: '-10% 0px -10% 0px'  // Smaller margins for more responsive detection
 });
 
-// Enhanced scroll handler with backup section detection
+// Enhanced scroll handler with better section detection
 let scrollTimeout;
 const handleScroll = () => {
     // Update scroll progress immediately for smooth animation
@@ -1890,45 +1896,46 @@ const handleScroll = () => {
             return;
         }
         
-        // Backup detection: Find which section is most centered in viewport
+        // Backup detection: Find which section is most visible in viewport
         const now = Date.now();
-        if (now - lastSceneChangeTime < 2000) return; // 2 second debounce for scroll-based changes
+        if (now - lastSceneChangeTime < 1000) return; // 1 second debounce for scroll-based changes
         
-        let closestSection = null;
-        let closestDistance = Infinity;
+        let bestSection = null;
+        let bestVisibility = 0;
         
         sections.forEach(section => {
             const rect = section.getBoundingClientRect();
-            const sectionCenter = rect.top + rect.height / 2;
-            const viewportCenter = windowHeight / 2;
-            const distance = Math.abs(sectionCenter - viewportCenter);
             
-            // Only consider sections that are significantly visible
-            const visibleHeight = Math.min(rect.bottom, windowHeight) - Math.max(rect.top, 0);
-            const visibilityRatio = visibleHeight / rect.height;
+            // Calculate how much of the section is visible
+            const visibleTop = Math.max(rect.top, 0);
+            const visibleBottom = Math.min(rect.bottom, windowHeight);
+            const visibleHeight = Math.max(0, visibleBottom - visibleTop);
+            const visibilityRatio = visibleHeight / windowHeight; // Ratio of viewport filled
             
-            if (visibilityRatio > 0.5 && distance < closestDistance) {
-                closestDistance = distance;
-                closestSection = section;
+            // Prefer sections that fill more of the viewport
+            if (visibilityRatio > bestVisibility && visibilityRatio > 0.3) {
+                bestVisibility = visibilityRatio;
+                bestSection = section;
             }
         });
         
-        if (closestSection && closestSection.id !== lastActiveSection) {
-            const themeName = closestSection.id;
+        if (bestSection && bestSection.id !== lastActiveSection) {
+            const themeName = bestSection.id;
             if (sectionThemes[themeName]) {
-                console.log('Scroll backup changing scene to:', themeName);
+                console.log('Scroll backup changing scene to:', themeName, 'visibility:', bestVisibility);
                 setScene(sectionThemes[themeName], themeName);
                 updateNavigationFromScroll(themeName);
                 lastActiveSection = themeName;
                 lastSceneChangeTime = now;
             }
         }
-    }, 200); // Increased timeout for more stability
+    }, 150); // Reduced timeout for more responsive detection
 };
 
 // Use intersection observer as primary method for all devices
 console.log('Using intersection observer for scene detection');
-sections.forEach(section => {
+sections.forEach((section, index) => {
+    console.log(`Observing section ${index}: ${section.id}`);
     observer.observe(section);
 });
 
