@@ -905,22 +905,24 @@ navLinks.forEach(link => {
                 navSidebar.classList.remove('open');
             }
             
+            // Close sidebar on desktop after click too
+            navSidebar.classList.remove('open');
+            
             console.log('Scene changed to:', sectionName); // Debug
         }
     });
 });
 
 // Toggle navigation sidebar
-navToggle.addEventListener('click', () => {
+navToggle.addEventListener('click', (e) => {
+    e.stopPropagation();
     navSidebar.classList.toggle('open');
+    console.log('Nav toggle clicked, open:', navSidebar.classList.contains('open'));
 });
 
-// Close sidebar when clicking outside on mobile
+// Close sidebar when clicking outside
 document.addEventListener('click', (e) => {
-    if (mobileDetected && 
-        !navSidebar.contains(e.target) && 
-        !navToggle.contains(e.target) &&
-        navSidebar.classList.contains('open')) {
+    if (!navSidebar.contains(e.target) && !navToggle.contains(e.target)) {
         navSidebar.classList.remove('open');
     }
 });
@@ -972,14 +974,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const contentDiv = this.parentElement.nextElementSibling;
             const icon = this.querySelector('.collapse-icon');
             
-            if (contentDiv.style.display === 'none') {
-                contentDiv.style.display = 'block';
-                icon.textContent = '−';
-                this.setAttribute('aria-expanded', 'true');
-            } else {
-                contentDiv.style.display = 'none';
+            if (contentDiv.classList.contains('expanded')) {
+                contentDiv.classList.remove('expanded');
                 icon.textContent = '+';
                 this.setAttribute('aria-expanded', 'false');
+            } else {
+                contentDiv.classList.add('expanded');
+                icon.textContent = '−';
+                this.setAttribute('aria-expanded', 'true');
             }
         });
     });

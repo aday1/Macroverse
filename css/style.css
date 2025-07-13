@@ -190,15 +190,17 @@ h2 {
 .collapsible-content {
     overflow: hidden;
     transition: max-height 0.5s ease, opacity 0.3s ease;
-    max-height: 1000px;
-    opacity: 1;
-}
-
-.collapsible-content.collapsed {
     max-height: 0;
     opacity: 0;
     margin: 0;
     padding: 0;
+}
+
+.collapsible-content.expanded {
+    max-height: 1000px;
+    opacity: 1;
+    margin: initial;
+    padding: initial;
 }
 
 /* Performance Section Styles */
@@ -352,13 +354,13 @@ li {
     position: fixed;
     top: 0;
     left: 0;
-    width: 280px;
+    width: 200px;
     height: 100vh;
     background: rgba(0, 0, 0, 0.95);
     backdrop-filter: blur(15px);
     z-index: 100;
-    padding: 2em 0;
-    transform: translateX(-240px);
+    padding: 1.5em 0;
+    transform: translateX(-160px);
     transition: transform 0.3s ease;
     border-right: 2px solid rgba(0, 255, 255, 0.3);
     box-shadow: 2px 0 20px rgba(0, 255, 255, 0.1);
@@ -373,9 +375,9 @@ li {
 .nav-header {
     color: #0ff;
     text-align: center;
-    font-size: 1.2em;
+    font-size: 1em;
     font-weight: bold;
-    margin-bottom: 1.5em;
+    margin-bottom: 1em;
     padding: 0 1em;
     text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
 }
@@ -393,7 +395,7 @@ li {
 .nav-link {
     display: flex;
     align-items: center;
-    padding: 1em 1.5em;
+    padding: 0.8em 1em;
     color: #fff;
     text-decoration: none;
     transition: all 0.3s ease;
@@ -440,14 +442,14 @@ li {
 
 .nav-number {
     display: inline-block;
-    width: 2.2em;
-    height: 2.2em;
+    width: 1.8em;
+    height: 1.8em;
     background: rgba(255, 255, 255, 0.1);
     border-radius: 50%;
     text-align: center;
-    line-height: 2.2em;
-    margin-right: 1em;
-    font-size: 0.9em;
+    line-height: 1.8em;
+    margin-right: 0.8em;
+    font-size: 0.8em;
     transition: all 0.3s ease;
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
@@ -467,7 +469,7 @@ li {
 }
 
 .nav-title {
-    font-size: 0.95em;
+    font-size: 0.85em;
     flex: 1;
     font-weight: 500;
 }
@@ -475,9 +477,9 @@ li {
 .nav-toggle {
     position: absolute;
     top: 50%;
-    right: -45px;
+    right: -35px;
     transform: translateY(-50%);
-    width: 45px;
+    width: 35px;
     height: 45px;
     background: rgba(0, 0, 0, 0.9);
     border: 2px solid rgba(0, 255, 255, 0.3);
@@ -538,8 +540,8 @@ li {
     
     /* Mobile navigation adjustments */
     .nav-sidebar {
-        width: 250px;
-        transform: translateX(-210px);
+        width: 180px;
+        transform: translateX(-145px);
         font-size: 0.9em;
     }
     
