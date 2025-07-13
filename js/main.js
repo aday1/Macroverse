@@ -763,6 +763,24 @@ console.log('Mobile detected:', mobileDetected); // Debug logging
 // Multiple detection methods for scene changes
 let lastActiveSection = '';
 
+// Function to update active navigation state
+function updateActiveNav(activeSection) {
+    const navLinks = document.querySelectorAll('.nav-link');
+    navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.dataset.section === activeSection) {
+            link.classList.add('active');
+        }
+    });
+}
+
+// Update navigation state based on scroll position
+function updateNavigationFromScroll(sectionName) {
+    if (sectionName && sectionName !== lastActiveSection) {
+        updateActiveNav(sectionName);
+    }
+}
+
 // Intersection Observer
 const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -773,6 +791,7 @@ const observer = new IntersectionObserver((entries) => {
                 console.log('Changing scene to:', themeName); // Debug logging
                 setScene(sectionThemes[themeName]);
                 lastActiveSection = themeName;
+                updateNavigationFromScroll(themeName);
             }
         }
     });
@@ -817,6 +836,7 @@ const handleScroll = () => {
                     console.log('Scroll changing scene to:', themeName); // Debug logging
                     setScene(sectionThemes[themeName]);
                     lastActiveSection = themeName;
+                    updateNavigationFromScroll(themeName);
                 }
             }
         });
@@ -842,6 +862,67 @@ if (mobileDetected) {
 setTimeout(() => {
     handleScroll();
 }, 1000);
+
+// Navigation functionality
+const navLinks = document.querySelectorAll('.nav-link');
+const navToggle = document.getElementById('nav-toggle');
+const navSidebar = document.getElementById('navigation-sidebar');
+
+// Handle navigation clicks
+navLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const sectionName = link.dataset.section;
+        const targetSection = document.getElementById(sectionName);
+        
+        console.log('Navigation clicked:', sectionName); // Debug
+        
+        if (targetSection && sectionThemes[sectionName]) {
+            // Immediately change the scene
+            setScene(sectionThemes[sectionName]);
+            lastActiveSection = sectionName;
+            
+            // Update navigation state
+            updateActiveNav(sectionName);
+            
+            // Add visual feedback for scene change
+            const canvas = document.querySelector('#bg');
+            canvas.style.transition = 'filter 0.3s ease';
+            canvas.style.filter = 'brightness(1.3) contrast(1.1)';
+            setTimeout(() => {
+                canvas.style.filter = 'brightness(1) contrast(1)';
+            }, 300);
+            
+            // Scroll to the section with smooth behavior
+            targetSection.scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'center'
+            });
+            
+            // Close sidebar on mobile after click
+            if (mobileDetected) {
+                navSidebar.classList.remove('open');
+            }
+            
+            console.log('Scene changed to:', sectionName); // Debug
+        }
+    });
+});
+
+// Toggle navigation sidebar
+navToggle.addEventListener('click', () => {
+    navSidebar.classList.toggle('open');
+});
+
+// Close sidebar when clicking outside on mobile
+document.addEventListener('click', (e) => {
+    if (mobileDetected && 
+        !navSidebar.contains(e.target) && 
+        !navToggle.contains(e.target) &&
+        navSidebar.classList.contains('open')) {
+        navSidebar.classList.remove('open');
+    }
+});
 
 // Additional touch event handling for mobile
 if (mobileDetected) {
@@ -875,6 +956,15 @@ function animate() {
     controls.update();
     renderer.render(scene, camera);
 }
+
+// Wait for DOM to be fully loaded before setting up navigation
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize navigation after DOM is loaded
+    setTimeout(() => {
+        updateActiveNav('energy');
+        console.log('Navigation initialized');
+    }, 100);
+});
 
 // Initial scene
 setScene(sectionThemes['energy']);
