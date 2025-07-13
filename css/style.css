@@ -639,28 +639,7 @@ li {
     box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
 }
 
-/* Right Side Main Navbar with Timeline */
-.main-navbar {
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: 280px;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.95);
-    backdrop-filter: blur(15px);
-    z-index: 140;
-    padding: 1em 0;
-    transform: translateX(240px);
-    transition: transform 0.3s ease;
-    border-left: 2px solid rgba(0, 255, 255, 0.3);
-    box-shadow: -2px 0 20px rgba(0, 255, 255, 0.1);
-}
-
-.main-navbar:hover,
-.main-navbar.open {
-    transform: translateX(0);
-    box-shadow: -2px 0 30px rgba(0, 255, 255, 0.2);
-}
+/* Legacy navbar styles - these are overridden by bottom navbar below */
 
 .navbar-header {
     color: #0ff;
@@ -752,7 +731,7 @@ li {
     pointer-events: none;
 }
 
-/* Bottom center horizontal navbar */
+/* Bottom center horizontal navbar - MAIN ACTIVE STYLES */
 .main-navbar {
     position: fixed;
     left: 50%;
