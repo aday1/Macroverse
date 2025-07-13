@@ -1777,8 +1777,9 @@ function highlightCurrentSectionTitle(sectionName) {
 
 // Update navigation state based on scroll position
 function updateNavigationFromScroll(sectionName) {
-    if (sectionName && sectionName !== lastActiveSection) {
+    if (sectionName) {
         updateActiveNav(sectionName);
+        console.log('Updated navigation highlighting for:', sectionName);
     }
 }
 
@@ -1796,8 +1797,8 @@ const observer = new IntersectionObserver((entries) => {
             if (entry.intersectionRatio > threshold && sectionThemes[themeName] && themeName !== lastActiveSection) {
                 console.log('Changing scene to:', themeName);
                 setScene(sectionThemes[themeName], themeName);
-                lastActiveSection = themeName;
                 updateNavigationFromScroll(themeName);
+                lastActiveSection = themeName;
             }
         }
     });
@@ -1827,8 +1828,8 @@ const handleScroll = () => {
             if (lastActiveSection !== 'intro') {
                 console.log('At top - switching to intro scene');
                 setScene(sectionThemes['intro'], 'intro');
-                lastActiveSection = 'intro';
                 updateNavigationFromScroll('intro');
+                lastActiveSection = 'intro';
             }
             return;
         }
@@ -1864,8 +1865,8 @@ const handleScroll = () => {
             if (sectionThemes[themeName] && themeName !== lastActiveSection) {
                 console.log('Scroll changing scene to:', themeName);
                 setScene(sectionThemes[themeName], themeName);
-                lastActiveSection = themeName;
                 updateNavigationFromScroll(themeName);
+                lastActiveSection = themeName;
             }
         }
     }, throttleTime);
