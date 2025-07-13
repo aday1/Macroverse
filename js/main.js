@@ -2075,6 +2075,9 @@ function initializeScene() {
     // Show scene title indicator immediately for intro
     updateSceneTitle('intro');
     
+    // Initialize scroll progress indicator
+    updateScrollProgress();
+    
     // Remove loading screen and fade in the scene more quickly
     setTimeout(() => {
         const loadingScreen = document.getElementById('loading-screen');
