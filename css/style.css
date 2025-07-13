@@ -387,21 +387,21 @@ li {
     margin-bottom: 0.5em;
 }
 
-/* Navigation Sidebar - Right Side */
+/* Cosmic Timeline Sidebar - Left Side */
 .nav-sidebar {
     position: fixed;
     top: 0;
-    right: 0;
-    width: 200px;
+    left: 0;
+    width: 280px;
     height: 100vh;
     background: rgba(0, 0, 0, 0.95);
     backdrop-filter: blur(15px);
     z-index: 150;
     padding: 1.5em 0;
-    transform: translateX(160px);
+    transform: translateX(-240px);
     transition: transform 0.3s ease;
-    border-left: 2px solid rgba(0, 255, 255, 0.3);
-    box-shadow: -2px 0 20px rgba(0, 255, 255, 0.1);
+    border-right: 2px solid rgba(0, 255, 255, 0.3);
+    box-shadow: 2px 0 20px rgba(0, 255, 255, 0.1);
 }
 
 .nav-sidebar:hover,
