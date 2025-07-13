@@ -1710,6 +1710,35 @@ let lastActiveSection = '';
 let lastSceneChangeTime = 0;
 const SCENE_CHANGE_DEBOUNCE = 400; // Reduced from 800ms to 400ms for snappier response
 
+// Function to update scroll progress indicator
+function updateScrollProgress() {
+    const scrollProgress = document.getElementById('scroll-progress-bar');
+    const scrollIndicator = document.getElementById('scroll-progress-indicator');
+    
+    if (!scrollProgress || !scrollIndicator) return;
+    
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const scrollPercentage = Math.min(Math.max(scrollTop / documentHeight, 0), 1);
+    
+    // Update progress bar height
+    scrollProgress.style.height = (scrollPercentage * 100) + '%';
+    
+    // Update indicator position
+    const containerHeight = document.getElementById('scroll-progress-container').offsetHeight;
+    const indicatorPosition = scrollPercentage * (containerHeight - 16); // 16px is indicator height
+    scrollIndicator.style.top = indicatorPosition + 'px';
+    
+    // Change indicator color based on progress
+    if (scrollPercentage < 0.3) {
+        scrollIndicator.style.background = '#ff0080'; // Pink for beginning
+    } else if (scrollPercentage < 0.7) {
+        scrollIndicator.style.background = '#0ff'; // Cyan for middle
+    } else {
+        scrollIndicator.style.background = '#80ff00'; // Green for end
+    }
+}
+
 // Function to update scene title indicator
 function updateSceneTitle(sectionName) {
     const indicator = document.getElementById('scene-title-indicator');
@@ -1829,6 +1858,9 @@ const handleScroll = () => {
     if (scrollTimeout) {
         clearTimeout(scrollTimeout);
     }
+    
+    // Update scroll progress immediately for smooth animation
+    updateScrollProgress();
     
     const throttleTime = mobileDetected ? 50 : 100;
     
