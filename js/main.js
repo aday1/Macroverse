@@ -43,9 +43,17 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
         video.addEventListener('canplaythrough', hideLoadingScreen);
         video.addEventListener('loadeddata', hideLoadingScreen);
-        // Fallback timeout
-        setTimeout(hideLoadingScreen, 3000);
+        // Fallback timeout - ensure loading screen disappears
+        setTimeout(hideLoadingScreen, 2000);
     }
+    
+    // Force loading screen to hide if it takes too long
+    setTimeout(() => {
+        if (loadingScreen && !loadingScreen.classList.contains('hidden')) {
+            console.log('Forcing loading screen to hide after 4 seconds');
+            hideLoadingScreen();
+        }
+    }, 4000);
 });
 
 // Slow down header video with optimized atmospheric speed
