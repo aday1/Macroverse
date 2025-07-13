@@ -1501,28 +1501,28 @@ function setScene(themeFunction, forceChange = false) {
     const overlay = createFadeOverlay();
     const canvas = document.querySelector('#bg');
     
-    // Much snappier fade transition - reduced from 800ms to 300ms total
-    overlay.style.transition = 'opacity 0.15s ease-out';
-    canvas.style.transition = 'filter 0.15s ease-out, opacity 0.15s ease-out';
+    // Smoother fade transition - increased duration and changed easing
+    overlay.style.transition = 'opacity 0.4s ease-in-out';
+    canvas.style.transition = 'filter 0.4s ease-in-out, opacity 0.4s ease-in-out';
     
     overlay.style.opacity = '1';
     canvas.style.filter = 'blur(2px) brightness(0.4)';
     canvas.style.opacity = '0.3';
     
     setTimeout(() => {
-        // Change the scene during quick fade
+        // Change the scene during fade
         if (currentSceneObject) {
             scene.remove(currentSceneObject);
         }
         currentSceneObject = themeFunction();
         scene.add(currentSceneObject);
         
-        console.log('Scene changed with snappy fade transition');
+        console.log('Scene changed with smooth fade transition');
         
-        // Quick fade back in
+        // Smooth fade back in
         setTimeout(() => {
-            overlay.style.transition = 'opacity 0.2s ease-in';
-            canvas.style.transition = 'filter 0.2s ease-in, opacity 0.2s ease-in';
+            overlay.style.transition = 'opacity 0.5s ease-in-out';
+            canvas.style.transition = 'filter 0.5s ease-in-out, opacity 0.5s ease-in-out';
             
             overlay.style.opacity = '0';
             canvas.style.filter = 'blur(0px) brightness(1)';
@@ -1530,9 +1530,9 @@ function setScene(themeFunction, forceChange = false) {
             
             setTimeout(() => {
                 isTransitioning = false;
-            }, 200);
-        }, 50);
-    }, 150); // Much faster peak transition
+            }, 500);
+        }, 100);
+    }, 400); // Longer peak transition for smoother feel
 }
 
 const sections = document.querySelectorAll('section');
