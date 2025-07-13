@@ -1828,26 +1828,27 @@ function updateNavigationFromScroll(sectionName) {
     }
 }
 
-// Enhanced intersection observer with consistent thresholds
+// Robust intersection observer with proper debouncing
 const observer = new IntersectionObserver((entries) => {
+    // Debounce immediately to prevent rapid firing
+    const now = Date.now();
+    if (now - lastSceneChangeTime < 1500) return; // Increased to 1.5 seconds
+    
     let bestEntry = null;
     let bestRatio = 0;
     
     // Find the entry with the highest intersection ratio
     entries.forEach(entry => {
-        if (entry.isIntersecting && entry.intersectionRatio > bestRatio) {
+        // Only consider entries that are significantly visible
+        if (entry.isIntersecting && entry.intersectionRatio > 0.6 && entry.intersectionRatio > bestRatio) {
             bestRatio = entry.intersectionRatio;
             bestEntry = entry;
         }
     });
     
-    // Only change scene if we have a clear winner with sufficient visibility
-    if (bestEntry && bestRatio > 0.4) {
+    // Only change scene if we have a very clear winner
+    if (bestEntry && bestRatio > 0.6) {
         const themeName = bestEntry.target.id;
-        
-        // Add debouncing to prevent rapid changes
-        const now = Date.now();
-        if (now - lastSceneChangeTime < 1000) return; // Wait 1 second between changes
         
         if (sectionThemes[themeName] && themeName !== lastActiveSection) {
             console.log('IntersectionObserver changing scene to:', themeName, 'Ratio:', bestRatio);
@@ -1858,17 +1859,17 @@ const observer = new IntersectionObserver((entries) => {
         }
     }
 }, { 
-    threshold: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8],  // More granular thresholds
-    rootMargin: '-10% 0px -10% 0px'  // Consistent margins
+    threshold: [0.6, 0.7, 0.8],  // Much higher thresholds - only very visible sections
+    rootMargin: '-20% 0px -20% 0px'  // Larger margins - section must be well within viewport
 });
 
-// Simplified scroll handler - only for progress bar updates
+// Enhanced scroll handler with backup section detection
 let scrollTimeout;
 const handleScroll = () => {
     // Update scroll progress immediately for smooth animation
     updateScrollProgress();
     
-    // Optional: Handle special intro section at very top
+    // Clear previous timeout
     if (scrollTimeout) {
         clearTimeout(scrollTimeout);
     }
@@ -1877,7 +1878,7 @@ const handleScroll = () => {
         const scrollPosition = window.scrollY;
         const windowHeight = window.innerHeight;
         
-        // Only handle intro section when at the very top
+        // Handle intro section when at the very top
         if (scrollPosition < windowHeight * 0.1) {
             if (lastActiveSection !== 'intro') {
                 console.log('At very top - switching to intro scene');
@@ -1886,8 +1887,43 @@ const handleScroll = () => {
                 lastActiveSection = 'intro';
                 lastSceneChangeTime = Date.now();
             }
+            return;
         }
-    }, 100);
+        
+        // Backup detection: Find which section is most centered in viewport
+        const now = Date.now();
+        if (now - lastSceneChangeTime < 2000) return; // 2 second debounce for scroll-based changes
+        
+        let closestSection = null;
+        let closestDistance = Infinity;
+        
+        sections.forEach(section => {
+            const rect = section.getBoundingClientRect();
+            const sectionCenter = rect.top + rect.height / 2;
+            const viewportCenter = windowHeight / 2;
+            const distance = Math.abs(sectionCenter - viewportCenter);
+            
+            // Only consider sections that are significantly visible
+            const visibleHeight = Math.min(rect.bottom, windowHeight) - Math.max(rect.top, 0);
+            const visibilityRatio = visibleHeight / rect.height;
+            
+            if (visibilityRatio > 0.5 && distance < closestDistance) {
+                closestDistance = distance;
+                closestSection = section;
+            }
+        });
+        
+        if (closestSection && closestSection.id !== lastActiveSection) {
+            const themeName = closestSection.id;
+            if (sectionThemes[themeName]) {
+                console.log('Scroll backup changing scene to:', themeName);
+                setScene(sectionThemes[themeName], themeName);
+                updateNavigationFromScroll(themeName);
+                lastActiveSection = themeName;
+                lastSceneChangeTime = now;
+            }
+        }
+    }, 200); // Increased timeout for more stability
 };
 
 // Use intersection observer as primary method for all devices
