@@ -1905,6 +1905,9 @@ function updateActiveNav(activeSection) {
         }
     });
     
+    // Also update the right navbar
+    updateActiveNavbar(activeSection);
+    
     // Highlight the current section title
     highlightCurrentSectionTitle(activeSection);
     
@@ -2119,6 +2122,74 @@ document.addEventListener('click', (e) => {
         navSidebar.classList.remove('open');
     }
 });
+
+// Right navbar functionality
+const navbarLinks = document.querySelectorAll('.navbar-link');
+const navbarToggle = document.getElementById('navbar-toggle');
+const mainNavbar = document.getElementById('main-navbar');
+
+// Handle right navbar clicks
+navbarLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const sectionName = link.dataset.section;
+        const targetSection = document.getElementById(sectionName);
+        
+        console.log('Right navbar clicked:', sectionName);
+        
+        if (targetSection && sectionThemes[sectionName]) {
+            // Force immediate scene change with fade transition for navigation
+            setScene(sectionThemes[sectionName], sectionName, true);
+            lastActiveSection = sectionName;
+            
+            // Update navigation state for both navbars
+            updateActiveNav(sectionName);
+            updateActiveNavbar(sectionName);
+            
+            // Smooth scroll to section with small delay for transition
+            setTimeout(() => {
+                targetSection.scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+            }, 150);
+            
+            // Close navbar on mobile after click
+            if (mobileDetected) {
+                mainNavbar.classList.remove('open');
+            }
+            
+            // Close navbar on desktop after click too
+            mainNavbar.classList.remove('open');
+            
+            console.log('Scene changed to:', sectionName); // Debug
+        }
+    });
+});
+
+// Toggle right navbar
+navbarToggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    mainNavbar.classList.toggle('open');
+    console.log('Right navbar toggle clicked, open:', mainNavbar.classList.contains('open'));
+});
+
+// Close right navbar when clicking outside
+document.addEventListener('click', (e) => {
+    if (!mainNavbar.contains(e.target) && !navbarToggle.contains(e.target)) {
+        mainNavbar.classList.remove('open');
+    }
+});
+
+// Function to update active state for right navbar
+function updateActiveNavbar(sectionName) {
+    navbarLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.dataset.section === sectionName) {
+            link.classList.add('active');
+        }
+    });
+}
 
 // Additional touch event handling for mobile
 if (mobileDetected) {
