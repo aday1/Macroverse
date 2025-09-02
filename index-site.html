@@ -112,6 +112,13 @@ Tickets are available from the Melbourne Fringe website. This project has been F
     
     <script>
         // Immediate loading screen removal
+        (function() {
+            const loadingScreen = document.getElementById('loading-screen');
+            if (loadingScreen) {
+                loadingScreen.style.display = 'none';
+            }
+        })();
+        
         document.addEventListener('DOMContentLoaded', function() {
             const loadingScreen = document.getElementById('loading-screen');
             if (loadingScreen) {
@@ -133,14 +140,7 @@ Tickets are available from the Melbourne Fringe website. This project has been F
             if (loadingScreen) {
                 loadingScreen.style.display = 'none';
             }
-        }, 500);
-        
-        setTimeout(function() {
-            const loadingScreen = document.getElementById('loading-screen');
-            if (loadingScreen) {
-                loadingScreen.style.display = 'none';
-            }
-        }, 2000);
+        }, 100);
     </script>
 </body>
 </html>
