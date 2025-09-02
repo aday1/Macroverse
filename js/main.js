@@ -33,23 +33,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // Collapsible content functionality
-    document.querySelectorAll('.collapse-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const contentDiv = this.parentElement.nextElementSibling;
-            const icon = this.querySelector('.collapse-icon');
-            
-            if (contentDiv.classList.contains('expanded')) {
-                contentDiv.classList.remove('expanded');
-                icon.textContent = '+';
-                this.setAttribute('aria-expanded', 'false');
-            } else {
-                contentDiv.classList.add('expanded');
-                icon.textContent = '−';
-                this.setAttribute('aria-expanded', 'true');
-            }
-        });
-    });
+    // Story navigation functionality
+    initializeStoryNavigation();
 });
 
 const scene = new THREE.Scene();
@@ -1049,6 +1034,42 @@ function animate() {
     }
     controls.update();
     renderer.render(scene, camera);
+}
+
+// Story Navigation Functions
+function initializeStoryNavigation() {
+    const storyNavLinks = document.querySelectorAll('.nav-link');
+    const storySections = document.querySelectorAll('.story-section');
+    
+    // Show first story by default
+    showStory('energy');
+    
+    storyNavLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const sectionId = link.getAttribute('data-section');
+            showStory(sectionId);
+            updateActiveNav(sectionId);
+        });
+    });
+}
+
+function showStory(sectionId) {
+    // Hide all story sections
+    document.querySelectorAll('.story-section').forEach(section => {
+        section.classList.remove('active');
+    });
+    
+    // Show the selected story section
+    const targetSection = document.getElementById(sectionId);
+    if (targetSection) {
+        targetSection.classList.add('active');
+    }
+    
+    // Update the background scene
+    if (sectionThemes[sectionId]) {
+        setScene(sectionThemes[sectionId]);
+    }
 }
 
 // Initialization function

@@ -85,12 +85,102 @@ body {
 }
 
 /* Hide text content when toggled */
-body.text-hidden .content-box,
-body.text-hidden .nav-sidebar,
+body.text-hidden .story-content,
 body.text-hidden .event-footer {
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.3s ease;
+}
+
+/* Story Section Layout */
+.story-section {
+    display: none;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2em;
+}
+
+.story-section.active {
+    display: flex;
+}
+
+.story-content {
+    max-width: 800px;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 3em;
+    border-radius: 15px;
+    border: 1px solid rgba(0, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+.story-title {
+    font-family: 'Orbitron', 'JetBrains Mono', monospace;
+    font-size: 2em;
+    color: #0ff;
+    margin-bottom: 1.5em;
+    text-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+}
+
+.story-quote {
+    border-left: 3px solid var(--accent-color, #0ff);
+    padding-left: 1.5em;
+    margin: 0;
+    font-style: italic;
+    font-size: 1.2em;
+    line-height: 1.6;
+}
+
+.story-quote p {
+    margin-bottom: 1em;
+}
+
+.story-quote footer {
+    font-style: normal;
+    color: #aaa;
+    font-size: 0.9em;
+    margin-top: 1em;
+}
+
+/* Minimal navigation when text is hidden */
+body.text-hidden .nav-sidebar {
+    background: transparent;
+    border: none;
+    transform: translateX(0);
+}
+
+body.text-hidden .nav-header {
+    display: none;
+}
+
+body.text-hidden .nav-link {
+    background: transparent;
+    border: none;
+    padding: 0.3em;
+    margin: 0.2em 0;
+}
+
+body.text-hidden .nav-link::before {
+    display: none;
+}
+
+body.text-hidden .nav-number {
+    background: rgba(0, 255, 255, 0.3);
+    border: 1px solid rgba(0, 255, 255, 0.5);
+    font-size: 0.8em;
+    width: 1.5em;
+    height: 1.5em;
+    line-height: 1.5em;
+}
+
+body.text-hidden .nav-title {
+    display: none;
+}
+
+body.text-hidden .nav-toggle {
+    display: none;
 }
 
 /* Event Footer */
@@ -128,9 +218,10 @@ body.text-hidden .event-footer {
 main {
     position: relative;
     z-index: 1;
-    padding: 2em;
-    max-width: 800px;
-    margin: 0 auto;
+    padding: 0;
+    max-width: none;
+    margin: 0;
+    min-height: 100vh;
 }
 
 h1 {
@@ -511,17 +602,18 @@ html {
 }
 
 @media (max-width: 480px) {
-    main {
-        padding: 0.5em;
-        padding-left: 2.5em; /* Add extra left padding for nav on small screens */
+    .story-content {
+        padding: 2em 1.5em;
+        margin: 1em;
     }
     
-    .content-box {
-        padding: 0.8em;
+    .story-title {
+        font-size: 1.5em;
     }
     
-    .section-title {
-        font-size: 1.4em;
+    .story-quote {
+        font-size: 1.1em;
+        padding-left: 1em;
     }
     
     .text-toggle-btn {
