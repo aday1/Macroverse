@@ -1,29 +1,38 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
-// Import Three.js
-import * as THREE from 'three';
-
 console.log('Three.js imported:', THREE);
 
 // Handle loading screen
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM Content Loaded - Initializing Macroverse');
     
-    // Ensure loading screen is hidden immediately
+    // Show loading screen initially, hide after Three.js loads
     const loadingScreen = document.getElementById('loading-screen');
     if (loadingScreen) {
-        loadingScreen.style.display = 'none';
-        console.log('Loading screen hidden by main.js');
+        console.log('Loading screen found, showing it initially');
+        loadingScreen.style.display = 'flex';
     }
     
     // Initialize Three.js in parallel
     try {
         initializeThreeJS();
         console.log('Three.js initialization started');
+        
+        // Hide loading screen after a short delay to ensure Three.js has started
+        setTimeout(() => {
+            if (loadingScreen) {
+                loadingScreen.style.display = 'none';
+                console.log('Loading screen hidden after Three.js initialization');
+            }
+        }, 2000);
+        
     } catch (error) {
         console.error('Error initializing Three.js:', error);
-        // Continue without Three.js background
+        // Hide loading screen even if Three.js fails
+        if (loadingScreen) {
+            loadingScreen.style.display = 'none';
+        }
     }
 });
 
@@ -37,10 +46,12 @@ function initializeThreeJS() {
     }
 
     try {
+        console.log('Creating Three.js scene...');
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         camera.position.z = 25;
 
+        console.log('Creating WebGL renderer...');
         const renderer = new THREE.WebGLRenderer({
             canvas: canvas,
             alpha: true,
@@ -50,7 +61,7 @@ function initializeThreeJS() {
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
         // Load and create shader material
-        const loader = new THREE.FileLoader();
+        console.log('Creating shader material...');
         
         // Create energy field shader
         const vertexShader = `
@@ -105,6 +116,7 @@ function initializeThreeJS() {
             blending: THREE.AdditiveBlending
         });
         
+        console.log('Creating shader mesh...');
         // Create background plane for shader
         const shaderGeometry = new THREE.PlaneGeometry(50, 50);
         const shaderMesh = new THREE.Mesh(shaderGeometry, shaderMaterial);
@@ -203,11 +215,14 @@ function initializeThreeJS() {
         window.addEventListener('resize', handleResize);
         
         // Start animation
+        console.log('Starting animation loop...');
         animate();
         console.log('Three.js animation started successfully');
         
     } catch (error) {
         console.error('Three.js initialization failed:', error);
+        console.error('Error details:', error.message);
+        console.error('Stack trace:', error.stack);
         // Hide canvas if Three.js fails
         if (canvas) {
             canvas.style.display = 'none';
