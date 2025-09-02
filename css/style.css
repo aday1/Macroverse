@@ -59,6 +59,149 @@ body {
         rgba(4, 8, 15, 1) 100%);
 }
 
+/* Cosmic Background System */
+.cosmic-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.stars-layer {
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    background-image: 
+        radial-gradient(2px 2px at 20px 30px, #4fc3f7, transparent),
+        radial-gradient(2px 2px at 40px 70px, rgba(255, 255, 255, 0.8), transparent),
+        radial-gradient(1px 1px at 90px 40px, #4fc3f7, transparent),
+        radial-gradient(1px 1px at 130px 80px, rgba(255, 255, 255, 0.6), transparent),
+        radial-gradient(2px 2px at 160px 30px, #4fc3f7, transparent);
+    background-repeat: repeat;
+    background-size: 200px 200px;
+    animation: stars-twinkle 20s linear infinite;
+}
+
+.nebula-layer {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(ellipse at 20% 80%, 
+            rgba(79, 195, 247, 0.1) 0%, 
+            rgba(79, 195, 247, 0.05) 40%, 
+            transparent 70%),
+        radial-gradient(ellipse at 80% 20%, 
+            rgba(63, 81, 181, 0.08) 0%, 
+            rgba(63, 81, 181, 0.03) 50%, 
+            transparent 70%),
+        radial-gradient(ellipse at 40% 40%, 
+            rgba(156, 39, 176, 0.06) 0%, 
+            rgba(156, 39, 176, 0.02) 60%, 
+            transparent 80%);
+    animation: nebula-drift 30s ease-in-out infinite alternate;
+}
+
+.planet-layer {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.planet {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, rgba(79, 195, 247, 0.3), rgba(79, 195, 247, 0.1));
+    animation: planet-orbit 40s linear infinite;
+}
+
+.planet-1 {
+    width: 120px;
+    height: 120px;
+    top: 20%;
+    left: 10%;
+    background: radial-gradient(circle at 30% 30%, 
+        rgba(79, 195, 247, 0.4) 0%, 
+        rgba(79, 195, 247, 0.2) 50%, 
+        rgba(79, 195, 247, 0.05) 100%);
+    box-shadow: 0 0 50px rgba(79, 195, 247, 0.2);
+    animation-duration: 50s;
+}
+
+.planet-2 {
+    width: 80px;
+    height: 80px;
+    top: 60%;
+    right: 15%;
+    background: radial-gradient(circle at 25% 25%, 
+        rgba(63, 81, 181, 0.3) 0%, 
+        rgba(63, 81, 181, 0.15) 50%, 
+        rgba(63, 81, 181, 0.03) 100%);
+    box-shadow: 0 0 30px rgba(63, 81, 181, 0.15);
+    animation-duration: 35s;
+    animation-direction: reverse;
+}
+
+.planet-3 {
+    width: 60px;
+    height: 60px;
+    top: 40%;
+    left: 70%;
+    background: radial-gradient(circle at 35% 35%, 
+        rgba(156, 39, 176, 0.25) 0%, 
+        rgba(156, 39, 176, 0.1) 50%, 
+        rgba(156, 39, 176, 0.02) 100%);
+    box-shadow: 0 0 25px rgba(156, 39, 176, 0.1);
+    animation-duration: 45s;
+}
+
+.energy-field {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: 
+        conic-gradient(from 0deg at 50% 50%, 
+            transparent 0deg,
+            rgba(79, 195, 247, 0.03) 60deg,
+            transparent 120deg,
+            rgba(79, 195, 247, 0.05) 180deg,
+            transparent 240deg,
+            rgba(79, 195, 247, 0.02) 300deg,
+            transparent 360deg);
+    animation: energy-rotation 60s linear infinite;
+}
+
+/* Animations */
+@keyframes stars-twinkle {
+    0% { transform: translateY(0px) rotate(0deg); opacity: 1; }
+    50% { opacity: 0.8; }
+    100% { transform: translateY(-200px) rotate(360deg); opacity: 1; }
+}
+
+@keyframes nebula-drift {
+    0% { 
+        transform: translateX(-20px) translateY(10px); 
+        filter: hue-rotate(0deg);
+    }
+    100% { 
+        transform: translateX(20px) translateY(-10px); 
+        filter: hue-rotate(30deg);
+    }
+}
+
+@keyframes planet-orbit {
+    0% { transform: rotate(0deg) translateY(-20px) rotate(0deg); }
+    100% { transform: rotate(360deg) translateY(-20px) rotate(-360deg); }
+}
+
+@keyframes energy-rotation {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
 #vignette {
     position: fixed;
     top: 0;
