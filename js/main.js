@@ -6,14 +6,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const loadingScreen = document.getElementById('loading-screen');
     
     const hideLoadingScreen = () => {
-        loadingScreen.classList.add('hidden');
-        setTimeout(() => {
-            loadingScreen.style.display = 'none';
-        }, 500);
+        if (loadingScreen) {
+            loadingScreen.classList.add('hidden');
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+            }, 500);
+        }
     };
     
     // Hide loading screen after a short delay
-    setTimeout(hideLoadingScreen, 1000);
+    setTimeout(hideLoadingScreen, 800);
     
     // Text toggle functionality
     const textToggleBtn = document.getElementById('text-toggle');
@@ -30,6 +32,24 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+    
+    // Collapsible content functionality
+    document.querySelectorAll('.collapse-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const contentDiv = this.parentElement.nextElementSibling;
+            const icon = this.querySelector('.collapse-icon');
+            
+            if (contentDiv.classList.contains('expanded')) {
+                contentDiv.classList.remove('expanded');
+                icon.textContent = '+';
+                this.setAttribute('aria-expanded', 'false');
+            } else {
+                contentDiv.classList.add('expanded');
+                icon.textContent = '−';
+                this.setAttribute('aria-expanded', 'true');
+            }
+        });
+    });
 });
 
 const scene = new THREE.Scene();
@@ -1031,36 +1051,25 @@ function animate() {
     renderer.render(scene, camera);
 }
 
-// Wait for DOM to be fully loaded before setting up navigation
-document.addEventListener('DOMContentLoaded', () => {
+// Initialization function
+function initializeApp() {
+    // Initial scene
+    setScene(sectionThemes['energy']);
+    animate();
+    
     // Initialize navigation after DOM is loaded
     setTimeout(() => {
         updateActiveNav('energy');
         console.log('Navigation initialized');
     }, 100);
-    
-    // Collapsible content functionality
-    document.querySelectorAll('.collapse-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const contentDiv = this.parentElement.nextElementSibling;
-            const icon = this.querySelector('.collapse-icon');
-            
-            if (contentDiv.classList.contains('expanded')) {
-                contentDiv.classList.remove('expanded');
-                icon.textContent = '+';
-                this.setAttribute('aria-expanded', 'false');
-            } else {
-                contentDiv.classList.add('expanded');
-                icon.textContent = '−';
-                this.setAttribute('aria-expanded', 'true');
-            }
-        });
-    });
-});
+}
 
-// Initial scene
-setScene(sectionThemes['energy']);
-animate();
+// Start the app when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeApp);
+} else {
+    initializeApp();
+}
 
 window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
