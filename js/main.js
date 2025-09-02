@@ -1,6 +1,11 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
+// Import Three.js
+import * as THREE from 'three';
+
+console.log('Three.js imported:', THREE);
+
 // Handle loading screen
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM Content Loaded - Initializing Macroverse');
@@ -51,7 +56,7 @@ function initializeThreeJS() {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
     // Create animated background particles
-    const particleCount = 100;
+    const particleCount = 150;
     const positions = new Float32Array(particleCount * 3);
     const velocities = new Float32Array(particleCount * 3);
     
@@ -72,23 +77,23 @@ function initializeThreeJS() {
         color: 0x4fc3f7,
         size: 2,
         transparent: true,
-        opacity: 0.6,
+        opacity: 0.8,
         blending: THREE.AdditiveBlending
     });
     
     const particles = new THREE.Points(particleGeometry, particleMaterial);
     scene.add(particles);
     
-    // Add some connecting lines
+    // Add some connecting lines for more visual interest
     const lineGeometry = new THREE.BufferGeometry();
     const linePositions = [];
     const lineMaterial = new THREE.LineBasicMaterial({ 
         color: 0x4fc3f7, 
         transparent: true, 
-        opacity: 0.1 
+        opacity: 0.15 
     });
     
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 30; i++) {
         linePositions.push(
             (Math.random() - 0.5) * 60,
             (Math.random() - 0.5) * 60,
