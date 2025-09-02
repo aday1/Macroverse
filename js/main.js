@@ -9,9 +9,10 @@ console.log('Three.js imported:', THREE);
 // Handle loading screen
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM Content Loaded - Initializing Macroverse');
-    const loadingScreen = document.getElementById('loading-screen');
     
-    const hideLoadingScreen = () => {
+    // Hide loading screen after a shorter delay regardless of Three.js status
+    setTimeout(() => {
+        const loadingScreen = document.getElementById('loading-screen');
         if (loadingScreen) {
             loadingScreen.classList.add('hidden');
             setTimeout(() => {
@@ -19,18 +20,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log('Loading screen hidden');
             }, 500);
         }
-    };
+    }, 800);
     
-    // Initialize Three.js scene first
+    // Initialize Three.js in parallel
     try {
         initializeThreeJS();
-        console.log('Three.js initialized successfully');
-        // Hide loading screen after scene is ready
-        setTimeout(hideLoadingScreen, 1200);
+        console.log('Three.js initialization started');
     } catch (error) {
         console.error('Error initializing Three.js:', error);
-        // Still hide loading screen even if there's an error
-        setTimeout(hideLoadingScreen, 1200);
+        // Continue without Three.js background
     }
 });
 
@@ -42,107 +40,116 @@ function initializeThreeJS() {
         console.error('Canvas element not found');
         return;
     }
-    
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.z = 25;
 
-    const renderer = new THREE.WebGLRenderer({
-        canvas: canvas,
-        alpha: true,
-        antialias: true
-    });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    try {
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 25;
 
-    // Create animated background particles
-    const particleCount = 150;
-    const positions = new Float32Array(particleCount * 3);
-    const velocities = new Float32Array(particleCount * 3);
-    
-    for (let i = 0; i < particleCount; i++) {
-        positions[i * 3] = (Math.random() - 0.5) * 100;
-        positions[i * 3 + 1] = (Math.random() - 0.5) * 100;
-        positions[i * 3 + 2] = (Math.random() - 0.5) * 100;
-        
-        velocities[i * 3] = (Math.random() - 0.5) * 0.02;
-        velocities[i * 3 + 1] = (Math.random() - 0.5) * 0.02;
-        velocities[i * 3 + 2] = (Math.random() - 0.5) * 0.02;
-    }
-    
-    const particleGeometry = new THREE.BufferGeometry();
-    particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    
-    const particleMaterial = new THREE.PointsMaterial({
-        color: 0x4fc3f7,
-        size: 2,
-        transparent: true,
-        opacity: 0.8,
-        blending: THREE.AdditiveBlending
-    });
-    
-    const particles = new THREE.Points(particleGeometry, particleMaterial);
-    scene.add(particles);
-    
-    // Add some connecting lines for more visual interest
-    const lineGeometry = new THREE.BufferGeometry();
-    const linePositions = [];
-    const lineMaterial = new THREE.LineBasicMaterial({ 
-        color: 0x4fc3f7, 
-        transparent: true, 
-        opacity: 0.15 
-    });
-    
-    for (let i = 0; i < 30; i++) {
-        linePositions.push(
-            (Math.random() - 0.5) * 60,
-            (Math.random() - 0.5) * 60,
-            (Math.random() - 0.5) * 60
-        );
-    }
-    
-    lineGeometry.setAttribute('position', new THREE.Float32BufferAttribute(linePositions, 3));
-    const lines = new THREE.LineSegments(lineGeometry, lineMaterial);
-    scene.add(lines);
-    
-    // Animation loop
-    function animate() {
-        requestAnimationFrame(animate);
-        
-        // Update particles
-        const positions = particles.geometry.attributes.position.array;
-        for (let i = 0; i < particleCount; i++) {
-            positions[i * 3] += velocities[i * 3];
-            positions[i * 3 + 1] += velocities[i * 3 + 1];
-            positions[i * 3 + 2] += velocities[i * 3 + 2];
-            
-            // Wrap around edges
-            if (Math.abs(positions[i * 3]) > 50) velocities[i * 3] *= -1;
-            if (Math.abs(positions[i * 3 + 1]) > 50) velocities[i * 3 + 1] *= -1;
-            if (Math.abs(positions[i * 3 + 2]) > 50) velocities[i * 3 + 2] *= -1;
-        }
-        particles.geometry.attributes.position.needsUpdate = true;
-        
-        // Rotate the scene slightly
-        particles.rotation.y += 0.001;
-        lines.rotation.x += 0.0005;
-        lines.rotation.y += 0.0008;
-        
-        renderer.render(scene, camera);
-    }
-    
-    // Window resize handler
-    const handleResize = () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
+        const renderer = new THREE.WebGLRenderer({
+            canvas: canvas,
+            alpha: true,
+            antialias: true
+        });
         renderer.setSize(window.innerWidth, window.innerHeight);
-    };
-    
-    window.addEventListener('resize', handleResize);
-    
-    // Start animation
-    animate();
-    console.log('Three.js animation started');
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        // Create animated background particles
+        const particleCount = 150;
+        const positions = new Float32Array(particleCount * 3);
+        const velocities = new Float32Array(particleCount * 3);
+        
+        for (let i = 0; i < particleCount; i++) {
+            positions[i * 3] = (Math.random() - 0.5) * 100;
+            positions[i * 3 + 1] = (Math.random() - 0.5) * 100;
+            positions[i * 3 + 2] = (Math.random() - 0.5) * 100;
+            
+            velocities[i * 3] = (Math.random() - 0.5) * 0.02;
+            velocities[i * 3 + 1] = (Math.random() - 0.5) * 0.02;
+            velocities[i * 3 + 2] = (Math.random() - 0.5) * 0.02;
+        }
+        
+        const particleGeometry = new THREE.BufferGeometry();
+        particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        
+        const particleMaterial = new THREE.PointsMaterial({
+            color: 0x4fc3f7,
+            size: 2,
+            transparent: true,
+            opacity: 0.8,
+            blending: THREE.AdditiveBlending
+        });
+        
+        const particles = new THREE.Points(particleGeometry, particleMaterial);
+        scene.add(particles);
+        
+        // Add some connecting lines for more visual interest
+        const lineGeometry = new THREE.BufferGeometry();
+        const linePositions = [];
+        const lineMaterial = new THREE.LineBasicMaterial({ 
+            color: 0x4fc3f7, 
+            transparent: true, 
+            opacity: 0.15 
+        });
+        
+        for (let i = 0; i < 30; i++) {
+            linePositions.push(
+                (Math.random() - 0.5) * 60,
+                (Math.random() - 0.5) * 60,
+                (Math.random() - 0.5) * 60
+            );
+        }
+        
+        lineGeometry.setAttribute('position', new THREE.Float32BufferAttribute(linePositions, 3));
+        const lines = new THREE.LineSegments(lineGeometry, lineMaterial);
+        scene.add(lines);
+        
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            // Update particles
+            const positions = particles.geometry.attributes.position.array;
+            for (let i = 0; i < particleCount; i++) {
+                positions[i * 3] += velocities[i * 3];
+                positions[i * 3 + 1] += velocities[i * 3 + 1];
+                positions[i * 3 + 2] += velocities[i * 3 + 2];
+                
+                // Wrap around edges
+                if (Math.abs(positions[i * 3]) > 50) velocities[i * 3] *= -1;
+                if (Math.abs(positions[i * 3 + 1]) > 50) velocities[i * 3 + 1] *= -1;
+                if (Math.abs(positions[i * 3 + 2]) > 50) velocities[i * 3 + 2] *= -1;
+            }
+            particles.geometry.attributes.position.needsUpdate = true;
+            
+            // Rotate the scene slightly
+            particles.rotation.y += 0.001;
+            lines.rotation.x += 0.0005;
+            lines.rotation.y += 0.0008;
+            
+            renderer.render(scene, camera);
+        }
+        
+        // Window resize handler
+        const handleResize = () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        };
+        
+        window.addEventListener('resize', handleResize);
+        
+        // Start animation
+        animate();
+        console.log('Three.js animation started successfully');
+        
+    } catch (error) {
+        console.error('Three.js initialization failed:', error);
+        // Hide canvas if Three.js fails
+        if (canvas) {
+            canvas.style.display = 'none';
+        }
+    }
 }
 
 // --- Original Scene Creation Functions (kept for compatibility) ---
