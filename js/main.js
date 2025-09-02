@@ -3,6 +3,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 // Handle loading screen
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM Content Loaded - Initializing Macroverse');
     const loadingScreen = document.getElementById('loading-screen');
     
     const hideLoadingScreen = () => {
@@ -10,14 +11,24 @@ document.addEventListener('DOMContentLoaded', () => {
             loadingScreen.classList.add('hidden');
             setTimeout(() => {
                 loadingScreen.style.display = 'none';
+                console.log('Loading screen hidden');
             }, 500);
         }
     };
     
-    // Hide loading screen after a short delay
-    setTimeout(hideLoadingScreen, 800);
+    // Initialize Three.js scene first
+    try {
+        initializeThreeJS();
+        console.log('Three.js initialized successfully');
+        // Hide loading screen after scene is ready
+        setTimeout(hideLoadingScreen, 800);
+    } catch (error) {
+        console.error('Error initializing Three.js:', error);
+        // Still hide loading screen even if there's an error
+        setTimeout(hideLoadingScreen, 800);
+    }
     
-    // Text toggle functionality
+    // Text toggle functionality (only if button exists)
     const textToggleBtn = document.getElementById('text-toggle');
     if (textToggleBtn) {
         textToggleBtn.addEventListener('click', () => {
@@ -37,27 +48,66 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeStoryNavigation();
 });
 
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.z = 20;
+function initializeThreeJS() {
+    console.log('Setting up Three.js scene');
+    
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.z = 20;
 
-const renderer = new THREE.WebGLRenderer({
-    canvas: document.querySelector('#bg'),
-    alpha: true
-});
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(window.devicePixelRatio);
+    const renderer = new THREE.WebGLRenderer({
+        canvas: document.querySelector('#bg'),
+        alpha: true
+    });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
 
-const controls = new OrbitControls(camera, renderer.domElement);
-// Disable controls on mobile for better scroll experience
-const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-if (isMobile) {
-    controls.enabled = false;
+    const controls = new OrbitControls(camera, renderer.domElement);
+    // Disable controls on mobile for better scroll experience
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    if (isMobile) {
+        controls.enabled = false;
+    }
+
+    // Create a simple energy field scene for the background
+    const group = new THREE.Group();
+    const material = new THREE.LineBasicMaterial({ color: 0x4fc3f7, transparent: true, opacity: 0.3 });
+    
+    for (let i = 0; i < 30; i++) {
+        const points = [];
+        const start = new THREE.Vector3((Math.random() - 0.5) * 30, (Math.random() - 0.5) * 30, (Math.random() - 0.5) * 30);
+        points.push(start);
+        for (let j = 0; j < 5; j++) {
+            points.push(start.clone().add(new THREE.Vector3((Math.random() - 0.5) * 5, (Math.random() - 0.5) * 5, (Math.random() - 0.5) * 5)));
+        }
+        const geometry = new THREE.BufferGeometry().setFromPoints(points);
+        const line = new THREE.Line(geometry, material);
+        group.add(line);
+    }
+    
+    scene.add(group);
+    
+    // Animation loop
+    function animate() {
+        requestAnimationFrame(animate);
+        group.rotation.x += 0.001;
+        group.rotation.y += 0.002;
+        controls.update();
+        renderer.render(scene, camera);
+    }
+    
+    // Window resize handler
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+    
+    // Start animation
+    animate();
 }
 
-let currentSceneObject;
-
-// --- Scene Creation Functions ---
+// --- Original Scene Creation Functions (kept for compatibility) ---
 
 function createEnergyField() {
     const group = new THREE.Group();
