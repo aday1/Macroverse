@@ -803,16 +803,20 @@ html {
     border: 2px dashed rgba(255, 255, 255, 0.2);
     border-radius: 8px;
     padding: 2em;
-    text-align: center;
+    text-align: left;
     font-family: 'Space Mono', monospace;
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(255, 255, 255, 0.8);
     margin: 0;
+    line-height: 1.7;
 }
 
 .placeholder-content p {
-    margin: 0.5em 0;
-    font-style: italic;
-    font-size: 1.1em;
+    margin: 1.2em 0;
+    font-style: normal;
+    font-size: 1em;
+    text-align: justify;
+    hyphens: auto;
+    word-break: break-word;
 }
 
 /* Logo Placeholders */
@@ -1035,5 +1039,7 @@ html {
     
     .placeholder-content p {
         font-size: 0.95em;
+        margin: 1em 0;
+        line-height: 1.6;
     }
 }
