@@ -43,29 +43,19 @@
                 <span class="nav-number">6</span>
                 <span class="nav-title">Living</span>
             </a></li>
-            <li><a href="#performance" class="nav-link" data-section="performance">
-                <span class="nav-number">🎭</span>
-                <span class="nav-title">Performance</span>
-            </a></li>
         </ul>
         <button id="nav-toggle" class="nav-toggle">☰</button>
     </nav>
     
     <canvas id="bg"></canvas>
     <div id="vignette"></div>
+    
+    <!-- Text Toggle Button -->
+    <button id="text-toggle" class="text-toggle-btn" title="Toggle text visibility">
+        <span class="toggle-icon">📝</span>
+    </button>
+    
     <main>
-        <header>
-            <video id="header-video" src="https://github.com/aday1/Macroverse/raw/refs/heads/main/samples-rgb.mp4" 
-                   autoplay muted loop playsinline preload="auto"></video>
-            <div id="header-content">
-                <h1>Macroverse</h1>
-                <p>A Microvirtuosity Performance by Nick Wilson A.K.A Reductionist and An AV Collaboration with Aday.</p>
-                <p>
-                    <a href="https://aday.net.au" target="_blank">aday.net.au</a> and 
-                    <a href="https://nickewilson.net/reductionist/" target="_blank">Nick Wilson</a>
-                </p>
-            </div>
-        </header>
 
         <section id="energy">
             <div class="content-box">
@@ -205,52 +195,12 @@
             </div>
         </section>
 
-        <section id="performance" class="performance-section">
-            <div class="content-box">
-                <h2 class="section-title">🎭 Live Performance
-                    <button class="collapse-btn" data-target="performance-content">
-                        <span class="collapse-icon">+</span>
-                    </button>
-                </h2>
-                <div id="performance-content" class="collapsible-content">
-                    <div class="performance-info">
-                        <h3>Experience Macroverse Live</h3>
-                        <p class="performance-description">
-                            Join us for an immersive audiovisual journey through 13.8 billion years of cosmic evolution. 
-                            A live microvirtuosity performance featuring battery powered synthesizers, custom visuals, and the complete 
-                            Macroverse experience in a multi-sensory environment.
-                        </p>
-                        
-                        <div class="performance-details">
-                            <div class="date-info">
-                                <h4>📅 Performance Dates</h4>
-                                <p class="dates">September 29th - October 1st, 2025</p>
-                                <p class="venue">Abbotsford Convent, Melbourne</p>
-                            </div>
-                            
-                            <div class="ticket-info">
-                                <h4>🎫 Tickets & Information</h4>
-                                <div class="ticket-links">
-                                    <a href="https://abbotsfordconvent.com.au/events" target="_blank" class="ticket-btn primary">
-                                        Buy Tickets
-                                    </a>
-                                    <a href="https://aday.net.au" target="_blank" class="ticket-btn secondary">
-                                        Visualist Info
-                                    </a>
-                                    <a href="https://nickewilson.net/reductionist/" target="_blank" class="ticket-btn secondary">
-                                        Composer Info
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="performance-note">
-                            <p>An unprecedented fusion of scientific narrative, electronic composition, and real-time visual synthesis.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+        <!-- Event Link Footer -->
+        <footer class="event-footer">
+            <a href="https://www.melbournefringe.com.au/whats-on/events/macroverse" target="_blank" class="fringe-link">
+                🎭 View Macroverse at Melbourne Fringe Festival
+            </a>
+        </footer>
 
     </main>
     <script type="importmap">

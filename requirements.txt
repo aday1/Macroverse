@@ -1,0 +1,5 @@
+# Macroverse Requirements
+moderngl-window>=2.4.0
+numpy>=1.21.0
+python-osc>=1.7.0
+mido>=1.2.0

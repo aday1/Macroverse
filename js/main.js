@@ -1,9 +1,8 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
-// Handle video loading and loading screen
+// Handle loading screen
 document.addEventListener('DOMContentLoaded', () => {
-    const video = document.getElementById('header-video');
     const loadingScreen = document.getElementById('loading-screen');
     
     const hideLoadingScreen = () => {
@@ -13,14 +12,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 500);
     };
     
-    // Check if video is ready
-    if (video.readyState >= 3) {
-        hideLoadingScreen();
-    } else {
-        video.addEventListener('canplaythrough', hideLoadingScreen);
-        video.addEventListener('loadeddata', hideLoadingScreen);
-        // Fallback timeout
-        setTimeout(hideLoadingScreen, 3000);
+    // Hide loading screen after a short delay
+    setTimeout(hideLoadingScreen, 1000);
+    
+    // Text toggle functionality
+    const textToggleBtn = document.getElementById('text-toggle');
+    if (textToggleBtn) {
+        textToggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('text-hidden');
+            const icon = textToggleBtn.querySelector('.toggle-icon');
+            if (document.body.classList.contains('text-hidden')) {
+                icon.textContent = '👁️'; // Eye icon when text is hidden
+                textToggleBtn.title = 'Show text';
+            } else {
+                icon.textContent = '📝'; // Text icon when text is visible
+                textToggleBtn.title = 'Hide text';
+            }
+        });
     }
 });
 

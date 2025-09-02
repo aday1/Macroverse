@@ -26,13 +26,13 @@ class Macroverse(mglw.WindowConfig):
         self.control.map_osc("/scene", self.handle_scene_change)
 
     def load_scenes(self):
-        shader_dir = 'shaders'
+        shader_dir = os.path.join('..', 'shaders')
         return [f for f in os.listdir(shader_dir) if f.endswith('.glsl')]
 
     def load_scene(self, shader_name):
         self.prog = self.load_program(
-            vertex_shader='shaders/default.vert',
-            fragment_shader=os.path.join('shaders', shader_name)
+            vertex_shader=os.path.join('..', 'shaders', 'default.vert'),
+            fragment_shader=os.path.join('..', 'shaders', shader_name)
         )
         self.quad_fs = mglw.geometry.quad_fs()
 
@@ -60,7 +60,7 @@ class Macroverse(mglw.WindowConfig):
 
     @classmethod
     def run(cls):
-        mglw.run_window_config(cls, args=['--window', 'headless'])
+        mglw.run_window_config(cls)
 
 if __name__ == '__main__':
     Macroverse.run()
