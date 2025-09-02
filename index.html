@@ -131,6 +131,30 @@
         </footer>
 
     </main>
+    <script>
+        // Immediate loading screen removal - runs before Three.js
+        (function() {
+            const loadingScreen = document.getElementById('loading-screen');
+            if (loadingScreen) {
+                loadingScreen.style.display = 'none';
+            }
+        })();
+        
+        // Additional fallbacks
+        document.addEventListener('DOMContentLoaded', function() {
+            const loadingScreen = document.getElementById('loading-screen');
+            if (loadingScreen) {
+                loadingScreen.style.display = 'none';
+            }
+        });
+        
+        setTimeout(function() {
+            const loadingScreen = document.getElementById('loading-screen');
+            if (loadingScreen) {
+                loadingScreen.style.display = 'none';
+            }
+        }, 100);
+    </script>
     <script type="importmap">
         {
             "imports": {

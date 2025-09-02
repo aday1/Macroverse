@@ -10,17 +10,12 @@ console.log('Three.js imported:', THREE);
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM Content Loaded - Initializing Macroverse');
     
-    // Hide loading screen after a shorter delay regardless of Three.js status
-    setTimeout(() => {
-        const loadingScreen = document.getElementById('loading-screen');
-        if (loadingScreen) {
-            loadingScreen.classList.add('hidden');
-            setTimeout(() => {
-                loadingScreen.style.display = 'none';
-                console.log('Loading screen hidden');
-            }, 500);
-        }
-    }, 800);
+    // Ensure loading screen is hidden immediately
+    const loadingScreen = document.getElementById('loading-screen');
+    if (loadingScreen) {
+        loadingScreen.style.display = 'none';
+        console.log('Loading screen hidden by main.js');
+    }
     
     // Initialize Three.js in parallel
     try {
