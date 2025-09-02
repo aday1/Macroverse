@@ -8,6 +8,20 @@ body {
     -webkit-overflow-scrolling: touch;
     /* Prevent zoom on mobile */
     touch-action: pan-y;
+    /* Optimize for single page layout */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Single page container */
+.page-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2em 0;
 }
 
 /* Loading screen for video */
@@ -655,8 +669,10 @@ html {
 .site-header {
     position: relative;
     z-index: 10;
-    padding: 2em 0;
+    padding: 3em 0 2em 0;
     text-align: center;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .logo-container {
@@ -665,33 +681,35 @@ html {
 }
 
 .main-logo {
-    max-height: 120px;
+    max-height: 150px;
     width: auto;
-    display: block; /* Show by default since we have the image */
-    filter: invert(1); /* Make the logo white on dark background */
+    display: block;
+    filter: invert(1);
+    margin: 0 auto;
 }
 
 /* Performance Info Section */
 .performance-info {
-    margin: 2em 0;
+    margin: 2em auto;
     padding: 2em;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 12px;
     backdrop-filter: blur(10px);
+    max-width: 800px;
 }
 
 .performance-dates h3 {
     color: #4fc3f7;
     font-family: 'Orbitron', sans-serif;
-    font-size: 1.3em;
+    font-size: 1.4em;
     margin: 0 0 1em 0;
     font-weight: 600;
 }
 
 .performance-dates p {
     font-family: 'Space Mono', monospace;
-    font-size: 1.1em;
+    font-size: 1.2em;
     color: #fff;
     margin: 0 0 1.5em 0;
     line-height: 1.6;
@@ -702,42 +720,81 @@ html {
     background: linear-gradient(135deg, #4fc3f7, #29b6f6);
     color: white;
     text-decoration: none;
-    padding: 1em 2em;
-    border-radius: 25px;
+    padding: 1.2em 2.5em;
+    border-radius: 30px;
     font-family: 'Orbitron', sans-serif;
     font-weight: 600;
-    font-size: 1.1em;
+    font-size: 1.2em;
     transition: all 0.3s ease;
     border: 2px solid transparent;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    margin-top: 0.5em;
 }
 
 .ticket-link:hover {
     background: linear-gradient(135deg, #29b6f6, #4fc3f7);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(79, 195, 247, 0.3);
-    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(79, 195, 247, 0.4);
+    border-color: rgba(255, 255, 255, 0.3);
 }
 
 .partner-logos {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 2em;
-    flex-wrap: wrap;
-    margin-top: 2em;
+    margin-top: 3em;
 }
 
-.partner-logo, .sponsor-logo {
+.partner-logo {
     position: relative;
 }
 
-.partner-img, .sponsor-img {
-    max-height: 80px;
+.partner-img {
+    display: block;
+    filter: invert(1);
+}
+
+.partner-img.large {
+    max-height: 120px;
     width: auto;
-    display: block; /* Show by default */
-    filter: invert(1); /* Make logos white on dark background */
+}
+
+/* Centered Main Content */
+.centered-main {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2em;
+}
+
+.centered-main .story-section {
+    margin: 0;
+    padding: 0;
+    display: block;
+    opacity: 1;
+    transform: none;
+    position: static;
+}
+
+.centered-main .story-content {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    padding: 3em;
+    text-align: center;
+    margin: 2em auto;
+    max-width: 700px;
+}
+
+.centered-main .story-title {
+    color: #4fc3f7;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2.2em;
+    margin: 0 0 1.5em 0;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 /* Placeholder Content Styling */
@@ -749,12 +806,13 @@ html {
     text-align: center;
     font-family: 'Space Mono', monospace;
     color: rgba(255, 255, 255, 0.7);
-    margin: 2em 0;
+    margin: 0;
 }
 
 .placeholder-content p {
     margin: 0.5em 0;
     font-style: italic;
+    font-size: 1.1em;
 }
 
 /* Logo Placeholders */
@@ -873,13 +931,21 @@ html {
 
 /* Mobile Responsiveness for New Elements */
 @media (max-width: 768px) {
+    .site-header {
+        padding: 2em 1em 1em 1em;
+    }
+    
+    .main-logo {
+        max-height: 120px;
+    }
+    
     .performance-info {
         margin: 1.5em 1em;
         padding: 1.5em;
     }
     
     .performance-dates h3 {
-        font-size: 1.1em;
+        font-size: 1.2em;
     }
     
     .performance-dates p {
@@ -888,83 +954,86 @@ html {
     }
     
     .ticket-link {
-        padding: 0.8em 1.5em;
+        padding: 1em 2em;
         font-size: 1em;
     }
     
-    .logo-placeholder {
-        min-width: 280px;
-        min-height: 100px;
+    .partner-img.large {
+        max-height: 100px;
     }
     
-    .logo-placeholder.small {
-        min-width: 120px;
-        min-height: 60px;
-    }
-    
-    .partner-logos {
-        gap: 1em;
-    }
-    
-    .tech-specs {
-        grid-template-columns: 1fr;
-        gap: 1em;
-    }
-    
-    .spec-item {
+    .centered-main {
         padding: 1em;
     }
     
-    .footer-logos {
-        gap: 1em;
+    .centered-main .story-content {
+        padding: 2em 1.5em;
+        margin: 1em auto;
+    }
+    
+    .centered-main .story-title {
+        font-size: 1.8em;
+    }
+    
+    .placeholder-content {
+        padding: 1.5em;
+    }
+    
+    .placeholder-content p {
+        font-size: 1em;
     }
 }
 
 @media (max-width: 480px) {
     .site-header {
-        padding: 1em 0;
+        padding: 1.5em 0.5em 1em 0.5em;
+    }
+    
+    .main-logo {
+        max-height: 100px;
     }
     
     .performance-info {
         margin: 1em 0.5em;
-        padding: 1em;
+        padding: 1.5em 1em;
     }
     
     .performance-dates h3 {
-        font-size: 1em;
+        font-size: 1.1em;
     }
     
     .performance-dates p {
         font-size: 0.9em;
+        line-height: 1.4;
     }
     
     .ticket-link {
-        padding: 0.7em 1.2em;
-        font-size: 0.9em;
+        padding: 0.9em 1.5em;
+        font-size: 0.95em;
     }
     
-    .logo-placeholder {
-        min-width: 250px;
-        min-height: 80px;
-        padding: 0.8em;
+    .partner-img.large {
+        max-height: 80px;
     }
     
-    .logo-placeholder.small {
-        min-width: 100px;
-        min-height: 50px;
+    .centered-main {
         padding: 0.5em;
     }
     
-    .placeholder-text {
-        font-size: 0.9em;
+    .centered-main .story-content {
+        padding: 2em 1em;
+        margin: 1em 0.5em;
     }
     
-    .placeholder-size {
-        font-size: 0.7em;
+    .centered-main .story-title {
+        font-size: 1.5em;
     }
     
     .placeholder-content {
-        padding: 1.5em;
-        margin: 1em 0;
+        padding: 1.5em 1em;
+    }
+    
+    .placeholder-content p {
+        font-size: 0.95em;
     }
 }

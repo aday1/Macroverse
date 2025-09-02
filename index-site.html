@@ -15,93 +15,48 @@
         <div>Loading Macroverse...</div>
     </div>
     
-    <!-- Navigation Sidebar -->
-    <nav id="navigation-sidebar" class="nav-sidebar">
-        <div class="nav-header">Sections</div>
-        <ul class="nav-list">
-            <li><a href="#about" class="nav-link active" data-section="about">
-                <span class="nav-number">1</span>
-                <span class="nav-title">About</span>
-            </a></li>
-        </ul>
-        <button id="nav-toggle" class="nav-toggle">☰</button>
-    </nav>
-    
     <canvas id="bg"></canvas>
     <div id="vignette"></div>
     
-    <!-- Text Toggle Button -->
-    <button id="text-toggle" class="text-toggle-btn" title="Toggle text visibility">
-        <span class="toggle-icon">📝</span>
-    </button>
-    
-    <!-- Logo Header -->
-    <header class="site-header">
-        <div class="logo-container">
-            <img src="images/macroverse_landscape-logo.png" alt="Macroverse Logo" class="main-logo" />
-            <div class="logo-placeholder" style="display: none;">
-                <div class="placeholder-text">Main Logo</div>
-                <div class="placeholder-size">400x120px</div>
+    <div class="page-container">
+        <!-- Logo Header -->
+        <header class="site-header">
+            <div class="logo-container">
+                <img src="images/macroverse_landscape-logo.png" alt="Macroverse Logo" class="main-logo" />
             </div>
-        </div>
+            
+            <!-- Performance Dates and Ticket Link -->
+            <div class="performance-info">
+                <div class="performance-dates">
+                    <h3>Performance Dates</h3>
+                    <p>Tuesday 7th Oct • Wednesday 8th Oct • Thursday 9th Oct • Friday 10th Oct • Saturday 11th Oct</p>
+                </div>
+                <a href="https://www.melbournefringe.com.au/whats-on/events/macroverse" target="_blank" class="ticket-link">
+                    🎭 Buy Tickets to Macroverse
+                </a>
+            </div>
+            
+            <div class="partner-logos">
+                <div class="partner-logo">
+                    <img src="images/MelbFringeFestival-LOGO-Black.png" alt="Melbourne Fringe Festival" class="partner-img large" />
+                </div>
+            </div>
+        </header>
         
-        <!-- Performance Dates and Ticket Link -->
-        <div class="performance-info">
-            <div class="performance-dates">
-                <h3>Performance Dates</h3>
-                <p>Tuesday 7th Oct • Wednesday 8th Oct • Thursday 9th Oct • Friday 10th Oct • Saturday 11th Oct</p>
-            </div>
-            <a href="https://www.melbournefringe.com.au/whats-on/events/macroverse" target="_blank" class="ticket-link">
-                🎭 Buy Tickets to Macroverse
-            </a>
-        </div>
-        
-        <div class="partner-logos">
-            <div class="partner-logo">
-                <img src="images/MelbFringeFestival-LOGO-Black.png" alt="Melbourne Fringe Festival" class="partner-img" />
-                <div class="logo-placeholder small" style="display: none;">
-                    <div class="placeholder-text">Partner 1</div>
-                    <div class="placeholder-size">150x80px</div>
-                </div>
-            </div>
-        </div>
-    </header>
-    
-    <main>
-
-        <section id="about" class="story-section active">
-            <div class="story-content">
-                <h2 class="story-title">About Macroverse</h2>
-                <div class="content-block">
-                    <div class="placeholder-content">
-                        <p>[PLACEHOLDER TEXT FOR NOW]</p>
-                        <p>Content coming soon...</p>
+        <main class="centered-main">
+            <section id="about" class="story-section active">
+                <div class="story-content">
+                    <h2 class="story-title">About Macroverse</h2>
+                    <div class="content-block">
+                        <div class="placeholder-content">
+                            <p>[PLACEHOLDER TEXT FOR NOW]</p>
+                            <p>Content coming soon...</p>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </section>
-
-        <!-- Event Link Footer -->
-        <footer class="event-footer">
-            <div class="footer-logos">
-                <div class="sponsor-logo">
-                    <img src="images/sponsor-1.png" alt="Sponsor 1" class="sponsor-img" />
-                    <div class="logo-placeholder small">
-                        <div class="placeholder-text">Sponsor 1</div>
-                        <div class="placeholder-size">120x60px</div>
-                    </div>
-                </div>
-                <div class="sponsor-logo">
-                    <img src="images/sponsor-2.png" alt="Sponsor 2" class="sponsor-img" />
-                    <div class="logo-placeholder small">
-                        <div class="placeholder-text">Sponsor 2</div>
-                        <div class="placeholder-size">120x60px</div>
-                    </div>
-                </div>
-            </div>
-        </footer>
-
-    </main>
+            </section>
+        </main>
+    </div>
     
     <script type="importmap">
         {
