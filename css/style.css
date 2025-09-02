@@ -667,7 +667,57 @@ html {
 .main-logo {
     max-height: 120px;
     width: auto;
-    display: none; /* Hidden until image is available */
+    display: block; /* Show by default since we have the image */
+    filter: invert(1); /* Make the logo white on dark background */
+}
+
+/* Performance Info Section */
+.performance-info {
+    margin: 2em 0;
+    padding: 2em;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+}
+
+.performance-dates h3 {
+    color: #4fc3f7;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.3em;
+    margin: 0 0 1em 0;
+    font-weight: 600;
+}
+
+.performance-dates p {
+    font-family: 'Space Mono', monospace;
+    font-size: 1.1em;
+    color: #fff;
+    margin: 0 0 1.5em 0;
+    line-height: 1.6;
+}
+
+.ticket-link {
+    display: inline-block;
+    background: linear-gradient(135deg, #4fc3f7, #29b6f6);
+    color: white;
+    text-decoration: none;
+    padding: 1em 2em;
+    border-radius: 25px;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 600;
+    font-size: 1.1em;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.ticket-link:hover {
+    background: linear-gradient(135deg, #29b6f6, #4fc3f7);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(79, 195, 247, 0.3);
+    border-color: rgba(255, 255, 255, 0.2);
 }
 
 .partner-logos {
@@ -676,7 +726,7 @@ html {
     align-items: center;
     gap: 2em;
     flex-wrap: wrap;
-    margin-top: 1em;
+    margin-top: 2em;
 }
 
 .partner-logo, .sponsor-logo {
@@ -686,7 +736,25 @@ html {
 .partner-img, .sponsor-img {
     max-height: 80px;
     width: auto;
-    display: none; /* Hidden until images are available */
+    display: block; /* Show by default */
+    filter: invert(1); /* Make logos white on dark background */
+}
+
+/* Placeholder Content Styling */
+.placeholder-content {
+    background: rgba(255, 255, 255, 0.03);
+    border: 2px dashed rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    padding: 2em;
+    text-align: center;
+    font-family: 'Space Mono', monospace;
+    color: rgba(255, 255, 255, 0.7);
+    margin: 2em 0;
+}
+
+.placeholder-content p {
+    margin: 0.5em 0;
+    font-style: italic;
 }
 
 /* Logo Placeholders */
@@ -805,6 +873,25 @@ html {
 
 /* Mobile Responsiveness for New Elements */
 @media (max-width: 768px) {
+    .performance-info {
+        margin: 1.5em 1em;
+        padding: 1.5em;
+    }
+    
+    .performance-dates h3 {
+        font-size: 1.1em;
+    }
+    
+    .performance-dates p {
+        font-size: 1em;
+        line-height: 1.5;
+    }
+    
+    .ticket-link {
+        padding: 0.8em 1.5em;
+        font-size: 1em;
+    }
+    
     .logo-placeholder {
         min-width: 280px;
         min-height: 100px;
@@ -838,6 +925,24 @@ html {
         padding: 1em 0;
     }
     
+    .performance-info {
+        margin: 1em 0.5em;
+        padding: 1em;
+    }
+    
+    .performance-dates h3 {
+        font-size: 1em;
+    }
+    
+    .performance-dates p {
+        font-size: 0.9em;
+    }
+    
+    .ticket-link {
+        padding: 0.7em 1.2em;
+        font-size: 0.9em;
+    }
+    
     .logo-placeholder {
         min-width: 250px;
         min-height: 80px;
@@ -856,5 +961,10 @@ html {
     
     .placeholder-size {
         font-size: 0.7em;
+    }
+    
+    .placeholder-content {
+        padding: 1.5em;
+        margin: 1em 0;
     }
 }
