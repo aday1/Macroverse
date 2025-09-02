@@ -82,31 +82,22 @@ Tickets are available from the Melbourne Fringe website. This project has been F
         </footer>
     </div>
     
-    <script type="importmap">
-        {
-            "imports": {
-                "three": "https://unpkg.com/three@0.138.0/build/three.module.js",
-                "three/examples/jsm/controls/OrbitControls.js": "https://unpkg.com/three@0.138.0/examples/jsm/controls/OrbitControls.js"
-            }
-        }
-    </script>
     <script>
-        // Simple loading screen handler - no dependencies
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM loaded, hiding loading screen');
-            setTimeout(function() {
-                const loadingScreen = document.getElementById('loading-screen');
-                if (loadingScreen) {
-                    loadingScreen.classList.add('hidden');
-                    setTimeout(function() {
-                        loadingScreen.style.display = 'none';
-                    }, 500);
-                }
-            }, 500);
+        // Minimal loading screen removal
+        window.addEventListener('load', function() {
+            const loadingScreen = document.getElementById('loading-screen');
+            if (loadingScreen) {
+                loadingScreen.style.display = 'none';
+            }
         });
+        
+        // Fallback timer in case window.load doesn't fire
+        setTimeout(function() {
+            const loadingScreen = document.getElementById('loading-screen');
+            if (loadingScreen) {
+                loadingScreen.style.display = 'none';
+            }
+        }, 1000);
     </script>
-    <!-- <script src="js/logo-manager.js"></script>
-    <script src="js/text-formatter.js"></script>
-    <script type="module" src="js/main.js"></script> -->
 </body>
 </html>
