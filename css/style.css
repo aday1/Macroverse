@@ -137,8 +137,22 @@ body {
         radial-gradient(1px 1px at 312px 134px, rgba(255, 99, 71, 0.4), transparent);
     background-repeat: repeat;
     background-size: 400px 400px;
-    animation: particles-float-1 100s ease-in-out infinite alternate, particles-shimmer 30s ease-in-out infinite, heat-drift 25s ease-in-out infinite;
+    animation: particles-float-1 100s ease-in-out infinite alternate, particles-shimmer 30s ease-in-out infinite, heat-drift 25s ease-in-out infinite, gas-disappear 45s ease-in-out infinite;
     filter: blur(0.4px) contrast(1.3) saturate(1.4);
+}
+
+.gas-layer {
+    position: absolute;
+    width: 120%;
+    height: 120%;
+    background-image: 
+        radial-gradient(150px 80px at 20% 30%, rgba(255, 140, 0, 0.08), transparent 70%),
+        radial-gradient(200px 120px at 70% 60%, rgba(255, 99, 71, 0.06), transparent 80%),
+        radial-gradient(180px 100px at 40% 80%, rgba(255, 165, 0, 0.07), transparent 75%),
+        radial-gradient(160px 90px at 80% 20%, rgba(255, 127, 80, 0.05), transparent 70%);
+    background-repeat: no-repeat;
+    animation: gas-flow 80s ease-in-out infinite, gas-disappear 35s ease-in-out infinite alternate;
+    filter: blur(2px) contrast(0.8) saturate(1.2);
 }
 
 .lightning-layer {
@@ -258,38 +272,39 @@ body {
 
 .shooting-star {
     position: absolute;
-    width: 2px;
-    height: 2px;
-    background: linear-gradient(45deg, rgba(255, 140, 0, 1) 0%, rgba(255, 69, 0, 0.8) 50%, transparent 100%);
+    width: 4px;
+    height: 4px;
+    background: radial-gradient(circle, rgba(0, 255, 100, 1) 0%, rgba(0, 200, 80, 0.9) 40%, rgba(0, 150, 60, 0.6) 70%, transparent 100%);
     border-radius: 50%;
+    box-shadow: 0 0 8px rgba(0, 255, 100, 0.8);
 }
 
 .shooting-star-1 {
     top: 20%;
     left: -10%;
-    animation: shooting-star-1 8s ease-out infinite;
+    animation: shooting-star-1 25s ease-out infinite;
     animation-delay: 0s;
 }
 
 .shooting-star-2 {
     top: 60%;
     left: -10%;
-    animation: shooting-star-2 12s ease-out infinite;
-    animation-delay: 4s;
+    animation: shooting-star-2 30s ease-out infinite;
+    animation-delay: 8s;
 }
 
 .shooting-star-3 {
     top: 35%;
     left: -10%;
-    animation: shooting-star-3 10s ease-out infinite;
-    animation-delay: 8s;
+    animation: shooting-star-3 28s ease-out infinite;
+    animation-delay: 16s;
 }
 
 .shooting-star-4 {
     top: 80%;
     left: -10%;
-    animation: shooting-star-4 9s ease-out infinite;
-    animation-delay: 15s;
+    animation: shooting-star-4 26s ease-out infinite;
+    animation-delay: 24s;
 }
 
 .nebula-layer {
@@ -629,17 +644,24 @@ body {
 }
 
 @keyframes lightning-flash-frequent {
-    0%, 70% { opacity: 0; }
-    72% { opacity: 0.15; }
-    74% { opacity: 0.4; }
-    76% { opacity: 0.7; }
+    0%, 60% { opacity: 0; }
+    62% { opacity: 0.1; }
+    64% { opacity: 0.25; }
+    66% { opacity: 0.5; }
+    68% { opacity: 0.8; }
+    70% { opacity: 0.6; }
+    72% { opacity: 0.9; }
+    74% { opacity: 0.7; }
+    76% { opacity: 0.5; }
     78% { opacity: 0.3; }
-    80% { opacity: 0; }
-    85%, 90% { opacity: 0; }
-    92% { opacity: 0.2; }
-    94% { opacity: 0.5; }
-    96% { opacity: 0.8; }
-    98% { opacity: 0.1; }
+    80% { opacity: 0.15; }
+    82% { opacity: 0; }
+    85%, 88% { opacity: 0; }
+    90% { opacity: 0.2; }
+    92% { opacity: 0.6; }
+    94% { opacity: 0.9; }
+    96% { opacity: 0.7; }
+    98% { opacity: 0.4; }
     100% { opacity: 0; }
 }
 
@@ -725,18 +747,47 @@ body {
     0% { 
         transform: translateX(0) translateY(0) rotate(45deg) scale(0);
         opacity: 0;
+        box-shadow: 
+            0 0 0 rgba(0, 255, 100, 0),
+            -8px 8px 0 rgba(0, 255, 100, 0),
+            -16px 16px 0 rgba(0, 200, 80, 0),
+            -24px 24px 0 rgba(100, 100, 100, 0);
     }
-    5% { 
+    3% {
+        opacity: 0.9;
+        transform: translateX(15px) translateY(-15px) rotate(45deg) scale(0.6);
+        box-shadow: 
+            -12px 12px 20px rgba(0, 255, 100, 0.7),
+            -24px 24px 16px rgba(0, 200, 80, 0.5),
+            -36px 36px 12px rgba(0, 150, 60, 0.3),
+            -48px 48px 8px rgba(100, 100, 100, 0.2);
+    }
+    15% {
         opacity: 1;
-        transform: translateX(20px) translateY(-20px) rotate(45deg) scale(1);
+        transform: translateX(60px) translateY(-60px) rotate(45deg) scale(1);
+        box-shadow: 
+            -18px 18px 30px rgba(0, 255, 100, 0.8),
+            -36px 36px 24px rgba(0, 200, 80, 0.6),
+            -54px 54px 18px rgba(0, 150, 60, 0.4),
+            -72px 72px 12px rgba(100, 100, 100, 0.3);
     }
-    95% { 
-        opacity: 0.8;
-        transform: translateX(120vw) translateY(-60vh) rotate(45deg) scale(0.5);
+    85% { 
+        opacity: 0.7;
+        transform: translateX(110vw) translateY(-55vh) rotate(45deg) scale(0.4);
+        box-shadow: 
+            -15px 15px 25px rgba(0, 255, 100, 0.5),
+            -30px 30px 20px rgba(0, 200, 80, 0.3),
+            -45px 45px 15px rgba(0, 150, 60, 0.2),
+            -60px 60px 10px rgba(100, 100, 100, 0.2);
     }
     100% { 
         opacity: 0;
-        transform: translateX(130vw) translateY(-65vh) rotate(45deg) scale(0);
+        transform: translateX(120vw) translateY(-60vh) rotate(45deg) scale(0);
+        box-shadow: 
+            0 0 0 rgba(0, 255, 100, 0),
+            0 0 0 rgba(0, 200, 80, 0),
+            0 0 0 rgba(0, 150, 60, 0),
+            0 0 0 rgba(100, 100, 100, 0);
     }
 }
 
@@ -744,18 +795,47 @@ body {
     0% { 
         transform: translateX(0) translateY(0) rotate(40deg) scale(0);
         opacity: 0;
+        box-shadow: 
+            0 0 0 rgba(0, 255, 100, 0),
+            -10px 8px 0 rgba(0, 255, 100, 0),
+            -20px 16px 0 rgba(0, 200, 80, 0),
+            -30px 24px 0 rgba(100, 100, 100, 0);
     }
-    8% { 
+    4% {
+        opacity: 0.9;
+        transform: translateX(18px) translateY(-15px) rotate(40deg) scale(0.7);
+        box-shadow: 
+            -14px 11px 22px rgba(0, 255, 100, 0.7),
+            -28px 22px 18px rgba(0, 200, 80, 0.5),
+            -42px 33px 14px rgba(0, 150, 60, 0.3),
+            -56px 44px 10px rgba(100, 100, 100, 0.2);
+    }
+    18% {
         opacity: 1;
-        transform: translateX(30px) translateY(-25px) rotate(40deg) scale(1);
+        transform: translateX(72px) translateY(-60px) rotate(40deg) scale(1);
+        box-shadow: 
+            -20px 16px 32px rgba(0, 255, 100, 0.8),
+            -40px 32px 26px rgba(0, 200, 80, 0.6),
+            -60px 48px 20px rgba(0, 150, 60, 0.4),
+            -80px 64px 14px rgba(100, 100, 100, 0.3);
     }
-    92% { 
+    82% { 
         opacity: 0.6;
-        transform: translateX(110vw) translateY(-45vh) rotate(40deg) scale(0.3);
+        transform: translateX(100vw) translateY(-42vh) rotate(40deg) scale(0.3);
+        box-shadow: 
+            -16px 13px 26px rgba(0, 255, 100, 0.4),
+            -32px 26px 20px rgba(0, 200, 80, 0.2),
+            -48px 39px 15px rgba(0, 150, 60, 0.1),
+            -64px 52px 10px rgba(100, 100, 100, 0.1);
     }
     100% { 
         opacity: 0;
-        transform: translateX(120vw) translateY(-50vh) rotate(40deg) scale(0);
+        transform: translateX(110vw) translateY(-47vh) rotate(40deg) scale(0);
+        box-shadow: 
+            0 0 0 rgba(0, 255, 100, 0),
+            0 0 0 rgba(0, 200, 80, 0),
+            0 0 0 rgba(0, 150, 60, 0),
+            0 0 0 rgba(100, 100, 100, 0);
     }
 }
 
@@ -1936,4 +2016,38 @@ html {
         margin-top: 2em;
         padding: 2em 1em;
     }
+}
+
+@keyframes gas-flow {
+    0% { 
+        transform: translateX(-5px) translateY(0px) scale(1) rotate(0deg);
+        opacity: 0.3;
+    }
+    25% { 
+        transform: translateX(8px) translateY(-3px) scale(1.05) rotate(0.5deg);
+        opacity: 0.6;
+    }
+    50% { 
+        transform: translateX(-3px) translateY(7px) scale(0.95) rotate(-0.3deg);
+        opacity: 0.8;
+    }
+    75% { 
+        transform: translateX(12px) translateY(-5px) scale(1.02) rotate(0.8deg);
+        opacity: 0.4;
+    }
+    100% { 
+        transform: translateX(-5px) translateY(0px) scale(1) rotate(0deg);
+        opacity: 0.3;
+    }
+}
+
+@keyframes gas-disappear {
+    0% { opacity: 0.6; filter: blur(2px) contrast(0.8) saturate(1.2); }
+    15% { opacity: 0.8; filter: blur(1.5px) contrast(1.0) saturate(1.4); }
+    30% { opacity: 0.9; filter: blur(2.5px) contrast(0.7) saturate(1.6); }
+    45% { opacity: 0.3; filter: blur(3px) contrast(0.5) saturate(1.8); }
+    60% { opacity: 0.1; filter: blur(4px) contrast(0.3) saturate(2.0); }
+    70% { opacity: 0.05; filter: blur(5px) contrast(0.2) saturate(2.2); }
+    80% { opacity: 0.2; filter: blur(3px) contrast(0.6) saturate(1.5); }
+    100% { opacity: 0.6; filter: blur(2px) contrast(0.8) saturate(1.2); }
 }

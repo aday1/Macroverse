@@ -49,6 +49,68 @@ function initializeThreeJS() {
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
+        // Load and create shader material
+        const loader = new THREE.FileLoader();
+        
+        // Create energy field shader
+        const vertexShader = `
+            varying vec2 vUv;
+            void main() {
+                vUv = uv;
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            }
+        `;
+        
+        const fragmentShader = `
+            uniform vec2 u_resolution;
+            uniform float u_time;
+            uniform float u_zoom;
+            uniform float u_brightness;
+            uniform vec3 u_color;
+            
+            varying vec2 vUv;
+            
+            void main() {
+                vec2 st = vUv * 2.0 - 1.0;
+                st.x *= u_resolution.x / u_resolution.y;
+                
+                float dist = length(st);
+                float angle = atan(st.y, st.x);
+                
+                float energy = sin(dist * 15.0 - u_time * 3.0) * 0.5 + 0.5;
+                energy *= sin(angle * 8.0 + u_time * 2.0) * 0.5 + 0.5;
+                energy = pow(energy, 2.0);
+                
+                float pulse = sin(u_time * 4.0) * 0.3 + 0.7;
+                energy *= pulse;
+                
+                vec3 color = u_color * energy * u_brightness;
+                color += vec3(0.1, 0.3, 0.7) * energy * 0.5;
+                
+                gl_FragColor = vec4(color, energy * 0.3);
+            }
+        `;
+        
+        const shaderMaterial = new THREE.ShaderMaterial({
+            vertexShader: vertexShader,
+            fragmentShader: fragmentShader,
+            uniforms: {
+                u_resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+                u_time: { value: 0.0 },
+                u_zoom: { value: 1.0 },
+                u_brightness: { value: 1.2 },
+                u_color: { value: new THREE.Vector3(0.2, 0.6, 1.0) }
+            },
+            transparent: true,
+            blending: THREE.AdditiveBlending
+        });
+        
+        // Create background plane for shader
+        const shaderGeometry = new THREE.PlaneGeometry(50, 50);
+        const shaderMesh = new THREE.Mesh(shaderGeometry, shaderMaterial);
+        shaderMesh.position.z = -10;
+        scene.add(shaderMesh);
+
         // Create animated background particles
         const particleCount = 150;
         const positions = new Float32Array(particleCount * 3);
@@ -103,6 +165,9 @@ function initializeThreeJS() {
         function animate() {
             requestAnimationFrame(animate);
             
+            // Update shader uniforms
+            shaderMaterial.uniforms.u_time.value = performance.now() * 0.001;
+            
             // Update particles
             const positions = particles.geometry.attributes.position.array;
             for (let i = 0; i < particleCount; i++) {
@@ -130,6 +195,9 @@ function initializeThreeJS() {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
+            
+            // Update shader resolution
+            shaderMaterial.uniforms.u_resolution.value.set(window.innerWidth, window.innerHeight);
         };
         
         window.addEventListener('resize', handleResize);
