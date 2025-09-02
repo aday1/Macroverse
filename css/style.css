@@ -707,12 +707,37 @@ html {
     font-weight: 600;
 }
 
-.performance-dates p {
+.dates-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.8em;
+    justify-items: center;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.dates-grid p {
     font-family: 'Space Mono', monospace;
-    font-size: 1.2em;
+    font-size: 1.1em;
     color: #fff;
-    margin: 0 0 1.5em 0;
-    line-height: 1.6;
+    margin: 0;
+    padding: 0.5em 1em;
+    background: rgba(79, 195, 247, 0.1);
+    border: 1px solid rgba(79, 195, 247, 0.3);
+    border-radius: 8px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.dates-grid p:hover {
+    background: rgba(79, 195, 247, 0.2);
+    border-color: rgba(79, 195, 247, 0.5);
+    transform: translateY(-2px);
+}
+
+.dates-grid p:last-child {
+    grid-column: 1 / -1;
+    max-width: 250px;
 }
 
 .ticket-link {
@@ -762,7 +787,7 @@ html {
 
 /* Centered Main Content */
 .centered-main {
-    max-width: 1000px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 2em;
 }
@@ -784,7 +809,7 @@ html {
     padding: 3em;
     text-align: center;
     margin: 2em auto;
-    max-width: 700px;
+    max-width: 1000px;
 }
 
 .centered-main .story-title {
@@ -802,20 +827,21 @@ html {
     background: rgba(255, 255, 255, 0.03);
     border: 2px dashed rgba(255, 255, 255, 0.2);
     border-radius: 8px;
-    padding: 2em;
+    padding: 2.5em;
     text-align: left;
     font-family: 'Space Mono', monospace;
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(255, 255, 255, 0.9);
     margin: 0;
-    line-height: 1.7;
+    line-height: 1.8;
+    max-width: 900px;
+    width: 100%;
 }
 
 .placeholder-content p {
-    margin: 1.2em 0;
+    margin: 1.8em 0;
     font-style: normal;
-    font-size: 1em;
-    text-align: justify;
-    hyphens: auto;
+    font-size: 1.05em;
+    text-align: left;
     word-break: break-word;
 }
 

@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (paragraph) {
             const fullText = paragraph.textContent || paragraph.innerText;
             
-            // Split the text into logical paragraphs
+            // Split the text into logical paragraphs (removed placeholder text)
             const paragraphs = [
                 "Electronic music artist Reductionist, collaborating with projection artist Aday, will utilise the humblest of ephemeral technologies, including battery-powered micro-instruments, open-source coding and apps, to express the vastest concepts that we, as humans, can attempt to comprehend.",
                 
