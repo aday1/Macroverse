@@ -68,6 +68,11 @@ body {
     height: 100%;
     z-index: -1;
     overflow: hidden;
+    animation: hypnotic-drift 80s ease-in-out infinite alternate;
+    filter: contrast(1.3) saturate(1.2);
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
 }
 
 .stars-layer {
@@ -75,18 +80,18 @@ body {
     width: 200%;
     height: 200%;
     background-image: 
-        radial-gradient(2px 2px at 73px 127px, #ff4081, transparent),
-        radial-gradient(1px 1px at 234px 67px, #4fc3f7, transparent),
-        radial-gradient(2px 2px at 156px 203px, #e91e63, transparent),
-        radial-gradient(1px 1px at 97px 34px, #2196f3, transparent),
-        radial-gradient(1px 1px at 278px 145px, #9c27b0, transparent),
-        radial-gradient(2px 2px at 45px 189px, #f44336, transparent),
-        radial-gradient(1px 1px at 189px 91px, #3f51b5, transparent),
-        radial-gradient(2px 2px at 312px 178px, #ff5722, transparent);
+        radial-gradient(3px 3px at 173px 267px, #ff4081, transparent),
+        radial-gradient(2px 2px at 334px 147px, #4fc3f7, transparent),
+        radial-gradient(3px 3px at 89px 203px, #e91e63, transparent),
+        radial-gradient(2px 2px at 245px 84px, #2196f3, transparent),
+        radial-gradient(2px 2px at 98px 345px, #9c27b0, transparent);
     background-repeat: repeat;
-    background-size: 350px 250px;
-    animation: stars-twinkle 500s linear infinite;
-    filter: blur(0.5px);
+    background-size: 450px 350px;
+    animation: stars-twinkle 600s linear infinite, chromatic-drift 35s ease-in-out infinite;
+    filter: blur(0.3px) contrast(1.6) saturate(1.4);
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
 }
 
 .particles-layer-1 {
@@ -94,13 +99,18 @@ body {
     width: 150%;
     height: 150%;
     background-image: 
-        radial-gradient(1px 1px at 125px 145px, rgba(244, 67, 54, 0.3), transparent),
-        radial-gradient(1px 1px at 285px 225px, rgba(33, 150, 243, 0.4), transparent),
-        radial-gradient(1px 1px at 345px 85px, rgba(156, 39, 176, 0.2), transparent);
+        radial-gradient(3px 3px at 125px 145px, rgba(244, 67, 54, 0.4), transparent),
+        radial-gradient(2px 2px at 285px 225px, rgba(33, 150, 243, 0.5), transparent),
+        radial-gradient(4px 4px at 345px 85px, rgba(156, 39, 176, 0.3), transparent),
+        radial-gradient(2px 2px at 89px 267px, rgba(255, 64, 129, 0.4), transparent),
+        radial-gradient(3px 3px at 223px 178px, rgba(63, 81, 181, 0.3), transparent);
     background-repeat: repeat;
     background-size: 400px 400px;
-    animation: particles-float-1 150s ease-in-out infinite alternate;
-    filter: blur(0.5px);
+    animation: particles-float-1 180s ease-in-out infinite alternate, chromatic-drift 40s ease-in-out infinite;
+    filter: blur(0.3px) contrast(1.4) saturate(1.6);
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
 }
 
 .lightning-layer {
@@ -112,37 +122,40 @@ body {
         linear-gradient(47deg, 
             transparent 0%,
             transparent 48.5%,
-            rgba(156, 39, 176, 0.8) 49%,
-            rgba(142, 36, 170, 0.9) 49.3%,
-            rgba(128, 32, 164, 0.7) 49.7%,
+            rgba(156, 39, 176, 0.9) 49%,
+            rgba(142, 36, 170, 1.0) 49.3%,
+            rgba(128, 32, 164, 0.8) 49.7%,
             transparent 50%,
             transparent 50.2%,
-            rgba(156, 39, 176, 0.6) 50.4%,
+            rgba(156, 39, 176, 0.7) 50.4%,
             transparent 50.8%,
             transparent 100%
         ),
         linear-gradient(-28deg, 
             transparent 0%,
             transparent 73.8%,
-            rgba(142, 36, 170, 0.5) 74%,
-            rgba(156, 39, 176, 0.8) 74.2%,
-            rgba(128, 32, 164, 0.4) 74.6%,
+            rgba(142, 36, 170, 0.6) 74%,
+            rgba(156, 39, 176, 0.9) 74.2%,
+            rgba(128, 32, 164, 0.5) 74.6%,
             transparent 75%,
             transparent 75.3%,
-            rgba(142, 36, 170, 0.3) 75.5%,
+            rgba(142, 36, 170, 0.4) 75.5%,
             transparent 75.9%,
             transparent 100%
         ),
         linear-gradient(72deg, 
             transparent 0%,
             transparent 61.5%,
-            rgba(156, 39, 176, 0.4) 62%,
-            rgba(142, 36, 170, 0.6) 62.2%,
+            rgba(156, 39, 176, 0.5) 62%,
+            rgba(142, 36, 170, 0.7) 62.2%,
             transparent 62.8%,
             transparent 100%
         );
-    animation: lightning-flash 25s ease-in-out infinite, lightning-move 30s ease-in-out infinite;
-    filter: blur(1px);
+    animation: lightning-flash 35s ease-in-out infinite, lightning-move 45s ease-in-out infinite, chromatic-drift 25s ease-in-out infinite;
+    filter: blur(0.8px) contrast(1.4) saturate(1.6);
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
 }
 
 .cloud-layer {
@@ -243,13 +256,16 @@ body {
     top: 20%;
     left: 10%;
     background: radial-gradient(circle at 30% 30%, 
-        rgba(244, 67, 54, 0.25) 0%, 
-        rgba(255, 87, 34, 0.15) 30%,
-        rgba(244, 67, 54, 0.08) 60%, 
-        rgba(244, 67, 54, 0.02) 100%);
-    box-shadow: 0 0 30px rgba(244, 67, 54, 0.15);
-    animation: planet-orbit-1 400s linear infinite;
-    filter: blur(1px);
+        rgba(244, 67, 54, 0.35) 0%, 
+        rgba(255, 87, 34, 0.25) 30%,
+        rgba(244, 67, 54, 0.12) 60%, 
+        rgba(244, 67, 54, 0.04) 100%);
+    box-shadow: 0 0 40px rgba(244, 67, 54, 0.25);
+    animation: planet-orbit-1 600s linear infinite, hypnotic-drift 90s ease-in-out infinite;
+    filter: blur(0.8px) contrast(1.3) saturate(1.4);
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
 }
 
 .planet-2 {
@@ -258,13 +274,16 @@ body {
     top: 60%;
     right: 15%;
     background: radial-gradient(circle at 25% 25%, 
-        rgba(33, 150, 243, 0.2) 0%, 
-        rgba(3, 169, 244, 0.12) 40%,
-        rgba(33, 150, 243, 0.06) 70%, 
-        rgba(33, 150, 243, 0.02) 100%);
-    box-shadow: 0 0 25px rgba(33, 150, 243, 0.1);
-    animation: planet-orbit-2 320s linear infinite reverse;
-    filter: blur(0.8px);
+        rgba(33, 150, 243, 0.3) 0%, 
+        rgba(3, 169, 244, 0.22) 40%,
+        rgba(33, 150, 243, 0.1) 70%, 
+        rgba(33, 150, 243, 0.04) 100%);
+    box-shadow: 0 0 35px rgba(33, 150, 243, 0.2);
+    animation: planet-orbit-2 480s linear infinite reverse, hypnotic-drift 70s ease-in-out infinite;
+    filter: blur(0.6px) contrast(1.2) saturate(1.5);
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
 }
 
 .planet-3 {
@@ -273,13 +292,16 @@ body {
     top: 40%;
     left: 70%;
     background: radial-gradient(circle at 35% 35%, 
-        rgba(156, 39, 176, 0.18) 0%,
-        rgba(233, 30, 99, 0.1) 35%, 
-        rgba(156, 39, 176, 0.04) 65%, 
-        rgba(156, 39, 176, 0.01) 100%);
-    box-shadow: 0 0 20px rgba(156, 39, 176, 0.08);
-    animation: planet-orbit-3 480s linear infinite;
-    filter: blur(0.6px);
+        rgba(156, 39, 176, 0.28) 0%,
+        rgba(233, 30, 99, 0.18) 35%, 
+        rgba(156, 39, 176, 0.08) 65%, 
+        rgba(156, 39, 176, 0.02) 100%);
+    box-shadow: 0 0 30px rgba(156, 39, 176, 0.15);
+    animation: planet-orbit-3 720s linear infinite, hypnotic-drift 110s ease-in-out infinite;
+    filter: blur(0.4px) contrast(1.4) saturate(1.3);
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
 }
 
 .energy-field {
@@ -383,24 +405,80 @@ body {
 }
 
 @keyframes planet-orbit-1 {
-    0% { transform: rotate(0deg) translateY(-15px) rotate(0deg) translateX(-10px); }
-    100% { transform: rotate(360deg) translateY(-15px) rotate(-360deg) translateX(10px); }
+    0% { transform: rotate(0deg) translateY(-25px) rotate(0deg) translateX(-18px) scale(1); }
+    25% { transform: rotate(90deg) translateY(-30px) rotate(-90deg) translateX(12px) scale(1.05); }
+    50% { transform: rotate(180deg) translateY(-22px) rotate(-180deg) translateX(15px) scale(0.95); }
+    75% { transform: rotate(270deg) translateY(-28px) rotate(-270deg) translateX(-10px) scale(1.02); }
+    100% { transform: rotate(360deg) translateY(-25px) rotate(-360deg) translateX(-18px) scale(1); }
 }
 
 @keyframes planet-orbit-2 {
-    0% { transform: rotate(0deg) translateY(-12px) rotate(0deg) translateX(8px); }
-    100% { transform: rotate(360deg) translateY(-12px) rotate(-360deg) translateX(-8px); }
+    0% { transform: rotate(0deg) translateY(-18px) rotate(0deg) translateX(22px) scale(1); }
+    30% { transform: rotate(108deg) translateY(-25px) rotate(-108deg) translateX(-15px) scale(0.9); }
+    60% { transform: rotate(216deg) translateY(-20px) rotate(-216deg) translateX(18px) scale(1.1); }
+    90% { transform: rotate(324deg) translateY(-23px) rotate(-324deg) translateX(-12px) scale(0.95); }
+    100% { transform: rotate(360deg) translateY(-18px) rotate(-360deg) translateX(22px) scale(1); }
 }
 
 @keyframes planet-orbit-3 {
-    0% { transform: rotate(0deg) translateY(-10px) rotate(0deg) translateX(5px); }
-    100% { transform: rotate(360deg) translateY(-10px) rotate(-360deg) translateX(-5px); }
+    0% { transform: rotate(0deg) translateY(-15px) rotate(0deg) translateX(20px) scale(1); }
+    20% { transform: rotate(72deg) translateY(-22px) rotate(-72deg) translateX(-16px) scale(1.08); }
+    40% { transform: rotate(144deg) translateY(-18px) rotate(-144deg) translateX(14px) scale(0.92); }
+    60% { transform: rotate(216deg) translateY(-25px) rotate(-216deg) translateX(-18px) scale(1.05); }
+    80% { transform: rotate(288deg) translateY(-16px) rotate(-288deg) translateX(17px) scale(0.97); }
+    100% { transform: rotate(360deg) translateY(-15px) rotate(-360deg) translateX(20px) scale(1); }
 }
 
 @keyframes energy-rotation {
     0% { transform: rotate(0deg); opacity: 0.01; }
     50% { opacity: 0.02; }
     100% { transform: rotate(360deg); opacity: 0.01; }
+}
+
+@keyframes chromatic-drift {
+    0% { 
+        filter: blur(0.3px) contrast(1.6) saturate(1.4) hue-rotate(0deg);
+        transform: translateX(0px) translateY(0px);
+    }
+    25% { 
+        filter: blur(0.4px) contrast(1.8) saturate(1.6) hue-rotate(5deg);
+        transform: translateX(1px) translateY(-0.5px);
+    }
+    50% { 
+        filter: blur(0.2px) contrast(1.4) saturate(1.8) hue-rotate(10deg);
+        transform: translateX(-0.5px) translateY(1px);
+    }
+    75% { 
+        filter: blur(0.5px) contrast(1.7) saturate(1.2) hue-rotate(15deg);
+        transform: translateX(-1px) translateY(-0.5px);
+    }
+    100% { 
+        filter: blur(0.3px) contrast(1.6) saturate(1.4) hue-rotate(0deg);
+        transform: translateX(0px) translateY(0px);
+    }
+}
+
+@keyframes hypnotic-drift {
+    0% { 
+        transform: scale(1) rotate(0deg);
+        filter: contrast(1.3) saturate(1.2) hue-rotate(0deg) brightness(1);
+    }
+    25% { 
+        transform: scale(1.01) rotate(0.3deg);
+        filter: contrast(1.4) saturate(1.4) hue-rotate(3deg) brightness(1.05);
+    }
+    50% { 
+        transform: scale(0.99) rotate(0deg);
+        filter: contrast(1.2) saturate(1.6) hue-rotate(6deg) brightness(0.95);
+    }
+    75% { 
+        transform: scale(1.005) rotate(-0.2deg);
+        filter: contrast(1.35) saturate(1.3) hue-rotate(4deg) brightness(1.02);
+    }
+    100% { 
+        transform: scale(1) rotate(0deg);
+        filter: contrast(1.3) saturate(1.2) hue-rotate(0deg) brightness(1);
+    }
 }
 
 #vignette {
