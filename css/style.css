@@ -75,14 +75,17 @@ body {
     width: 200%;
     height: 200%;
     background-image: 
-        radial-gradient(2px 2px at 60px 80px, #ff4081, transparent),
-        radial-gradient(1px 1px at 140px 120px, #4fc3f7, transparent),
-        radial-gradient(2px 2px at 220px 40px, #e91e63, transparent),
-        radial-gradient(1px 1px at 80px 180px, #2196f3, transparent),
-        radial-gradient(1px 1px at 180px 160px, #9c27b0, transparent);
+        radial-gradient(2px 2px at 73px 127px, #ff4081, transparent),
+        radial-gradient(1px 1px at 234px 67px, #4fc3f7, transparent),
+        radial-gradient(2px 2px at 156px 203px, #e91e63, transparent),
+        radial-gradient(1px 1px at 97px 34px, #2196f3, transparent),
+        radial-gradient(1px 1px at 278px 145px, #9c27b0, transparent),
+        radial-gradient(2px 2px at 45px 189px, #f44336, transparent),
+        radial-gradient(1px 1px at 189px 91px, #3f51b5, transparent),
+        radial-gradient(2px 2px at 312px 178px, #ff5722, transparent);
     background-repeat: repeat;
-    background-size: 300px 300px;
-    animation: stars-twinkle 200s linear infinite;
+    background-size: 350px 250px;
+    animation: stars-twinkle 500s linear infinite;
     filter: blur(0.5px);
 }
 
@@ -138,7 +141,7 @@ body {
             transparent 62.8%,
             transparent 100%
         );
-    animation: lightning-flash 25s ease-in-out infinite;
+    animation: lightning-flash 25s ease-in-out infinite, lightning-move 30s ease-in-out infinite;
     filter: blur(1px);
 }
 
@@ -187,24 +190,36 @@ body {
     height: 100%;
     background: 
         radial-gradient(ellipse at 20% 80%, 
-            rgba(244, 67, 54, 0.06) 0%, 
-            rgba(244, 67, 54, 0.03) 40%, 
+            rgba(244, 67, 54, 0.08) 0%, 
+            rgba(244, 67, 54, 0.04) 40%, 
             transparent 70%),
         radial-gradient(ellipse at 80% 20%, 
             rgba(33, 150, 243, 0.08) 0%, 
             rgba(33, 150, 243, 0.04) 50%, 
             transparent 70%),
         radial-gradient(ellipse at 40% 40%, 
-            rgba(156, 39, 176, 0.05) 0%, 
-            rgba(156, 39, 176, 0.02) 60%, 
+            rgba(156, 39, 176, 0.1) 0%, 
+            rgba(156, 39, 176, 0.05) 60%, 
             transparent 80%),
         radial-gradient(ellipse at 60% 10%, 
-            rgba(255, 64, 129, 0.04) 0%, 
-            rgba(255, 64, 129, 0.02) 50%, 
+            rgba(233, 30, 99, 0.09) 0%, 
+            rgba(233, 30, 99, 0.04) 50%, 
             transparent 75%),
         radial-gradient(ellipse at 10% 60%, 
             rgba(63, 81, 181, 0.05) 0%, 
             rgba(63, 81, 181, 0.02) 45%, 
+            transparent 80%),
+        radial-gradient(ellipse at 85% 65%, 
+            rgba(142, 36, 170, 0.08) 0%, 
+            rgba(142, 36, 170, 0.03) 55%, 
+            transparent 85%),
+        radial-gradient(ellipse at 25% 15%, 
+            rgba(255, 64, 129, 0.07) 0%, 
+            rgba(255, 64, 129, 0.03) 45%, 
+            transparent 75%),
+        radial-gradient(ellipse at 70% 85%, 
+            rgba(156, 39, 176, 0.06) 0%, 
+            rgba(156, 39, 176, 0.02) 50%, 
             transparent 80%);
     animation: nebula-drift 120s ease-in-out infinite alternate;
 }
@@ -285,9 +300,27 @@ body {
 
 /* Animations */
 @keyframes stars-twinkle {
-    0% { transform: translateY(0px) rotate(0deg); opacity: 0.6; }
-    50% { opacity: 0.3; }
-    100% { transform: translateY(-300px) rotate(360deg); opacity: 0.6; }
+    0% { transform: translateY(0px) rotate(0deg); opacity: 0.5; }
+    50% { opacity: 0.2; }
+    100% { transform: translateY(-350px) rotate(360deg); opacity: 0.5; }
+}
+
+@keyframes lightning-move {
+    0% { 
+        transform: translateX(-20px) translateY(-15px); 
+    }
+    25% { 
+        transform: translateX(15px) translateY(20px); 
+    }
+    50% { 
+        transform: translateX(25px) translateY(-10px); 
+    }
+    75% { 
+        transform: translateX(-10px) translateY(15px); 
+    }
+    100% { 
+        transform: translateX(-20px) translateY(-15px); 
+    }
 }
 
 @keyframes cloud-drift {
