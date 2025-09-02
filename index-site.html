@@ -39,6 +39,9 @@
             <div class="planet planet-1"></div>
             <div class="planet planet-2"></div>
             <div class="planet planet-3"></div>
+            <div class="planet planet-4"></div>
+            <div class="planet planet-5"></div>
+            <div class="planet planet-6"></div>
         </div>
         <div class="energy-field"></div>
     </div>
@@ -108,6 +111,14 @@ Tickets are available from the Melbourne Fringe website. This project has been F
     </div>
     
     <script>
+        // Immediate loading screen removal
+        document.addEventListener('DOMContentLoaded', function() {
+            const loadingScreen = document.getElementById('loading-screen');
+            if (loadingScreen) {
+                loadingScreen.style.display = 'none';
+            }
+        });
+        
         // Minimal loading screen removal
         window.addEventListener('load', function() {
             const loadingScreen = document.getElementById('loading-screen');
@@ -116,13 +127,20 @@ Tickets are available from the Melbourne Fringe website. This project has been F
             }
         });
         
-        // Fallback timer in case window.load doesn't fire
+        // Multiple fallback timers in case events don't fire
         setTimeout(function() {
             const loadingScreen = document.getElementById('loading-screen');
             if (loadingScreen) {
                 loadingScreen.style.display = 'none';
             }
-        }, 1000);
+        }, 500);
+        
+        setTimeout(function() {
+            const loadingScreen = document.getElementById('loading-screen');
+            if (loadingScreen) {
+                loadingScreen.style.display = 'none';
+            }
+        }, 2000);
     </script>
 </body>
 </html>
