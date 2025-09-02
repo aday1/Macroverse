@@ -14,3 +14,9 @@ https://glslsandbox.com/e#107951.13 - slow colors morphing heatdeath
 
 
 https://glslsandbox.com/e#107954.0 - orbits?
+
+
+https://glslsandbox.com/e#8854.0 - Orbits?
+
+https://glslsandbox.com/e#107716.0
+
