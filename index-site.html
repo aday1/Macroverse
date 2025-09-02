@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Macroverse - Interactive Experience</title>
+    <!-- Google Fonts for space typewriter aesthetics -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Mono:wght@400;700&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="loading-screen" id="loading-screen">
+        <div>Loading Macroverse...</div>
+    </div>
+    
+    <!-- Navigation Sidebar -->
+    <nav id="navigation-sidebar" class="nav-sidebar">
+        <div class="nav-header">Sections</div>
+        <ul class="nav-list">
+            <li><a href="#about" class="nav-link active" data-section="about">
+                <span class="nav-number">1</span>
+                <span class="nav-title">About</span>
+            </a></li>
+            <li><a href="#experience" class="nav-link" data-section="experience">
+                <span class="nav-number">2</span>
+                <span class="nav-title">Experience</span>
+            </a></li>
+            <li><a href="#technology" class="nav-link" data-section="technology">
+                <span class="nav-number">3</span>
+                <span class="nav-title">Technology</span>
+            </a></li>
+        </ul>
+        <button id="nav-toggle" class="nav-toggle">☰</button>
+    </nav>
+    
+    <canvas id="bg"></canvas>
+    <div id="vignette"></div>
+    
+    <!-- Text Toggle Button -->
+    <button id="text-toggle" class="text-toggle-btn" title="Toggle text visibility">
+        <span class="toggle-icon">📝</span>
+    </button>
+    
+    <!-- Logo Header -->
+    <header class="site-header">
+        <div class="logo-container">
+            <img src="images/logo-main.png" alt="Macroverse Logo" class="main-logo" />
+            <div class="logo-placeholder">
+                <div class="placeholder-text">Main Logo</div>
+                <div class="placeholder-size">400x120px</div>
+            </div>
+        </div>
+        <div class="partner-logos">
+            <div class="partner-logo">
+                <img src="images/partner-1.png" alt="Partner 1" class="partner-img" />
+                <div class="logo-placeholder small">
+                    <div class="placeholder-text">Partner 1</div>
+                    <div class="placeholder-size">150x80px</div>
+                </div>
+            </div>
+            <div class="partner-logo">
+                <img src="images/partner-2.png" alt="Partner 2" class="partner-img" />
+                <div class="logo-placeholder small">
+                    <div class="placeholder-text">Partner 2</div>
+                    <div class="placeholder-size">150x80px</div>
+                </div>
+            </div>
+            <div class="partner-logo">
+                <img src="images/partner-3.png" alt="Partner 3" class="partner-img" />
+                <div class="logo-placeholder small">
+                    <div class="placeholder-text">Partner 3</div>
+                    <div class="placeholder-size">150x80px</div>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <main>
+
+        <section id="about" class="story-section active">
+            <div class="story-content">
+                <h2 class="story-title">About Macroverse</h2>
+                <p class="story-timeline">Interactive Cosmic Experience</p>
+                <div class="content-block">
+                    <p>Macroverse is an immersive interactive experience that takes audiences on a journey through the cosmos, from the birth of the universe to the emergence of life. Using cutting-edge shader technology and real-time audio visualization, we create a unique performance that combines science, art, and technology.</p>
+                    
+                    <p>Our interactive visualization system responds to live audio input, creating dynamic cosmic landscapes that evolve in real-time. Each performance is unique, shaped by the interplay between scientific accuracy, artistic vision, and audience participation.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="experience" class="story-section">
+            <div class="story-content">
+                <h2 class="story-title">The Experience</h2>
+                <p class="story-timeline">Real-time Interactive Visualization</p>
+                <div class="content-block">
+                    <p>Witness the universe unfold before your eyes through our custom shader-based visualization engine. From primordial energy fields to complex stellar formations, each visual element is carefully crafted to represent authentic cosmic phenomena while maintaining artistic beauty.</p>
+                    
+                    <p>The experience features:</p>
+                    <ul class="feature-list">
+                        <li>6 distinct cosmic environments</li>
+                        <li>Real-time audio-reactive visuals</li>
+                        <li>Interactive parameter control</li>
+                        <li>Scientific narrative framework</li>
+                        <li>Immersive atmospheric soundscape</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="technology" class="story-section">
+            <div class="story-content">
+                <h2 class="story-title">Technology</h2>
+                <p class="story-timeline">Modern GPU-Accelerated Rendering</p>
+                <div class="content-block">
+                    <p>Macroverse leverages advanced graphics programming and real-time rendering techniques to create stunning visual experiences that would be impossible with traditional video or animation.</p>
+                    
+                    <div class="tech-specs">
+                        <div class="spec-item">
+                            <h4>Shader Technology</h4>
+                            <p>Custom GLSL fragment shaders for procedural cosmic effects</p>
+                        </div>
+                        <div class="spec-item">
+                            <h4>Audio Processing</h4>
+                            <p>Real-time FFT analysis for audio-reactive parameters</p>
+                        </div>
+                        <div class="spec-item">
+                            <h4>Performance</h4>
+                            <p>60+ FPS rendering with interactive control systems</p>
+                        </div>
+                        <div class="spec-item">
+                            <h4>Platforms</h4>
+                            <p>Cross-platform support via ModernGL and Python</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Event Link Footer -->
+        <footer class="event-footer">
+            <div class="footer-logos">
+                <div class="sponsor-logo">
+                    <img src="images/sponsor-1.png" alt="Sponsor 1" class="sponsor-img" />
+                    <div class="logo-placeholder small">
+                        <div class="placeholder-text">Sponsor 1</div>
+                        <div class="placeholder-size">120x60px</div>
+                    </div>
+                </div>
+                <div class="sponsor-logo">
+                    <img src="images/sponsor-2.png" alt="Sponsor 2" class="sponsor-img" />
+                    <div class="logo-placeholder small">
+                        <div class="placeholder-text">Sponsor 2</div>
+                        <div class="placeholder-size">120x60px</div>
+                    </div>
+                </div>
+            </div>
+            <a href="https://www.melbournefringe.com.au/whats-on/events/macroverse" target="_blank" class="fringe-link">
+                🎭 View Macroverse at Melbourne Fringe Festival
+            </a>
+        </footer>
+
+    </main>
+    
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.138.0/build/three.module.js",
+                "three/examples/jsm/controls/OrbitControls.js": "https://unpkg.com/three@0.138.0/examples/jsm/controls/OrbitControls.js"
+            }
+        }
+    </script>
+    <script src="js/logo-manager.js"></script>
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>

@@ -647,3 +647,214 @@ html {
         padding: 1.5em 0;
     }
 }
+
+/* ========================================
+   LOGO AND BRANDING STYLES (index-site.html)
+   ======================================== */
+
+.site-header {
+    position: relative;
+    z-index: 10;
+    padding: 2em 0;
+    text-align: center;
+}
+
+.logo-container {
+    margin-bottom: 2em;
+    position: relative;
+}
+
+.main-logo {
+    max-height: 120px;
+    width: auto;
+    display: none; /* Hidden until image is available */
+}
+
+.partner-logos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2em;
+    flex-wrap: wrap;
+    margin-top: 1em;
+}
+
+.partner-logo, .sponsor-logo {
+    position: relative;
+}
+
+.partner-img, .sponsor-img {
+    max-height: 80px;
+    width: auto;
+    display: none; /* Hidden until images are available */
+}
+
+/* Logo Placeholders */
+.logo-placeholder {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px dashed rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    padding: 1em;
+    backdrop-filter: blur(10px);
+    font-family: 'Space Mono', monospace;
+    color: rgba(255, 255, 255, 0.6);
+    min-height: 120px;
+    min-width: 400px;
+    transition: all 0.3s ease;
+}
+
+.logo-placeholder:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.logo-placeholder.small {
+    min-height: 80px;
+    min-width: 150px;
+    padding: 0.8em;
+}
+
+.placeholder-text {
+    font-size: 1em;
+    font-weight: 500;
+    margin-bottom: 0.3em;
+    text-align: center;
+}
+
+.placeholder-size {
+    font-size: 0.8em;
+    opacity: 0.7;
+    text-align: center;
+}
+
+/* Content Enhancements */
+.content-block {
+    margin: 1.5em 0;
+}
+
+.feature-list {
+    list-style: none;
+    padding: 0;
+    margin: 1.5em 0;
+}
+
+.feature-list li {
+    padding: 0.5em 0;
+    position: relative;
+    padding-left: 1.5em;
+}
+
+.feature-list li::before {
+    content: "▸";
+    color: #4fc3f7;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+}
+
+.tech-specs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5em;
+    margin: 2em 0;
+}
+
+.spec-item {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 1.5em;
+    backdrop-filter: blur(5px);
+    transition: all 0.3s ease;
+}
+
+.spec-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(79, 195, 247, 0.3);
+    transform: translateY(-2px);
+}
+
+.spec-item h4 {
+    color: #4fc3f7;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.1em;
+    margin: 0 0 0.5em 0;
+    font-weight: 600;
+}
+
+.spec-item p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.5;
+}
+
+/* Footer Logo Section */
+.footer-logos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2em;
+    margin-bottom: 1.5em;
+    flex-wrap: wrap;
+}
+
+/* Mobile Responsiveness for New Elements */
+@media (max-width: 768px) {
+    .logo-placeholder {
+        min-width: 280px;
+        min-height: 100px;
+    }
+    
+    .logo-placeholder.small {
+        min-width: 120px;
+        min-height: 60px;
+    }
+    
+    .partner-logos {
+        gap: 1em;
+    }
+    
+    .tech-specs {
+        grid-template-columns: 1fr;
+        gap: 1em;
+    }
+    
+    .spec-item {
+        padding: 1em;
+    }
+    
+    .footer-logos {
+        gap: 1em;
+    }
+}
+
+@media (max-width: 480px) {
+    .site-header {
+        padding: 1em 0;
+    }
+    
+    .logo-placeholder {
+        min-width: 250px;
+        min-height: 80px;
+        padding: 0.8em;
+    }
+    
+    .logo-placeholder.small {
+        min-width: 100px;
+        min-height: 50px;
+        padding: 0.5em;
+    }
+    
+    .placeholder-text {
+        font-size: 0.9em;
+    }
+    
+    .placeholder-size {
+        font-size: 0.7em;
+    }
+}

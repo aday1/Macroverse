@@ -1,4 +1,4 @@
-name: Deploy static content to Pages
+name: Deploy Macroverse to GitHub Pages
 
 on:
   # Runs on pushes targeting the default branch
@@ -21,7 +21,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # Single deploy job since we're just deploying
+  # Build and deploy job
   deploy:
     environment:
       name: github-pages
@@ -30,13 +30,44 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        
+      - name: Verify web assets
+        run: |
+          echo "Checking for web assets..."
+          ls -la
+          echo "HTML files:"
+          find . -name "*.html" -type f
+          echo "CSS files:"
+          find . -name "*.css" -type f
+          echo "JavaScript files:"
+          find . -name "*.js" -type f
+          echo "Images directory:"
+          ls -la images/ || echo "Images directory not found"
+          
       - name: Setup Pages
         uses: actions/configure-pages@v4
+        
+      - name: Create deployment structure
+        run: |
+          # Copy all web assets to deployment folder
+          mkdir -p _site
+          cp -r . _site/
+          # Remove Python-specific files and development folders from web deployment
+          rm -rf _site/python
+          rm -rf _site/venv
+          rm -rf _site/shaders  # Keep shaders out of web deployment for security
+          rm -rf _site/__pycache__
+          rm -rf _site/.git
+          # Keep essential web files
+          echo "Final web structure:"
+          find _site -type f -name "*.html" -o -name "*.css" -o -name "*.js" -o -name "*.md" -o -name "*.png" -o -name "*.jpg" -o -name "*.gif" | sort
+        
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repository
-          path: '.'
+          # Upload the prepared site structure
+          path: '_site'
+          
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
