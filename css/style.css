@@ -75,14 +75,48 @@ body {
     width: 200%;
     height: 200%;
     background-image: 
-        radial-gradient(2px 2px at 20px 30px, #4fc3f7, transparent),
-        radial-gradient(2px 2px at 40px 70px, rgba(255, 255, 255, 0.8), transparent),
-        radial-gradient(1px 1px at 90px 40px, #4fc3f7, transparent),
-        radial-gradient(1px 1px at 130px 80px, rgba(255, 255, 255, 0.6), transparent),
-        radial-gradient(2px 2px at 160px 30px, #4fc3f7, transparent);
+        radial-gradient(2px 2px at 20px 30px, #ff4081, transparent),
+        radial-gradient(1px 1px at 40px 70px, #4fc3f7, transparent),
+        radial-gradient(2px 2px at 90px 40px, #e91e63, transparent),
+        radial-gradient(1px 1px at 130px 80px, #2196f3, transparent),
+        radial-gradient(3px 3px at 160px 30px, #ff5722, transparent),
+        radial-gradient(1px 1px at 50px 120px, #03a9f4, transparent),
+        radial-gradient(2px 2px at 180px 90px, #f44336, transparent),
+        radial-gradient(1px 1px at 70px 150px, #00bcd4, transparent),
+        radial-gradient(2px 2px at 200px 60px, #9c27b0, transparent),
+        radial-gradient(1px 1px at 30px 180px, #3f51b5, transparent);
     background-repeat: repeat;
-    background-size: 200px 200px;
-    animation: stars-twinkle 20s linear infinite;
+    background-size: 220px 220px;
+    animation: stars-twinkle 25s linear infinite;
+}
+
+.particles-layer-1 {
+    position: absolute;
+    width: 150%;
+    height: 150%;
+    background-image: 
+        radial-gradient(1px 1px at 25px 45px, rgba(244, 67, 54, 0.8), transparent),
+        radial-gradient(1px 1px at 85px 25px, rgba(33, 150, 243, 0.9), transparent),
+        radial-gradient(1px 1px at 145px 85px, rgba(255, 64, 129, 0.7), transparent),
+        radial-gradient(1px 1px at 65px 105px, rgba(63, 81, 181, 0.8), transparent),
+        radial-gradient(1px 1px at 105px 45px, rgba(244, 67, 54, 0.6), transparent);
+    background-repeat: repeat;
+    background-size: 170px 170px;
+    animation: particles-float-1 18s ease-in-out infinite alternate;
+}
+
+.particles-layer-2 {
+    position: absolute;
+    width: 180%;
+    height: 180%;
+    background-image: 
+        radial-gradient(1px 1px at 35px 55px, rgba(3, 169, 244, 0.7), transparent),
+        radial-gradient(1px 1px at 95px 15px, rgba(233, 30, 99, 0.8), transparent),
+        radial-gradient(1px 1px at 155px 75px, rgba(63, 81, 181, 0.6), transparent),
+        radial-gradient(1px 1px at 15px 95px, rgba(255, 87, 34, 0.9), transparent);
+    background-repeat: repeat;
+    background-size: 190px 190px;
+    animation: particles-float-2 22s ease-in-out infinite alternate-reverse;
 }
 
 .nebula-layer {
@@ -91,18 +125,26 @@ body {
     height: 100%;
     background: 
         radial-gradient(ellipse at 20% 80%, 
-            rgba(79, 195, 247, 0.1) 0%, 
-            rgba(79, 195, 247, 0.05) 40%, 
+            rgba(244, 67, 54, 0.12) 0%, 
+            rgba(244, 67, 54, 0.06) 40%, 
             transparent 70%),
         radial-gradient(ellipse at 80% 20%, 
-            rgba(63, 81, 181, 0.08) 0%, 
-            rgba(63, 81, 181, 0.03) 50%, 
+            rgba(33, 150, 243, 0.15) 0%, 
+            rgba(33, 150, 243, 0.08) 50%, 
             transparent 70%),
         radial-gradient(ellipse at 40% 40%, 
-            rgba(156, 39, 176, 0.06) 0%, 
-            rgba(156, 39, 176, 0.02) 60%, 
+            rgba(156, 39, 176, 0.1) 0%, 
+            rgba(156, 39, 176, 0.04) 60%, 
+            transparent 80%),
+        radial-gradient(ellipse at 60% 10%, 
+            rgba(255, 64, 129, 0.08) 0%, 
+            rgba(255, 64, 129, 0.03) 50%, 
+            transparent 75%),
+        radial-gradient(ellipse at 10% 60%, 
+            rgba(63, 81, 181, 0.1) 0%, 
+            rgba(63, 81, 181, 0.04) 45%, 
             transparent 80%);
-    animation: nebula-drift 30s ease-in-out infinite alternate;
+    animation: nebula-drift 35s ease-in-out infinite alternate;
 }
 
 .planet-layer {
@@ -124,10 +166,11 @@ body {
     top: 20%;
     left: 10%;
     background: radial-gradient(circle at 30% 30%, 
-        rgba(79, 195, 247, 0.4) 0%, 
-        rgba(79, 195, 247, 0.2) 50%, 
-        rgba(79, 195, 247, 0.05) 100%);
-    box-shadow: 0 0 50px rgba(79, 195, 247, 0.2);
+        rgba(244, 67, 54, 0.5) 0%, 
+        rgba(255, 87, 34, 0.3) 30%,
+        rgba(244, 67, 54, 0.15) 60%, 
+        rgba(244, 67, 54, 0.05) 100%);
+    box-shadow: 0 0 60px rgba(244, 67, 54, 0.3);
     animation-duration: 50s;
 }
 
@@ -137,10 +180,11 @@ body {
     top: 60%;
     right: 15%;
     background: radial-gradient(circle at 25% 25%, 
-        rgba(63, 81, 181, 0.3) 0%, 
-        rgba(63, 81, 181, 0.15) 50%, 
-        rgba(63, 81, 181, 0.03) 100%);
-    box-shadow: 0 0 30px rgba(63, 81, 181, 0.15);
+        rgba(33, 150, 243, 0.45) 0%, 
+        rgba(3, 169, 244, 0.25) 40%,
+        rgba(33, 150, 243, 0.1) 70%, 
+        rgba(33, 150, 243, 0.03) 100%);
+    box-shadow: 0 0 40px rgba(33, 150, 243, 0.25);
     animation-duration: 35s;
     animation-direction: reverse;
 }
@@ -151,10 +195,11 @@ body {
     top: 40%;
     left: 70%;
     background: radial-gradient(circle at 35% 35%, 
-        rgba(156, 39, 176, 0.25) 0%, 
-        rgba(156, 39, 176, 0.1) 50%, 
+        rgba(156, 39, 176, 0.4) 0%,
+        rgba(233, 30, 99, 0.2) 35%, 
+        rgba(156, 39, 176, 0.08) 65%, 
         rgba(156, 39, 176, 0.02) 100%);
-    box-shadow: 0 0 25px rgba(156, 39, 176, 0.1);
+    box-shadow: 0 0 35px rgba(156, 39, 176, 0.2);
     animation-duration: 45s;
 }
 
@@ -177,8 +222,30 @@ body {
 /* Animations */
 @keyframes stars-twinkle {
     0% { transform: translateY(0px) rotate(0deg); opacity: 1; }
-    50% { opacity: 0.8; }
+    50% { opacity: 0.7; }
     100% { transform: translateY(-200px) rotate(360deg); opacity: 1; }
+}
+
+@keyframes particles-float-1 {
+    0% { 
+        transform: translateX(-30px) translateY(20px) rotate(0deg); 
+        opacity: 0.8;
+    }
+    100% { 
+        transform: translateX(30px) translateY(-20px) rotate(180deg); 
+        opacity: 1;
+    }
+}
+
+@keyframes particles-float-2 {
+    0% { 
+        transform: translateX(25px) translateY(-15px) rotate(0deg); 
+        opacity: 0.9;
+    }
+    100% { 
+        transform: translateX(-25px) translateY(15px) rotate(-180deg); 
+        opacity: 0.6;
+    }
 }
 
 @keyframes nebula-drift {
@@ -188,7 +255,7 @@ body {
     }
     100% { 
         transform: translateX(20px) translateY(-10px); 
-        filter: hue-rotate(30deg);
+        filter: hue-rotate(60deg);
     }
 }
 
