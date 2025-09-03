@@ -1422,11 +1422,13 @@ li {
 }
 
 html, body {
-    overflow-x: hidden; /* Prevent horizontal scroll */
+    overflow-x: hidden; /* Prevent horizontal scroll only */
+    overflow-y: auto; /* Explicitly allow vertical scrolling */
     width: 100%;
     max-width: 100vw;
     margin: 0;
     padding: 0;
+    height: auto; /* Allow natural height for scrolling content */
 }
 
 .page-container {
