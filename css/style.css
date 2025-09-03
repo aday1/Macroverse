@@ -19,7 +19,7 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start; /* Change from center to flex-start for scrolling */
     align-items: center;
     padding: 2em 0;
 }
@@ -1435,6 +1435,11 @@ html, body {
     width: 100%;
     max-width: 100vw;
     overflow-x: hidden;
+    /* Fix mobile scrolling - remove vertical centering */
+    justify-content: flex-start;
+    align-items: stretch;
+    min-height: 100vh;
+    height: auto;
 }
 
 /* Ensure all major containers don't exceed viewport */
@@ -1474,6 +1479,12 @@ input, select, textarea {
 
 /* Mobile optimizations */
 @media (max-width: 768px) {
+    /* Fix body layout for mobile scrolling */
+    body {
+        justify-content: flex-start;
+        align-items: stretch;
+    }
+    
     /* Enhanced atmospheric animations for mobile */
     .cosmic-background {
         animation: atmospheric-drift 40s ease-in-out infinite alternate; /* Faster on mobile */
