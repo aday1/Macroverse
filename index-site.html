@@ -135,6 +135,34 @@ Tickets are available from the Melbourne Fringe website. This project has been F
             }
         });
         
+        // Mobile touch optimizations
+        const isMobile = window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
+        if (isMobile) {
+            console.log('Mobile device detected, adding touch optimizations');
+            
+            // Prevent scroll bounce on iOS
+            document.body.addEventListener('touchmove', (e) => {
+                if (e.scale !== 1) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+            
+            // Add touch feedback to interactive elements
+            const interactiveElements = document.querySelectorAll('.ticket-link, .fringe-link, a[href]');
+            interactiveElements.forEach(element => {
+                element.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(0.98)';
+                    this.style.opacity = '0.8';
+                });
+                
+                element.addEventListener('touchend', function() {
+                    this.style.transform = 'scale(1)';
+                    this.style.opacity = '1';
+                });
+            });
+        }
+        
         // Multiple fallback timers in case events don't fire
         setTimeout(function() {
             const loadingScreen = document.getElementById('loading-screen');

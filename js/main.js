@@ -7,6 +7,9 @@ console.log('Three.js imported:', THREE);
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM Content Loaded - Initializing Macroverse');
     
+    // Mobile detection
+    const isMobile = window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
     // Show loading screen initially, hide after Three.js loads
     const loadingScreen = document.getElementById('loading-screen');
     if (loadingScreen) {
@@ -19,13 +22,14 @@ document.addEventListener('DOMContentLoaded', () => {
         initializeThreeJS();
         console.log('Three.js initialization started');
         
-        // Hide loading screen after a short delay to ensure Three.js has started
+        // Hide loading screen after appropriate delay (longer on mobile)
+        const loadingDelay = isMobile ? 3000 : 2000;
         setTimeout(() => {
             if (loadingScreen) {
                 loadingScreen.style.display = 'none';
                 console.log('Loading screen hidden after Three.js initialization');
             }
-        }, 2000);
+        }, loadingDelay);
         
     } catch (error) {
         console.error('Error initializing Three.js:', error);
@@ -33,6 +37,30 @@ document.addEventListener('DOMContentLoaded', () => {
         if (loadingScreen) {
             loadingScreen.style.display = 'none';
         }
+    }
+    
+    // Add mobile-specific touch handlers
+    if (isMobile) {
+        console.log('Mobile device detected, adding touch optimizations');
+        
+        // Prevent scroll bounce on iOS
+        document.body.addEventListener('touchmove', (e) => {
+            if (e.scale !== 1) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+        
+        // Add touch feedback to navigation
+        const navLinks = document.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+            link.addEventListener('touchstart', function() {
+                this.style.transform = 'translateX(8px) scale(0.98)';
+            });
+            
+            link.addEventListener('touchend', function() {
+                this.style.transform = 'translateX(5px) scale(1)';
+            });
+        });
     }
 });
 
@@ -55,10 +83,16 @@ function initializeThreeJS() {
         const renderer = new THREE.WebGLRenderer({
             canvas: canvas,
             alpha: true,
-            antialias: true
+            antialias: window.innerWidth > 768, // Disable antialiasing on mobile for better performance
+            powerPreference: "default", // Let device choose appropriate GPU
+            failIfMajorPerformanceCaveat: false
         });
         renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        
+        // Optimize for mobile devices
+        const isMobile = window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const pixelRatio = isMobile ? Math.min(window.devicePixelRatio, 2) : Math.min(window.devicePixelRatio, 2);
+        renderer.setPixelRatio(pixelRatio);
 
         // Load and create shader material
         console.log('Creating shader material...');
@@ -124,7 +158,7 @@ function initializeThreeJS() {
         scene.add(shaderMesh);
 
         // Create animated background particles
-        const particleCount = 150;
+        const particleCount = isMobile ? 75 : 150; // Reduce particles on mobile
         const positions = new Float32Array(particleCount * 3);
         const velocities = new Float32Array(particleCount * 3);
         
@@ -174,25 +208,41 @@ function initializeThreeJS() {
         scene.add(lines);
         
         // Animation loop
-        function animate() {
+        let frameCount = 0;
+        const targetFPS = isMobile ? 30 : 60; // Reduce frame rate on mobile
+        const frameInterval = 1000 / targetFPS;
+        let lastFrameTime = 0;
+        
+        function animate(currentTime = 0) {
             requestAnimationFrame(animate);
+            
+            // Throttle frame rate on mobile for better battery life
+            if (currentTime - lastFrameTime < frameInterval && isMobile) {
+                return;
+            }
+            lastFrameTime = currentTime;
             
             // Update shader uniforms
             shaderMaterial.uniforms.u_time.value = performance.now() * 0.001;
             
-            // Update particles
-            const positions = particles.geometry.attributes.position.array;
-            for (let i = 0; i < particleCount; i++) {
-                positions[i * 3] += velocities[i * 3];
-                positions[i * 3 + 1] += velocities[i * 3 + 1];
-                positions[i * 3 + 2] += velocities[i * 3 + 2];
-                
-                // Wrap around edges
-                if (Math.abs(positions[i * 3]) > 50) velocities[i * 3] *= -1;
-                if (Math.abs(positions[i * 3 + 1]) > 50) velocities[i * 3 + 1] *= -1;
-                if (Math.abs(positions[i * 3 + 2]) > 50) velocities[i * 3 + 2] *= -1;
+            // Update particles (less frequently on mobile)
+            frameCount++;
+            const updateParticles = isMobile ? frameCount % 2 === 0 : true;
+            
+            if (updateParticles) {
+                const positions = particles.geometry.attributes.position.array;
+                for (let i = 0; i < particleCount; i++) {
+                    positions[i * 3] += velocities[i * 3];
+                    positions[i * 3 + 1] += velocities[i * 3 + 1];
+                    positions[i * 3 + 2] += velocities[i * 3 + 2];
+                    
+                    // Wrap around edges
+                    if (Math.abs(positions[i * 3]) > 50) velocities[i * 3] *= -1;
+                    if (Math.abs(positions[i * 3 + 1]) > 50) velocities[i * 3 + 1] *= -1;
+                    if (Math.abs(positions[i * 3 + 2]) > 50) velocities[i * 3 + 2] *= -1;
+                }
+                particles.geometry.attributes.position.needsUpdate = true;
             }
-            particles.geometry.attributes.position.needsUpdate = true;
             
             // Rotate the scene slightly
             particles.rotation.y += 0.001;
