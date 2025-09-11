@@ -42,6 +42,10 @@ class Macroverse(mglw.WindowConfig):
 
         self.control.map_osc("/scene", self.handle_scene_change)
         self.control.map_osc("/param", self.handle_param_change)
+
+        # Start OSC server in background thread
+        self._osc_thread = threading.Thread(target=self.control.start_osc_server, daemon=True)
+        self._osc_thread.start()
         
         # Queue for parameter updates
         self.param_queue = queue.Queue()

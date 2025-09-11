@@ -3,6 +3,13 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 console.log('Three.js imported:', THREE);
 
+// Global renderer state
+let scene;
+let camera;
+let renderer;
+let controls;
+let currentSceneObject = null;
+
 // Handle loading screen
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM Content Loaded - Initializing Macroverse');
@@ -17,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loadingScreen.style.display = 'flex';
     }
     
-    // Initialize Three.js in parallel
+    // Initialize Three.js
     try {
         initializeThreeJS();
         console.log('Three.js initialization started');
@@ -75,12 +82,12 @@ function initializeThreeJS() {
 
     try {
         console.log('Creating Three.js scene...');
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        scene = new THREE.Scene();
+        camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         camera.position.z = 25;
 
         console.log('Creating WebGL renderer...');
-        const renderer = new THREE.WebGLRenderer({
+        renderer = new THREE.WebGLRenderer({
             canvas: canvas,
             alpha: true,
             antialias: window.innerWidth > 768, // Disable antialiasing on mobile for better performance
@@ -88,6 +95,7 @@ function initializeThreeJS() {
             failIfMajorPerformanceCaveat: false
         });
         renderer.setSize(window.innerWidth, window.innerHeight);
+        controls = new OrbitControls(camera, renderer.domElement);
         
         // Optimize for mobile devices
         const isMobile = window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -249,6 +257,10 @@ function initializeThreeJS() {
             lines.rotation.x += 0.0005;
             lines.rotation.y += 0.0008;
             
+            if (currentSceneObject && currentSceneObject.userData.animate) {
+                currentSceneObject.userData.animate();
+            }
+            controls.update();
             renderer.render(scene, camera);
         }
         
@@ -1250,14 +1262,15 @@ if (mobileDetected) {
     }, 2000);
 }
 
-function animate() {
-    requestAnimationFrame(animate);
-    if (currentSceneObject && currentSceneObject.userData.animate) {
-        currentSceneObject.userData.animate();
+// Text toggle
+document.addEventListener('DOMContentLoaded', () => {
+    const toggleBtn = document.getElementById('text-toggle');
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('text-hidden');
+        });
     }
-    controls.update();
-    renderer.render(scene, camera);
-}
+});
 
 // Story Navigation Functions
 function initializeStoryNavigation() {
@@ -1299,7 +1312,6 @@ function showStory(sectionId) {
 function initializeApp() {
     // Initial scene
     setScene(sectionThemes['energy']);
-    animate();
     
     // Initialize navigation after DOM is loaded
     setTimeout(() => {
@@ -1316,6 +1328,7 @@ if (document.readyState === 'loading') {
 }
 
 window.addEventListener('resize', () => {
+    if (!camera || !renderer) return;
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
