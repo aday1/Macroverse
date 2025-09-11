@@ -1,6 +1,7 @@
 import moderngl_window as mglw
 from audio_processing import AudioProcessor
 from control import Control
+from player_framework import Player
 import os
 import threading
 import queue
@@ -17,6 +18,8 @@ class Macroverse(mglw.WindowConfig):
         super().__init__(**kwargs)
         self.audio_processor = AudioProcessor()
         self.control = Control()
+        self._osc_thread = threading.Thread(target=self.control.start_osc_server, daemon=True)
+        self._osc_thread.start()
 
         # Shader control parameters
         self.shader_params = {
@@ -35,6 +38,7 @@ class Macroverse(mglw.WindowConfig):
 
         self.scenes = self.load_scenes()
         self.current_scene_index = 0
+        self.player = Player(self.scenes, default_duration_seconds=20.0, fade_duration_seconds=1.0, loop=True)
         self.prog = None
         self.quad_fs = None
         if self.scenes:
@@ -42,6 +46,7 @@ class Macroverse(mglw.WindowConfig):
 
         self.control.map_osc("/scene", self.handle_scene_change)
         self.control.map_osc("/param", self.handle_param_change)
+        self.control.map_osc("/transport", self.handle_transport)
         
         # Queue for parameter updates
         self.param_queue = queue.Queue()
@@ -52,6 +57,8 @@ class Macroverse(mglw.WindowConfig):
             print(f"  {i+1}. {scene}")
         print("\nKeyboard Controls:")
         print("  1-6: Switch shaders")
+        print("  LEFT/RIGHT: Previous/Next scene")
+        print("  SPACE: Play/Pause, M: Toggle loop")
         print("  Q/A: Time scale (±0.1)")
         print("  W/S: Audio sensitivity (±0.1)")
         print("  E/D: Zoom (±0.1)")
@@ -80,8 +87,37 @@ class Macroverse(mglw.WindowConfig):
     def handle_scene_change(self, address, *args):
         if args and isinstance(args[0], int):
             self.current_scene_index = args[0] % len(self.scenes)
+            self.player.goto_index(self.current_scene_index)
             self.load_scene(self.scenes[self.current_scene_index])
             print(f"Switched to scene: {self.scenes[self.current_scene_index]}")
+
+    def handle_transport(self, address, *args):
+        """OSC handler for transport commands
+        /transport <cmd> [arg]
+        cmds: play, pause, toggle, next, prev, loop, goto
+        goto expects numeric index as [arg]
+        """
+        if not args:
+            return
+        cmd = str(args[0]).lower()
+        if cmd == 'play':
+            self.player.play()
+        elif cmd == 'pause':
+            self.player.pause()
+        elif cmd == 'toggle':
+            self.player.toggle_play()
+        elif cmd == 'next':
+            self.player.next()
+        elif cmd == 'prev':
+            self.player.prev()
+        elif cmd == 'loop':
+            self.player.toggle_loop()
+        elif cmd == 'goto' and len(args) >= 2:
+            try:
+                index = int(args[1])
+                self.player.goto_index(index)
+            except Exception:
+                pass
 
     def handle_param_change(self, address, *args):
         """Handle OSC parameter changes"""
@@ -100,8 +136,21 @@ class Macroverse(mglw.WindowConfig):
                 shader_index = key - self.wnd.keys.NUMBER_1
                 if shader_index < len(self.scenes):
                     self.current_scene_index = shader_index
+                    self.player.goto_index(self.current_scene_index)
                     self.load_scene(self.scenes[self.current_scene_index])
                     print(f"Switched to shader: {self.scenes[self.current_scene_index]}")
+
+            # Transport
+            elif key == self.wnd.keys.SPACE:
+                self.player.toggle_play()
+                print("Play" if self.player.is_playing else "Pause")
+            elif key == self.wnd.keys.RIGHT:
+                self.player.next()
+            elif key == self.wnd.keys.LEFT:
+                self.player.prev()
+            elif key == self.wnd.keys.M:
+                self.player.toggle_loop()
+                print(f"Loop: {self.player.loop}")
             
             # Parameter controls
             elif key == self.wnd.keys.Q:
@@ -190,6 +239,20 @@ class Macroverse(mglw.WindowConfig):
     def on_render(self, time: float, frametime: float):
         self.ctx.clear(0.0, 0.0, 0.0)  # Black background
 
+        # Update player (auto-advance + transitions)
+        try:
+            self.player.update(frametime)
+        except Exception:
+            pass
+
+        # Sync loaded scene with player's current scene if needed
+        current_scene_name = self.player.get_current_scene_name() if self.scenes else None
+        if current_scene_name and (self.scenes[self.current_scene_index] != current_scene_name):
+            if current_scene_name in self.scenes:
+                self.current_scene_index = self.scenes.index(current_scene_name)
+                self.load_scene(current_scene_name)
+                print(f"Auto-advanced to: {current_scene_name}")
+
         fft_data = self.audio_processor.get_fft_data()
         audio_level = (sum(fft_data) / len(fft_data) / 10000) * self.shader_params['audio_sensitivity']
 
@@ -202,8 +265,9 @@ class Macroverse(mglw.WindowConfig):
             # Additional parameters for enhanced control
             if 'u_zoom' in self.prog:
                 self.prog['u_zoom'] = self.shader_params['zoom']
+            effective_brightness = self.shader_params['brightness'] * (self.player.get_brightness_multiplier() if self.scenes else 1.0)
             if 'u_brightness' in self.prog:
-                self.prog['u_brightness'] = self.shader_params['brightness']
+                self.prog['u_brightness'] = effective_brightness
             if 'u_color_r' in self.prog:
                 self.prog['u_color_r'] = self.shader_params['color_r']
             if 'u_color_g' in self.prog:
