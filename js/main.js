@@ -3,6 +3,13 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 console.log('Three.js imported:', THREE);
 
+// Shared globals for renderer state used across this module
+let scene;
+let camera;
+let renderer;
+let controls;
+let currentSceneObject = null;
+
 // Handle loading screen
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM Content Loaded - Initializing Macroverse');
@@ -62,6 +69,18 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
+
+    // Text visibility toggle
+    try {
+        const textToggle = document.getElementById('text-toggle');
+        if (textToggle) {
+            textToggle.addEventListener('click', () => {
+                document.body.classList.toggle('text-hidden');
+            });
+        }
+    } catch (e) {
+        console.warn('Failed to bind text toggle:', e);
+    }
 });
 
 function initializeThreeJS() {
@@ -75,12 +94,12 @@ function initializeThreeJS() {
 
     try {
         console.log('Creating Three.js scene...');
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        scene = new THREE.Scene();
+        camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         camera.position.z = 25;
 
         console.log('Creating WebGL renderer...');
-        const renderer = new THREE.WebGLRenderer({
+        renderer = new THREE.WebGLRenderer({
             canvas: canvas,
             alpha: true,
             antialias: window.innerWidth > 768, // Disable antialiasing on mobile for better performance
@@ -88,6 +107,9 @@ function initializeThreeJS() {
             failIfMajorPerformanceCaveat: false
         });
         renderer.setSize(window.innerWidth, window.innerHeight);
+        // Controls
+        controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
         
         // Optimize for mobile devices
         const isMobile = window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -213,15 +235,7 @@ function initializeThreeJS() {
         const frameInterval = 1000 / targetFPS;
         let lastFrameTime = 0;
         
-        function animate(currentTime = 0) {
-            requestAnimationFrame(animate);
-            
-            // Throttle frame rate on mobile for better battery life
-            if (currentTime - lastFrameTime < frameInterval && isMobile) {
-                return;
-            }
-            lastFrameTime = currentTime;
-            
+        function animateBackground(currentTime = 0) {
             // Update shader uniforms
             shaderMaterial.uniforms.u_time.value = performance.now() * 0.001;
             
@@ -248,9 +262,13 @@ function initializeThreeJS() {
             particles.rotation.y += 0.001;
             lines.rotation.x += 0.0005;
             lines.rotation.y += 0.0008;
-            
-            renderer.render(scene, camera);
         }
+        
+        // Expose background animation via current scene object so global loop can drive it
+        const bgGroup = new THREE.Group();
+        bgGroup.userData.animate = animateBackground;
+        scene.add(bgGroup);
+        currentSceneObject = bgGroup;
         
         // Window resize handler
         const handleResize = () => {
@@ -264,10 +282,8 @@ function initializeThreeJS() {
         
         window.addEventListener('resize', handleResize);
         
-        // Start animation
-        console.log('Starting animation loop...');
-        animate();
-        console.log('Three.js animation started successfully');
+        // Do not start a separate render loop here; the global loop will handle rendering
+        console.log('Three.js scene initialized successfully');
         
     } catch (error) {
         console.error('Three.js initialization failed:', error);

@@ -14,8 +14,8 @@ class ScenePlayer(mglw.WindowConfig):
         super().__init__(**kwargs)
         self.audio_processor = AudioProcessor()
         self.prog = self.load_program(
-            vertex_shader='shaders/default.vert',
-            fragment_shader='shaders/living.glsl'
+            vertex_shader='../shaders/default.vert',
+            fragment_shader='../shaders/living.glsl'
         )
         self.quad_fs = mglw.geometry.quad_fs()
 

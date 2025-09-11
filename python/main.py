@@ -40,8 +40,14 @@ class Macroverse(mglw.WindowConfig):
         if self.scenes:
             self.load_scene(self.scenes[self.current_scene_index])
 
+        # OSC mappings
         self.control.map_osc("/scene", self.handle_scene_change)
         self.control.map_osc("/param", self.handle_param_change)
+        self.control.map_osc("/scene_name", self.handle_scene_change_by_name)
+
+        # Start OSC server in a background thread
+        self.osc_thread = threading.Thread(target=self.control.start_osc_server, daemon=True)
+        self.osc_thread.start()
         
         # Queue for parameter updates
         self.param_queue = queue.Queue()
@@ -68,7 +74,7 @@ class Macroverse(mglw.WindowConfig):
 
     def load_scenes(self):
         shader_dir = os.path.join('..', 'shaders')
-        return [f for f in os.listdir(shader_dir) if f.endswith('.glsl')]
+        return sorted([f for f in os.listdir(shader_dir) if f.endswith('.glsl')])
 
     def load_scene(self, shader_name):
         self.prog = self.load_program(
@@ -82,6 +88,33 @@ class Macroverse(mglw.WindowConfig):
             self.current_scene_index = args[0] % len(self.scenes)
             self.load_scene(self.scenes[self.current_scene_index])
             print(f"Switched to scene: {self.scenes[self.current_scene_index]}")
+
+    def handle_scene_change_by_name(self, address, *args):
+        if args and isinstance(args[0], str):
+            name = args[0]
+            try:
+                index = self.scenes.index(name)
+                self.current_scene_index = index
+                self.load_scene(self.scenes[self.current_scene_index])
+                print(f"Switched to scene: {self.scenes[self.current_scene_index]}")
+            except ValueError:
+                # Try with .glsl extension or base name matching
+                candidate = f"{name}.glsl" if not name.endswith('.glsl') else name
+                try:
+                    index = self.scenes.index(candidate)
+                    self.current_scene_index = index
+                    self.load_scene(self.scenes[self.current_scene_index])
+                    print(f"Switched to scene: {self.scenes[self.current_scene_index]}")
+                except ValueError:
+                    # Try partial match by base name
+                    base = name.replace('.glsl', '')
+                    for i, s in enumerate(self.scenes):
+                        if s.replace('.glsl', '') == base:
+                            self.current_scene_index = i
+                            self.load_scene(self.scenes[self.current_scene_index])
+                            print(f"Switched to scene: {self.scenes[self.current_scene_index]}")
+                            return
+                    print(f"Scene not found: {name}")
 
     def handle_param_change(self, address, *args):
         """Handle OSC parameter changes"""

@@ -1,6 +1,7 @@
 import pygame
 import sys
 from typing import Dict, Any, Callable
+from pythonosc import udp_client
 
 class ShaderControlInterface:
     """
@@ -52,6 +53,8 @@ class ShaderControlInterface:
         self.buttons = self._create_buttons()
         
         self.running = True
+        # OSC client for sending parameter updates
+        self.osc_client = udp_client.SimpleUDPClient("127.0.0.1", 5005)
         
     def _create_sliders(self):
         sliders = {}
@@ -117,6 +120,8 @@ class ShaderControlInterface:
             if button_rect.collidepoint(pos):
                 self.current_shader = shader
                 self.on_shader_change(shader)
+                # send scene change by name (expecting shader file mapping upstream)
+                self.osc_client.send_message("/scene_name", shader.replace(' ', ''))
     
     def _handle_drag(self, pos):
         for param, slider in self.sliders.items():
@@ -138,6 +143,8 @@ class ShaderControlInterface:
         slider['value'] = value
         self.params[param] = value
         self.on_param_change(param, value)
+        # send OSC param
+        self.osc_client.send_message("/param", [param, float(value)])
     
     def _handle_keypress(self, key):
         # Quick presets
@@ -162,6 +169,7 @@ class ShaderControlInterface:
                     self.params[param] = value
                     self.sliders[param]['value'] = value
                     self.on_param_change(param, value)
+                    self.osc_client.send_message("/param", [param, float(value)])
     
     def _reset_params(self):
         defaults = {
