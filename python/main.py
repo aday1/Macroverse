@@ -4,6 +4,7 @@ from control import Control
 import os
 import threading
 import queue
+import json
 
 class Macroverse(mglw.WindowConfig):
     gl_version = (3, 3)
@@ -40,11 +41,28 @@ class Macroverse(mglw.WindowConfig):
         if self.scenes:
             self.load_scene(self.scenes[self.current_scene_index])
 
+        # OSC routes and server
         self.control.map_osc("/scene", self.handle_scene_change)
+        self.control.map_osc("/scene/next", self.handle_scene_next)
+        self.control.map_osc("/scene/prev", self.handle_scene_prev)
         self.control.map_osc("/param", self.handle_param_change)
+        self.control.map_osc("/preset/save", self.handle_preset_save)
+        self.control.map_osc("/preset/load", self.handle_preset_load)
+
+        self._osc_thread = threading.Thread(target=self.control.start_osc_server, daemon=True)
+        self._osc_thread.start()
         
         # Queue for parameter updates
         self.param_queue = queue.Queue()
+
+        # Audio smoothing state
+        self._smoothed_audio_level = 0.0
+        self._audio_smoothing_alpha = 0.2
+
+        # Presets
+        self._presets_path = os.path.join(os.path.dirname(__file__), 'presets.json')
+        self._presets = self._load_presets()
+        self._apply_preset_if_available('default')
         
         print("=== MACROVERSE SHADER CONTROLS ===")
         print("Available Shaders:")
@@ -68,7 +86,12 @@ class Macroverse(mglw.WindowConfig):
 
     def load_scenes(self):
         shader_dir = os.path.join('..', 'shaders')
-        return [f for f in os.listdir(shader_dir) if f.endswith('.glsl')]
+        try:
+            scenes = [f for f in os.listdir(shader_dir) if f.endswith('.glsl')]
+            scenes.sort()
+            return scenes
+        except FileNotFoundError:
+            return []
 
     def load_scene(self, shader_name):
         self.prog = self.load_program(
@@ -76,21 +99,47 @@ class Macroverse(mglw.WindowConfig):
             fragment_shader=os.path.join('..', 'shaders', shader_name)
         )
         self.quad_fs = mglw.geometry.quad_fs()
+        print(f"Loaded scene: {shader_name}")
 
     def handle_scene_change(self, address, *args):
-        if args and isinstance(args[0], int):
+        if args and isinstance(args[0], int) and self.scenes:
             self.current_scene_index = args[0] % len(self.scenes)
             self.load_scene(self.scenes[self.current_scene_index])
             print(f"Switched to scene: {self.scenes[self.current_scene_index]}")
 
+    def handle_scene_next(self, address, *args):
+        if self.scenes:
+            self.current_scene_index = (self.current_scene_index + 1) % len(self.scenes)
+            self.load_scene(self.scenes[self.current_scene_index])
+
+    def handle_scene_prev(self, address, *args):
+        if self.scenes:
+            self.current_scene_index = (self.current_scene_index - 1) % len(self.scenes)
+            self.load_scene(self.scenes[self.current_scene_index])
+
     def handle_param_change(self, address, *args):
-        """Handle OSC parameter changes"""
+        """Handle OSC parameter changes (thread-safe enqueue)"""
         if len(args) >= 2:
             param_name = str(args[0])
-            param_value = float(args[1])
-            if param_name in self.shader_params:
-                self.shader_params[param_name] = param_value
-                print(f"Parameter updated: {param_name} = {param_value}")
+            try:
+                param_value = float(args[1])
+            except Exception:
+                return
+            self.param_queue.put((param_name, param_value))
+
+    def handle_preset_save(self, address, *args):
+        name = str(args[0]) if args else 'default'
+        self._presets[name] = dict(self.shader_params)
+        self._save_presets()
+        print(f"Preset saved: {name}")
+
+    def handle_preset_load(self, address, *args):
+        name = str(args[0]) if args else 'default'
+        if name in self._presets:
+            for k, v in self._presets[name].items():
+                if k in self.shader_params:
+                    self.shader_params[k] = v
+            print(f"Preset loaded: {name}")
 
     def key_event(self, key, action, modifiers):
         """Handle keyboard input for real-time shader control"""
@@ -185,13 +234,40 @@ class Macroverse(mglw.WindowConfig):
                 
             elif key == self.wnd.keys.ESCAPE:
                 print("Exiting Macroverse...")
+                self._shutdown()
                 self.wnd.close()
+
+            # Scene navigation shortcuts
+            elif key == self.wnd.keys.LEFT:
+                self.handle_scene_prev('/scene/prev')
+            elif key == self.wnd.keys.RIGHT:
+                self.handle_scene_next('/scene/next')
+
+            # Preset shortcuts
+            elif key == self.wnd.keys.F5:
+                self.handle_preset_save('/preset/save', 'default')
+            elif key == self.wnd.keys.F9:
+                self.handle_preset_load('/preset/load', 'default')
 
     def on_render(self, time: float, frametime: float):
         self.ctx.clear(0.0, 0.0, 0.0)  # Black background
 
+        # Apply queued parameter updates from OSC thread
+        while not self.param_queue.empty():
+            try:
+                param_name, param_value = self.param_queue.get_nowait()
+                if param_name in self.shader_params:
+                    self.shader_params[param_name] = param_value
+                    print(f"Parameter updated: {param_name} = {param_value}")
+            except queue.Empty:
+                break
+
         fft_data = self.audio_processor.get_fft_data()
-        audio_level = (sum(fft_data) / len(fft_data) / 10000) * self.shader_params['audio_sensitivity']
+        raw_audio = (sum(fft_data) / len(fft_data) / 10000) * self.shader_params['audio_sensitivity']
+        # Exponential moving average smoothing
+        alpha = self._audio_smoothing_alpha
+        self._smoothed_audio_level = (1 - alpha) * self._smoothed_audio_level + alpha * raw_audio
+        audio_level = self._smoothed_audio_level
 
         if self.prog and self.quad_fs:
             # Pass all shader parameters as uniforms
@@ -237,6 +313,32 @@ class Macroverse(mglw.WindowConfig):
             particles = self.shader_params['particle_count']
             print(f"[{current_shader}] Time:{self.shader_params['time_scale']:.1f} Audio:{self.shader_params['audio_sensitivity']:.1f} Zoom:{self.shader_params['zoom']:.1f} Brightness:{self.shader_params['brightness']:.1f}")
             print(f"  RGB:({r:.2f},{g:.2f},{b:.2f}) Ripple:{self.shader_params['ripple_frequency']:.0f}@{self.shader_params['ripple_speed']:.1f} Particles:{particles:.0f}@{self.shader_params['particle_speed']:.3f}")
+
+    def _shutdown(self):
+        try:
+            self.control.stop_osc_server()
+        except Exception:
+            pass
+
+    def _load_presets(self):
+        try:
+            with open(self._presets_path, 'r') as f:
+                return json.load(f)
+        except Exception:
+            return {}
+
+    def _save_presets(self):
+        try:
+            with open(self._presets_path, 'w') as f:
+                json.dump(self._presets, f, indent=2)
+        except Exception as e:
+            print(f"Failed to save presets: {e}")
+
+    def _apply_preset_if_available(self, name):
+        if name in self._presets:
+            for k, v in self._presets[name].items():
+                if k in self.shader_params:
+                    self.shader_params[k] = v
 
     @classmethod
     def run(cls):

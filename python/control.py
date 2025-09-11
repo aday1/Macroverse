@@ -21,7 +21,10 @@ class Control:
         self.server.serve_forever()
 
     def stop_osc_server(self):
-        self.server.shutdown()
+        try:
+            self.server.shutdown()
+        except Exception:
+            pass
 
     def get_midi_messages(self):
         if self.midi_input:
